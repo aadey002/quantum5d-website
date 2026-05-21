@@ -1,0 +1,21 @@
+# Robots.txt for Quantum 5D Consulting
+# Allow all web crawlers to access all content
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://4zp02m0u3jrd.space.minimax.io/sitemap.xml
+
+# Optional: Crawl-delay for polite crawling
+Crawl-delay: 1
+
+# Block access to admin or private areas (if any)
+# Disallow: /admin/
+# Disallow: /private/
+
+# Allow search engines to index CSS and JS files
+Allow: /css/
+Allow: /js/
+Allow: /images/
+Allow: /assets/

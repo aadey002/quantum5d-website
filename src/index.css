@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Footer newsletter styling */
+.newsletter-footer input {
+  @apply bg-gray-700 border-gray-600 text-white placeholder-gray-400;
+}
+
+.newsletter-footer input:focus {
+  @apply border-purple-500;
+}
+
+.newsletter-footer button {
+  @apply bg-purple-600 hover:bg-purple-700;
+}
+
+/* Blog newsletter styling */
+.blog-newsletter input {
+  @apply border-white/30 text-white placeholder-white/70 bg-white/10;
+}
+
+.blog-newsletter input:focus {
+  @apply border-white ring-white/30;
+}
+
+.blog-newsletter button {
+  @apply bg-white text-purple-900 hover:bg-gray-100;
+}
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%
+  }
+
+  .dark {
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%
+  }
+}
+
+
+
+img {
+  object-position: top;
+}
+
+.fixed {
+  position: fixed;
+}
