@@ -17,7 +17,7 @@ export function ResourcesPage() {
       type: "Excel Tool",
       category: "340B Optimization",
       pages: "Interactive Tool",
-      downloadUrl: "/resources/340B-Savings-Calculator-ROI-Analysis-Tool.pdf"
+      downloadUrl: "/resources/340b-savings-calculator.xlsx"
     },
     {
       id: 2,

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Shield, Users, Award, TrendingUp, BookOpen, Calendar, Phone, Mail, Star, CheckCircle, DollarSign, Target, Zap, Trophy, Calculator, Building } from 'lucide-react'
+import { ArrowRight, Shield, Users, Award, TrendingUp, BookOpen, Calendar, Phone, Mail, Star, CheckCircle, DollarSign, Target, Zap, Trophy, Calculator } from 'lucide-react'
 import { NewsletterSignup } from '../components/NewsletterSignup'
 import { SEO } from '../components/SEO'
 import { fetchBlogPosts, BlogPost } from '../services/blogApi'
@@ -173,7 +173,7 @@ export function HomePage() {
             
             <div className="text-center bg-white p-6 rounded-lg shadow-md border border-purple-100">
               <div className="flex items-center justify-center mb-2">
-                <Building className="h-16 w-16 text-purple-600" />
+                <span className="text-5xl font-bold text-purple-600">50+</span>
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Healthcare Organizations Served</h3>
               <p className="text-gray-600">FQHCs, hospitals, and pharmacies we've successfully partnered with</p>
@@ -337,7 +337,7 @@ export function HomePage() {
                   <Trophy className="h-8 w-8 text-purple-600 flex-shrink-0 mt-1" />
                   <div>
                     <h4 className="font-bold text-gray-900 mb-2">Proven Track Record</h4>
-                    <p className="text-gray-600"><Building className="h-4 w-4 inline mr-1 text-purple-600" />Healthcare organizations served with 98% client satisfaction rate and millions in documented savings generated.</p>
+                    <p className="text-gray-600">50+ healthcare organizations served with 98% client satisfaction rate and millions in documented savings generated.</p>
                   </div>
                 </div>
                 
@@ -439,7 +439,7 @@ export function HomePage() {
               <div className="text-center bg-purple-50 p-8 rounded-lg">
                 <Trophy className="h-12 w-12 text-purple-600 mx-auto mb-4" />
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">Trusted by Healthcare Providers Nationwide</h3>
-                <p className="text-gray-600">Serving <Building className="h-4 w-4 inline mx-1 text-purple-600" /> healthcare organizations across the United States with a 98% client satisfaction rate.</p>
+                <p className="text-gray-600">Serving 50+ healthcare organizations across the United States with a 98% client satisfaction rate.</p>
               </div>
             </div>
           </div>
