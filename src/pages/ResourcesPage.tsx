@@ -560,7 +560,7 @@ export function ResourcesPage() {
               </p>
               <div className="text-center pt-4 border-t border-gray-100">
                 <p className="text-xs text-gray-500">
-                  © 2025 Quantum 5D Consulting. All rights reserved.
+                  © 2026 Quantum 5D Consulting. All rights reserved.
                 </p>
               </div>
             </div>

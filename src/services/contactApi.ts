@@ -1,4 +1,5 @@
 const API_BASE_URL = 'https://kolxfjisvizwayyrlzyx.supabase.co/functions/v1'
+const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvbHhmamlzdml6d2F5eXJsenl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIxMzI0MzAsImV4cCI6MjA2NzcwODQzMH0.7dG4aLMWc25eXyMT4f1PkQgQtZiDzSntQW0Js-IDZ7c'
 
 export interface ContactFormData {
   name: string
@@ -36,7 +37,7 @@ export async function submitContactForm(formData: ContactFormData): Promise<Cont
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvbHhmamlzdml6d2F5eXJsenl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ0MTI3NDIsImV4cCI6MjA0OTk4ODc0Mn0.2KjTnLh3xINGCU6TqNp4QAZITFy0YSbmQJa6CDthNm8`,
+        'Authorization': `Bearer ${ANON_KEY}`,
       },
       body: JSON.stringify({
         ...formData,
@@ -77,7 +78,7 @@ export async function signupNewsletter(signupData: NewsletterSignupData): Promis
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvbHhmamlzdml6d2F5eXJsenl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ0MTI3NDIsImV4cCI6MjA0OTk4ODc0Mn0.2KjTnLh3xINGCU6TqNp4QAZITFy0YSbmQJa6CDthNm8`,
+        'Authorization': `Bearer ${ANON_KEY}`,
       },
       body: JSON.stringify({
         action: 'subscribe',
@@ -127,6 +128,7 @@ export async function signupNewsletter(signupData: NewsletterSignupData): Promis
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${ANON_KEY}`,
           },
           body: JSON.stringify({
             subscriberId: result.data?.id,

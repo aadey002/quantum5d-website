@@ -1,5 +1,4 @@
-import React from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import { BlogListPage } from './pages/BlogListPage'
 import { BlogPostPage } from './pages/BlogPostPage'
@@ -15,49 +14,19 @@ import { Navigation } from './components/Navigation'
 import { Footer } from './components/Footer'
 import './App.css'
 
+function NotFoundPage() {
+  return (
+    <div className="min-h-[60vh] flex flex-col items-center justify-center px-4 text-center">
+      <h1 className="text-6xl font-bold text-gray-900 mb-4">404</h1>
+      <p className="text-xl text-gray-600 mb-8">The page you're looking for doesn't exist.</p>
+      <Link to="/" className="bg-blue-900 text-white px-6 py-3 rounded-lg hover:bg-blue-800 transition-colors">
+        Back to Home
+      </Link>
+    </div>
+  )
+}
+
 function App() {
-  React.useEffect(() => {
-    // Initialize floating ball functionality
-    const ball = document.getElementById('minimax-floating-ball');
-    if (!ball) return;
-
-    // Initial animation
-    ball.style.opacity = '0';
-    ball.style.transform = 'translateY(20px)';
-
-    setTimeout(() => {
-      ball.style.opacity = '1';
-      ball.style.transform = 'translateY(0)';
-    }, 500);
-
-    // Handle logo click
-    const ballContent = ball.querySelector('.minimax-ball-content');
-    if (ballContent) {
-      ballContent.addEventListener('click', function (e) {
-        e.stopPropagation();
-        window.open('https://agent.minimax.io/agent', '_blank');
-        ball.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-          ball.style.transform = 'scale(1)';
-        }, 100);
-      });
-    }
-
-    // Handle close button click
-    const closeIcon = ball.querySelector('.minimax-close-icon');
-    if (closeIcon) {
-      closeIcon.addEventListener('click', function (e) {
-        e.stopPropagation();
-        ball.style.opacity = '0';
-        ball.style.transform = 'translateY(20px)';
-
-        setTimeout(() => {
-          ball.style.display = 'none';
-        }, 300);
-      });
-    }
-  }, []);
-
   return (
     <HelmetProvider>
       <Router>
@@ -74,17 +43,12 @@ function App() {
           <Route path="/blog/:slug" element={<BlogPostPage />} />
           <Route path="/resources" element={<ResourcesPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/privacy" element={<ContactPage />} />
+          <Route path="/terms" element={<ContactPage />} />
+          <Route path="/free-assessment" element={<ContactPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <Footer />
-        
-        {/* MiniMax floating ball */}
-        <div id="minimax-floating-ball">
-          <div className="minimax-ball-content">
-            <div className="minimax-logo-wave"></div>
-            <span className="minimax-ball-text">Created by MiniMax Agent</span>
-          </div>
-          <div className="minimax-close-icon">×</div>
-        </div>
         </div>
       </Router>
     </HelmetProvider>

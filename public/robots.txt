@@ -5,7 +5,7 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://4zp02m0u3jrd.space.minimax.io/sitemap.xml
+Sitemap: https://quantum5dconsulting.com/sitemap.xml
 
 # Optional: Crawl-delay for polite crawling
 Crawl-delay: 1

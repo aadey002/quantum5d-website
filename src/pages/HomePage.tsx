@@ -100,7 +100,6 @@ export function HomePage() {
         path="/"
         image="/images/hero/pharmacy-consulting-hero.jpg"
         structuredData={structuredData}
-        googleSiteVerification="PLACEHOLDER_VERIFICATION_CODE"
         googleAnalyticsId="G-1KGZ0633K4"
       />
       {/* Hero Section */}
