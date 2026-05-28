@@ -1,56 +1,40 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Award, Users, Target, CheckCircle, Phone, Mail, TrendingUp, DollarSign } from 'lucide-react'
-import { SEO } from '../components/SEO'
+import { PageMeta } from '../components/PageMeta'
+import { Schema } from '../components/Schema'
 
 export function AboutPage() {
-  // Structured data for Dr. Oriaifo and the organization
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Person",
-        "@id": "https://quantum5dconsulting.com/about#dr-oriaifo",
-        "name": "Dr. Adetoro Oriaifo",
-        "jobTitle": "Founder & Principal Consultant",
-        "worksFor": {
-          "@type": "Organization",
-          "name": "Quantum 5D Consulting"
-        },
-        "hasCredential": [
-          "Doctor of Pharmacy (PharmD)",
-          "340B Program Optimization Specialist",
-          "Minority & Woman-Owned Business Certified"
-        ],
-        "description": "Over 15 years of pharmacy experience with specialized expertise in 340B program optimization",
-        "image": "https://quantum5dconsulting.com/images/team/dr-oriaifo-professional.jpg",
-        "contactPoint": {
-          "@type": "ContactPoint",
-          "telephone": "+1-410-921-3989",
-          "email": "info@quantum5dconsulting.com",
-          "contactType": "Professional"
-        }
-      },
-      {
-        "@type": "Organization",
-        "@id": "https://quantum5dconsulting.com/about#organization",
-        "name": "Quantum 5D Consulting",
-        "founder": {
-          "@id": "https://quantum5dconsulting.com/about#dr-oriaifo"
-        },
-        "description": "Leading pharmacy consulting firm specializing in 340B program optimization, regulatory compliance, and operational excellence",
-        "serviceType": "Pharmacy Consulting"
-      }
-    ]
-  }
   return (
     <div className="min-h-screen">
-      <SEO 
-        title="About Dr. Adetoro Oriaifo - Quantum 5D Consulting Founder"
-        description="Meet Dr. Adetoro Oriaifo, PharmD, founder of Quantum 5D Consulting. Expert in 340B program optimization with 15+ years pharmacy management experience."
-        path="/about"
-        image="/images/team/dr-oriaifo-professional.jpg"
-        structuredData={structuredData}
+      <PageMeta
+        title="About Dr. Adetoro Oriaifo, PharmD | Quantum 5D Consulting Founder"
+        description="Meet Dr. Adetoro Oriaifo, PharmD — founder of Quantum 5D Consulting. 15+ years in 340B program optimization, FQHC pharmacy operations, and healthcare leadership."
+        canonical="/about"
+        openGraph={{
+          title: "About Dr. Adetoro Oriaifo, PharmD | Quantum 5D Consulting Founder",
+          description: "Meet Dr. Adetoro Oriaifo, PharmD — founder of Quantum 5D Consulting. 15+ years in 340B program optimization, FQHC pharmacy operations, and healthcare leadership.",
+          image: "/og/about.jpg",
+          url: "/about",
+          type: "website",
+        }}
+      />
+      <Schema
+        type="Person"
+        data={{
+          name: "Adetoro Oriaifo",
+          honorificPrefix: "Dr.",
+          jobTitle: "Founder & CEO",
+          worksFor: { "@type": "Organization", name: "Quantum 5D Consulting" },
+          knowsAbout: [
+            "340B Drug Pricing Program",
+            "FQHC Pharmacy Operations",
+            "Pharmacy Compliance",
+            "Healthcare AI",
+            "Pharmacy Executive Leadership",
+          ],
+          sameAs: ["https://www.linkedin.com/in/adetorooriaifo/"],
+        }}
       />
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-purple-900 to-purple-700 text-white py-20">

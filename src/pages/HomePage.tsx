@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Shield, Users, Award, TrendingUp, BookOpen, Calendar, Phone, Mail, Star, CheckCircle, DollarSign, Target, Zap, Trophy, Calculator } from 'lucide-react'
 import { NewsletterSignup } from '../components/NewsletterSignup'
-import { SEO } from '../components/SEO'
+import { PageMeta } from '../components/PageMeta'
+import { Schema } from '../components/Schema'
 import { fetchBlogPosts, BlogPost } from '../services/blogApi'
 
 export function HomePage() {
@@ -82,25 +83,37 @@ export function HomePage() {
     "Minority & Woman-Owned Business Certified"
   ]
 
-  // Structured data for organization
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Quantum 5D Consulting",
-    "url": "https://quantum5dconsulting.com",
-    "logo": "https://quantum5dconsulting.com/images/logo.png",
-    "description": "Pharmacy consulting firm specializing in 340B optimization, compliance, and buildouts."
-  }
-
   return (
     <div className="min-h-screen">
-      <SEO 
+      <PageMeta
         title="Pharmacy Consulting Experts | 340B Program, Compliance & Workforce Strategy"
         description="Quantum 5D Consulting helps covered entities optimize 340B programs, improve HRSA compliance, build operational pharmacies, and train pharmacy staff nationwide."
-        path="/"
-        image="/images/hero/pharmacy-consulting-hero.jpg"
-        structuredData={structuredData}
-        googleAnalyticsId="G-1KGZ0633K4"
+        canonical="/"
+        openGraph={{
+          title: "Pharmacy Consulting Experts | 340B Program, Compliance & Workforce Strategy",
+          description: "Quantum 5D Consulting helps covered entities optimize 340B programs, improve HRSA compliance, build operational pharmacies, and train pharmacy staff nationwide.",
+          image: "/og/homepage.jpg",
+          url: "/",
+          type: "website",
+        }}
+      />
+      <Schema
+        type="Organization"
+        data={{
+          name: "Quantum 5D Consulting",
+          alternateName: "Q5D",
+          url: "https://quantum5dconsulting.com",
+          logo: "https://quantum5dconsulting.com/logo.png",
+          founder: {
+            "@type": "Person",
+            name: "Adetoro Oriaifo",
+            honorificPrefix: "Dr.",
+          },
+          description: "Minority, Pharmacist & Woman-Owned Business specializing in 340B program optimization, regulatory compliance, and pharmacy management nationwide.",
+          sameAs: [
+            "https://www.linkedin.com/company/quantum-5d-consulting",
+          ],
+        }}
       />
       {/* Hero Section */}
       <section className="relative bg-white py-16 lg:py-24">
