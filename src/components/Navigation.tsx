@@ -14,8 +14,9 @@ export function Navigation() {
     { name: 'Case Studies', path: '/case-studies' },
     { name: 'Blog', path: '/blog' },
     { name: 'Resources', path: '/resources' },
+    { name: 'AI Tools', path: 'https://quantum5d.ai', external: true },
     { name: 'Contact', path: '/contact' },
-  ]
+  ] as const
 
   return (
     <nav className="bg-white shadow-lg relative z-50">
@@ -41,18 +42,30 @@ export function Navigation() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
-              <Link
-                key={item.name}
-                to={item.path}
-                className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${
-                  location.pathname === item.path || 
-                  (item.path === '/blog' && location.pathname.startsWith('/blog'))
-                    ? 'text-purple-600 border-b-2 border-purple-600'
-                    : 'text-gray-700 hover:text-purple-600'
-                }`}
-              >
-                {item.name}
-              </Link>
+              'external' in item && item.external ? (
+                <a
+                  key={item.name}
+                  href={item.path}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-2 text-sm font-medium transition-colors duration-200 text-purple-600 hover:text-purple-800"
+                >
+                  {item.name} ↗
+                </a>
+              ) : (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+                    location.pathname === item.path ||
+                    (item.path === '/blog' && location.pathname.startsWith('/blog'))
+                      ? 'text-purple-600 border-b-2 border-purple-600'
+                      : 'text-gray-700 hover:text-purple-600'
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              )
             ))}
           </div>
 
@@ -73,19 +86,32 @@ export function Navigation() {
         <div className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg border-t">
           <div className="px-2 pt-2 pb-3 space-y-1">
             {navItems.map((item) => (
-              <Link
-                key={item.name}
-                to={item.path}
-                onClick={() => setIsOpen(false)}
-                className={`block px-3 py-2 text-base font-medium transition-colors duration-200 ${
-                  location.pathname === item.path || 
-                  (item.path === '/blog' && location.pathname.startsWith('/blog'))
-                    ? 'text-purple-600 bg-purple-50'
-                    : 'text-gray-700 hover:text-purple-600 hover:bg-gray-50'
-                }`}
-              >
-                {item.name}
-              </Link>
+              'external' in item && item.external ? (
+                <a
+                  key={item.name}
+                  href={item.path}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setIsOpen(false)}
+                  className="block px-3 py-2 text-base font-medium transition-colors duration-200 text-purple-600 hover:text-purple-800 hover:bg-purple-50"
+                >
+                  {item.name} ↗
+                </a>
+              ) : (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  onClick={() => setIsOpen(false)}
+                  className={`block px-3 py-2 text-base font-medium transition-colors duration-200 ${
+                    location.pathname === item.path ||
+                    (item.path === '/blog' && location.pathname.startsWith('/blog'))
+                      ? 'text-purple-600 bg-purple-50'
+                      : 'text-gray-700 hover:text-purple-600 hover:bg-gray-50'
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              )
             ))}
           </div>
         </div>

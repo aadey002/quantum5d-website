@@ -1,5 +1,14 @@
 {
+  "framework": null,
+  "buildCommand": "",
+  "outputDirectory": "public",
   "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "www.quantum5d.ai" }],
+      "destination": "https://quantum5d.ai/$1",
+      "permanent": true
+    },
     {
       "source": "/(.*)",
       "has": [{ "type": "host", "value": "www.quantum5dconsulting.com" }],
@@ -9,6 +18,7 @@
   ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/((?!api|assets|images|resources|robots.txt|sitemap.xml|logo.png).*)", "destination": "/index.html" }
+    { "source": "/", "destination": "/quantum5d-site-index.html" },
+    { "source": "/((?!api|assets|images|resources|robots.txt|sitemap.xml|logo.png|quantum5d-site-index.html).*)", "destination": "/quantum5d-site-index.html" }
   ]
 }
