@@ -319,35 +319,6 @@ footer{padding:42px 0;color:var(--muted);font-size:13px}
   </div>
 </div></section>
 
-<!-- API EXAMPLE -->
-<section class="sec" id="api" style="background:#0B0833;color:#fff;border-top:1px solid rgba(255,255,255,.08)"><div class="wrap">
-  <div class="sec-head">
-    <p class="eyebrow" style="color:var(--purple-soft)">Developer integration</p>
-    <h2 style="color:#fff">Build with Claude</h2>
-    <p style="color:#CFCAE6">Our systems are powered by the Anthropic API. Here’s how we wire prompt caching for fast, cost-efficient AI calls.</p>
-  </div>
-  <div style="margin-top:28px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:24px;overflow-x:auto">
-    <pre style="margin:0;font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.65;color:#CFCAE6;white-space:pre;tab-size:4"><code>client = anthropic.Anthropic()
-
-response = client.messages.create(
-    model="claude-opus-4-8",
-    max_tokens=1024,
-    system=[
-        {
-            "type": "text",
-            "text": "You are a helpful assistant.",
-            "cache_control": {"type": "ephemeral"},
-        }
-    ],
-    messages=[
-        {"role": "user", "content": "What do you know?"},
-    ],
-)
-print(response.usage.model_dump_json())</code></pre>
-  </div>
-  <p style="margin-top:16px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#938ABD">cache_control goes on content blocks — not the top-level call. This caches the system prompt so repeated calls hit the cache and run faster.</p>
-</div></section>
-
 <!-- CONTACT -->
 <section class="sec" id="contact"><div class="wrap">
   <div class="contact">
