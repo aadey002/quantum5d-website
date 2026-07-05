@@ -33,40 +33,46 @@ export interface ContactResponse {
 
 export async function submitContactForm(formData: ContactFormData): Promise<ContactResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/contact-form-handler`, {
+    const response = await fetch('/api/contact', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${ANON_KEY}`,
       },
       body: JSON.stringify({
-        ...formData,
-        source: formData.source || 'website',
-        submitted_at: new Date().toISOString()
+        name: formData.name,
+        organization: formData.company || '',
+        email: formData.email,
+        message: (formData.subject ? formData.subject + ': ' : '') + formData.message,
       })
     })
-    
-    if (!response.ok) {
-      console.warn('Failed to submit contact form via API, providing fallback message')
+
+    const result = await response.json()
+
+    if (!response.ok || !result.success) {
       return {
-        success: true,
-        data: {
-          id: 'fallback-' + Date.now(),
-          status: 'received',
-          message: 'Thank you for your message! Please contact us directly at info@quantum5dconsulting.com or call (410) 921-3989 for immediate assistance.'
+        success: false,
+        error: {
+          code: 'SUBMIT_ERROR',
+          message: result.error || 'Failed to send your message. Please try again.'
         }
       }
     }
-    
-    return await response.json()
-  } catch (error) {
-    console.warn('Contact form submission error, providing fallback:', error)
+
     return {
       success: true,
       data: {
-        id: 'fallback-' + Date.now(),
+        id: 'lead-' + Date.now(),
         status: 'received',
-        message: 'Thank you for your message! Please contact us directly at info@quantum5dconsulting.com or call (410) 921-3989 for immediate assistance.'
+        message: 'Thank you for your message! We will be in touch shortly.'
+      }
+    }
+  } catch (error) {
+    console.error('Contact form submission error:', error)
+    return {
+      success: false,
+      error: {
+        code: 'NETWORK_ERROR',
+        message: 'Network error — please try again or call (410) 921-3989.'
       }
     }
   }
