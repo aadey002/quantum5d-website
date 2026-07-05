@@ -62,3 +62,20 @@ img {
 .fixed {
   position: fixed;
 }
+
+/* Blog post headings — purple bold */
+.prose h2 {
+  color: #581c87 !important;
+  font-weight: 700 !important;
+  font-size: 1.5rem !important;
+  margin-top: 2.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.prose h3 {
+  color: #6b21a8 !important;
+  font-weight: 700 !important;
+  font-size: 1.25rem !important;
+  margin-top: 2rem !important;
+  margin-bottom: 0.75rem !important;
+}
