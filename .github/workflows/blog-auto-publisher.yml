@@ -1,0 +1,37 @@
+name: Blog Auto-Publisher
+
+on:
+  schedule:
+    - cron: '0 13 * * *'  # 9am ET (13:00 UTC) daily
+  workflow_dispatch:
+
+jobs:
+  publish-scheduled:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish due blog posts
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          # Find posts with status='scheduled' and published_date <= now
+          # Update them to status='published'
+          RESULT=$(curl -s -X PATCH \
+            "$SUPABASE_URL/rest/v1/blog_posts?status=eq.scheduled&published_date=lte.$(date -u +%Y-%m-%dT%H:%M:%S)" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: return=representation" \
+            -d '{"status": "published"}')
+
+          # Also publish posts with no published_date that are overdue (created > 7 days ago)
+          RESULT2=$(curl -s -X PATCH \
+            "$SUPABASE_URL/rest/v1/blog_posts?status=eq.scheduled&published_date=is.null" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: return=representation" \
+            -d "{\"status\": \"published\", \"published_date\": \"$(date -u +%Y-%m-%dT%H:%M:%S)\"}")
+
+          echo "Published posts: $RESULT"
+          echo "Published null-date posts: $RESULT2"

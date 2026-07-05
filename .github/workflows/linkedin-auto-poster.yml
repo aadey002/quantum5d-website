@@ -1,0 +1,119 @@
+name: LinkedIn Auto-Poster
+
+on:
+  schedule:
+    - cron: '0 13 * * 1-5'  # 9am ET (13:00 UTC) weekdays
+  workflow_dispatch:
+
+jobs:
+  post-to-linkedin:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post scheduled LinkedIn content
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          set -e
+
+          NOW=$(date -u +%Y-%m-%dT%H:%M:%S)
+          echo "Checking for posts due before $NOW"
+
+          # Get LinkedIn access token
+          TOKEN_RESPONSE=$(curl -s \
+            "$SUPABASE_URL/rest/v1/linkedin_accounts?select=access_token,linkedin_user_id&limit=1" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY")
+
+          ACCESS_TOKEN=$(echo "$TOKEN_RESPONSE" | jq -r '.[0].access_token // empty')
+          LINKEDIN_USER_ID=$(echo "$TOKEN_RESPONSE" | jq -r '.[0].linkedin_user_id // empty')
+
+          if [ -z "$ACCESS_TOKEN" ] || [ -z "$LINKEDIN_USER_ID" ]; then
+            echo "No LinkedIn account configured or token expired"
+            exit 0
+          fi
+
+          # Get due posts (status=approved or scheduled, scheduled_date <= now)
+          POSTS=$(curl -s \
+            "$SUPABASE_URL/rest/v1/linkedin_posts?status=in.(approved,scheduled)&scheduled_date=lte.$NOW&order=scheduled_date.asc&limit=3" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY")
+
+          POST_COUNT=$(echo "$POSTS" | jq '. | length')
+          echo "Found $POST_COUNT posts to publish"
+
+          if [ "$POST_COUNT" = "0" ]; then
+            echo "No posts due"
+            exit 0
+          fi
+
+          echo "$POSTS" | jq -c '.[]' | while read -r POST; do
+            POST_ID=$(echo "$POST" | jq -r '.id')
+            CONTENT=$(echo "$POST" | jq -r '.content')
+            HASHTAGS=$(echo "$POST" | jq -r '.hashtags // [] | join(" ")')
+
+            # Append hashtags to content
+            FULL_CONTENT="$CONTENT"
+            if [ -n "$HASHTAGS" ] && [ "$HASHTAGS" != "" ]; then
+              FULL_CONTENT="$CONTENT
+
+$HASHTAGS"
+            fi
+
+            echo "Posting: $POST_ID"
+
+            # Post to LinkedIn
+            LI_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+              "https://api.linkedin.com/v2/ugcPosts" \
+              -H "Authorization: Bearer $ACCESS_TOKEN" \
+              -H "Content-Type: application/json" \
+              -H "X-Restli-Protocol-Version: 2.0.0" \
+              -d "$(jq -n \
+                --arg author "urn:li:person:$LINKEDIN_USER_ID" \
+                --arg text "$FULL_CONTENT" \
+                '{
+                  "author": $author,
+                  "lifecycleState": "PUBLISHED",
+                  "specificContent": {
+                    "com.linkedin.ugc.ShareContent": {
+                      "shareCommentary": { "text": $text },
+                      "shareMediaCategory": "NONE"
+                    }
+                  },
+                  "visibility": {
+                    "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
+                  }
+                }')")
+
+            HTTP_CODE=$(echo "$LI_RESPONSE" | tail -1)
+            BODY=$(echo "$LI_RESPONSE" | sed '$d')
+
+            if [ "$HTTP_CODE" = "201" ]; then
+              LI_POST_ID=$(echo "$BODY" | jq -r '.id // empty')
+              echo "Posted successfully: $LI_POST_ID"
+
+              # Update status in Supabase
+              curl -s -X PATCH \
+                "$SUPABASE_URL/rest/v1/linkedin_posts?id=eq.$POST_ID" \
+                -H "apikey: $SUPABASE_KEY" \
+                -H "Authorization: Bearer $SUPABASE_KEY" \
+                -H "Content-Type: application/json" \
+                -d "{\"status\": \"posted\", \"posted_at\": \"$NOW\", \"linkedin_post_id\": \"$LI_POST_ID\"}"
+            else
+              echo "Failed to post $POST_ID: HTTP $HTTP_CODE"
+              echo "$BODY"
+
+              # Mark as failed
+              curl -s -X PATCH \
+                "$SUPABASE_URL/rest/v1/linkedin_posts?id=eq.$POST_ID" \
+                -H "apikey: $SUPABASE_KEY" \
+                -H "Authorization: Bearer $SUPABASE_KEY" \
+                -H "Content-Type: application/json" \
+                -d "{\"status\": \"failed\", \"rejection_reason\": \"HTTP $HTTP_CODE\"}"
+            fi
+
+            # Rate limit: wait 5 seconds between posts
+            sleep 5
+          done
+
+          echo "Done"
