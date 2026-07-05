@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Calendar, User, Tag, ArrowLeft, AlertCircle } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
 import { fetchBlogPostBySlug, BlogPost } from '../services/blogApi'
 
 export function BlogPostPage() {
@@ -151,10 +152,16 @@ export function BlogPostPage() {
 
           {/* Article Body */}
           <div className="p-8">
-            <div 
-              className="prose prose-lg max-w-none"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
+            {post.content.trim().startsWith('<') ? (
+              <div
+                className="prose prose-lg max-w-none"
+                dangerouslySetInnerHTML={{ __html: post.content }}
+              />
+            ) : (
+              <div className="prose prose-lg max-w-none">
+                <ReactMarkdown>{post.content}</ReactMarkdown>
+              </div>
+            )}
           </div>
 
           {/* Article Footer */}
