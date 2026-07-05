@@ -1,4 +1,5 @@
 name: LinkedIn Auto-Poster
+# Posts scheduled LinkedIn content on weekdays at 9am ET
 
 on:
   schedule:
