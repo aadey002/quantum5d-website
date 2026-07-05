@@ -154,11 +154,11 @@ export function BlogPostPage() {
           <div className="p-8">
             {post.content.trim().startsWith('<') ? (
               <div
-                className="prose prose-lg max-w-none"
+                className="prose prose-lg max-w-none prose-headings:text-purple-800 prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3"
                 dangerouslySetInnerHTML={{ __html: post.content }}
               />
             ) : (
-              <div className="prose prose-lg max-w-none">
+              <div className="prose prose-lg max-w-none prose-headings:text-purple-800 prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3">
                 <ReactMarkdown>{post.content}</ReactMarkdown>
               </div>
             )}
