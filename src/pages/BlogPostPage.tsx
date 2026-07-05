@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Calendar, User, Tag, ArrowLeft, AlertCircle } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
+import { Helmet } from 'react-helmet-async'
 import { fetchBlogPostBySlug, BlogPost } from '../services/blogApi'
 
 export function BlogPostPage() {
@@ -21,15 +22,9 @@ export function BlogPostPage() {
       setLoading(true)
       setError(null)
       const response = await fetchBlogPostBySlug(postSlug)
-      
+
       if (response.success) {
         setPost(response.data)
-        // Update page title and meta description for SEO
-        document.title = response.data.seo.title || `${response.data.title} | Quantum 5D Consulting`
-        const metaDescription = document.querySelector('meta[name="description"]')
-        if (metaDescription) {
-          metaDescription.setAttribute('content', response.data.seo.description || response.data.excerpt)
-        }
       } else {
         console.log('Blog post error:', response.error)
         setError(response.error?.message || 'Failed to load blog post')
@@ -47,6 +42,39 @@ export function BlogPostPage() {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
+    })
+  }
+
+  const buildArticleJsonLd = (blogPost: BlogPost) => {
+    const baseUrl = 'https://quantum5dconsulting.com'
+    return JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: blogPost.title,
+      description: blogPost.seo.description || blogPost.excerpt,
+      datePublished: blogPost.publishedAt,
+      dateModified: blogPost.publishedAt,
+      url: baseUrl + '/blog/' + blogPost.slug,
+      image: blogPost.featuredImage || baseUrl + '/logo.png',
+      author: {
+        '@type': 'Person',
+        name: 'Dr. Adetoro Oriaifo',
+        jobTitle: 'Chief Pharmacy Officer',
+        url: baseUrl + '/about'
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Quantum 5D Consulting',
+        url: baseUrl,
+        logo: {
+          '@type': 'ImageObject',
+          url: baseUrl + '/logo.png'
+        }
+      },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': baseUrl + '/blog/' + blogPost.slug
+      }
     })
   }
 
@@ -73,8 +101,8 @@ export function BlogPostPage() {
               {error === 'Blog post not found' ? 'Article Not Found' : 'Sample Article Unavailable'}
             </h2>
             <p className="text-gray-600 mb-4">
-              {error === 'Blog post not found' 
-                ? 'The article you\'re looking for doesn\'t exist or has been moved.' 
+              {error === 'Blog post not found'
+                ? 'The article you\'re looking for doesn\'t exist or has been moved.'
                 : 'We\'re currently experiencing technical difficulties with our blog system. Please check our main blog page for available articles.'}
             </p>
             <Link
@@ -90,8 +118,36 @@ export function BlogPostPage() {
     )
   }
 
+  const pageTitle = post.seo.title || (post.title + ' | Quantum 5D Consulting')
+  const pageDescription = post.seo.description || post.excerpt
+  const baseUrl = 'https://quantum5dconsulting.com'
+  const pageUrl = baseUrl + '/blog/' + post.slug
+  const pageImage = post.featuredImage || baseUrl + '/logo.png'
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href={pageUrl} />
+
+        <meta property="og:type" content="article" />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:url" content={pageUrl} />
+        <meta property="og:image" content={pageImage} />
+        <meta property="og:site_name" content="Quantum 5D Consulting" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={pageDescription} />
+        <meta name="twitter:image" content={pageImage} />
+
+        <meta name="author" content="Dr. Adetoro Oriaifo" />
+        <script type="application/ld+json">{buildArticleJsonLd(post)}</script>
+      </Helmet>
+
       {/* Back Navigation */}
       <div className="bg-white border-b">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -123,15 +179,15 @@ export function BlogPostPage() {
                 {post.category}
               </span>
             </div>
-            
+
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
               {post.title}
             </h1>
-            
+
             <p className="text-xl text-gray-600 leading-relaxed">
               {post.excerpt}
             </p>
-            
+
             {/* Tags */}
             {post.tags && post.tags.length > 0 && (
               <div className="flex items-center space-x-2 mt-6">
