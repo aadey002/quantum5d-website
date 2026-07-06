@@ -580,6 +580,16 @@ export function ResourcesPage() {
           onDownloadStart={() => {
             setDownloadingId(selectedResource.id)
             setTimeout(() => setDownloadingId(null), 2000)
+            fetch('/api/track-event', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                event_type: 'resource_download',
+                event_name: selectedResource.title,
+                site: 'quantum5dconsulting.com',
+                metadata: { url: selectedResource.downloadUrl, id: selectedResource.id }
+              })
+            }).catch(() => {})
           }}
         />
       )}

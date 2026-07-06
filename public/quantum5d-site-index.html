@@ -811,6 +811,14 @@ function viewKPI(){
 
 draw();
 <\/script>
+<script>
+function trackEvent(type,name,meta){
+  fetch('/api/track-event',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({event_type:type,event_name:name,site:'quantum5d.ai',metadata:meta||{}})
+  }).catch(function(){});
+}
+trackEvent('page_view','homepage');
+</script>
 </body>
 </html>
 `},meeting:{title:'Meeting Intelligence',html:`<!DOCTYPE html>
@@ -7489,7 +7497,7 @@ draw();
 </html>
 `}};
 var guideKey=null,guideStep=0;
-function launchProto(k){var p=PROTOS[k];if(!p)return;
+function launchProto(k){trackEvent("proto_launch",k);_launchProto(k);}function _launchProto(k){var p=PROTOS[k];if(!p)return;
 document.getElementById("protoTitle").textContent=p.title+" · Quantum 5D prototype";
 var f=document.getElementById("protoFrame");f.srcdoc=p.html;
 guideKey=k;guideStep=0;renderGuide();

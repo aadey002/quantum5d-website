@@ -147,6 +147,7 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--soft-purple);fo
     <button data-tab="blog">Blog</button>
     <button data-tab="linkedin">LinkedIn</button>
     <button data-tab="pipeline">Pipeline</button>
+    <button data-tab="website">Website</button>
   </div>
 
   <div class="content">
@@ -160,6 +161,9 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--soft-purple);fo
         <div class="card"><div class="label">LinkedIn Posts</div><div class="value" id="statLinkedInPosts">--</div></div>
         <div class="card"><div class="label">Total Engagement</div><div class="value" id="statEngagement">--</div></div>
         <div class="card"><div class="label">LinkedIn Token</div><div class="value" id="statTokenStatus">--</div><div class="sub" id="statTokenSub"></div></div>
+        <div class="card"><div class="label">Page Views</div><div class="value" id="statOverviewPageViews">--</div></div>
+        <div class="card"><div class="label">Proto Launches</div><div class="value" id="statOverviewProtos">--</div></div>
+        <div class="card"><div class="label">Downloads</div><div class="value" id="statOverviewDownloads">--</div></div>
       </div>
     </div>
 
@@ -185,6 +189,23 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--soft-purple);fo
     <div class="tab-panel" id="panel-pipeline">
       <h2 class="section-title">Upcoming Content Pipeline</h2>
       <div id="pipelineContent" class="loading"><div class="spinner"></div><div>Loading...</div></div>
+    </div>
+
+    <!-- Website -->
+    <div class="tab-panel" id="panel-website">
+      <h2 class="section-title">Website Engagement</h2>
+      <div class="cards" id="websiteCards">
+        <div class="card"><div class="label">Page Views (Total)</div><div class="value" id="statPageViews">--</div></div>
+        <div class="card"><div class="label">Page Views (This Week)</div><div class="value" id="statWeekPageViews">--</div></div>
+        <div class="card"><div class="label">Prototype Launches</div><div class="value" id="statProtoLaunches">--</div></div>
+        <div class="card"><div class="label">Resource Downloads</div><div class="value" id="statDownloads">--</div></div>
+      </div>
+      <h3 style="margin:28px 0 12px;font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600">Top Prototypes Launched</h3>
+      <div id="protoChart"></div>
+      <h3 style="margin:28px 0 12px;font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600">Top Resource Downloads</h3>
+      <div id="downloadChart"></div>
+      <h3 style="margin:28px 0 12px;font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600">Recent Activity</h3>
+      <div id="recentEvents"></div>
     </div>
   </div>
 
@@ -337,6 +358,7 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--soft-purple);fo
     loadBlog();
     loadLinkedIn();
     loadPipeline();
+    loadWebsite();
     document.getElementById('lastUpdated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
   }
 
@@ -624,6 +646,75 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--soft-purple);fo
       document.getElementById('pipelineContent').innerHTML = html;
     }).catch(function(e) {
       document.getElementById('pipelineContent').innerHTML = '<p style="padding:20px;color:var(--danger)">Error loading pipeline: ' + escHtml(e.message) + '</p>';
+    });
+  }
+
+  // --- Website Engagement ---
+  function loadWebsite() {
+    var weekStart = startOfWeek();
+
+    // Fetch all site events
+    sbFetch('site_events?select=event_type,event_name,created_at&order=created_at.desc&limit=500').then(function(events) {
+      var pageViews = events.filter(function(e) { return e.event_type === 'page_view'; });
+      var protos = events.filter(function(e) { return e.event_type === 'proto_launch'; });
+      var downloads = events.filter(function(e) { return e.event_type === 'resource_download'; });
+      var weekPageViews = pageViews.filter(function(e) { return e.created_at >= weekStart; });
+
+      // Stats cards in Website tab
+      document.getElementById('statPageViews').textContent = pageViews.length;
+      document.getElementById('statWeekPageViews').textContent = weekPageViews.length;
+      document.getElementById('statProtoLaunches').textContent = protos.length;
+      document.getElementById('statDownloads').textContent = downloads.length;
+
+      // Overview tab cards
+      document.getElementById('statOverviewPageViews').textContent = pageViews.length;
+      document.getElementById('statOverviewProtos').textContent = protos.length;
+      document.getElementById('statOverviewDownloads').textContent = downloads.length;
+
+      // Proto launch chart
+      var protoCounts = {};
+      protos.forEach(function(e) { protoCounts[e.event_name] = (protoCounts[e.event_name] || 0) + 1; });
+      var protoSorted = Object.entries(protoCounts).sort(function(a, b) { return b[1] - a[1]; });
+      var maxProto = protoSorted.length > 0 ? protoSorted[0][1] : 1;
+      var protoHtml = '';
+      if (protoSorted.length === 0) {
+        protoHtml = '<p style="color:var(--muted);font-size:14px">No prototype launches recorded yet</p>';
+      } else {
+        protoSorted.forEach(function(p) {
+          var pct = Math.round((p[1] / maxProto) * 100);
+          protoHtml += '<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px"><span>' + escHtml(p[0]) + '</span><span style="font-family:IBM Plex Mono,monospace;font-weight:600">' + p[1] + '</span></div><div style="background:var(--border);border-radius:4px;height:8px;overflow:hidden"><div style="background:var(--purple);height:100%;width:' + pct + '%;border-radius:4px"></div></div></div>';
+        });
+      }
+      document.getElementById('protoChart').innerHTML = protoHtml;
+
+      // Download chart
+      var dlCounts = {};
+      downloads.forEach(function(e) { dlCounts[e.event_name] = (dlCounts[e.event_name] || 0) + 1; });
+      var dlSorted = Object.entries(dlCounts).sort(function(a, b) { return b[1] - a[1]; });
+      var maxDl = dlSorted.length > 0 ? dlSorted[0][1] : 1;
+      var dlHtml = '';
+      if (dlSorted.length === 0) {
+        dlHtml = '<p style="color:var(--muted);font-size:14px">No downloads recorded yet</p>';
+      } else {
+        dlSorted.forEach(function(d) {
+          var pct = Math.round((d[1] / maxDl) * 100);
+          dlHtml += '<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px"><span>' + escHtml(d[0]) + '</span><span style="font-family:IBM Plex Mono,monospace;font-weight:600">' + d[1] + '</span></div><div style="background:var(--border);border-radius:4px;height:8px;overflow:hidden"><div style="background:#4ade80;height:100%;width:' + pct + '%;border-radius:4px"></div></div></div>';
+        });
+      }
+      document.getElementById('downloadChart').innerHTML = dlHtml;
+
+      // Recent activity
+      var recent = events.slice(0, 20);
+      var recentHtml = '<table class="data-table"><thead><tr><th>Time</th><th>Type</th><th>Name</th></tr></thead><tbody>';
+      recent.forEach(function(e) {
+        var typeLabel = e.event_type === 'page_view' ? '<span style="color:var(--purple)">Page View</span>' : e.event_type === 'proto_launch' ? '<span style="color:#f59e0b">Proto Launch</span>' : '<span style="color:#4ade80">Download</span>';
+        recentHtml += '<tr><td>' + new Date(e.created_at).toLocaleString() + '</td><td>' + typeLabel + '</td><td>' + escHtml(e.event_name) + '</td></tr>';
+      });
+      recentHtml += '</tbody></table>';
+      if (recent.length === 0) recentHtml = '<p style="color:var(--muted);font-size:14px">No events recorded yet</p>';
+      document.getElementById('recentEvents').innerHTML = recentHtml;
+    }).catch(function(e) {
+      document.getElementById('protoChart').innerHTML = '<p style="color:var(--danger)">Error: ' + escHtml(e.message) + '</p>';
     });
   }
 
