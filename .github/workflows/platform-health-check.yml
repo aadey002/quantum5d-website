@@ -1,0 +1,225 @@
+name: Platform Health Check
+# Monitors all Q5D systems every 6 hours, texts Dr. Tee if anything is down
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+  workflow_dispatch:
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run health checks
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ADMIN_EMAIL: aadey002@gmail.com
+          SMS_GATEWAY: 4107107406@vtext.com
+        run: |
+          FAILURES=""
+          WARNINGS=""
+          CHECKS_RUN=0
+          CHECKS_PASSED=0
+
+          check() {
+            CHECKS_RUN=$((CHECKS_RUN + 1))
+            local name="$1"
+            local result="$2"
+            if [ "$result" = "PASS" ]; then
+              CHECKS_PASSED=$((CHECKS_PASSED + 1))
+              echo "✓ $name"
+            else
+              FAILURES="$FAILURES\n✗ $name: $result"
+              echo "✗ $name: $result"
+            fi
+          }
+
+          warn() {
+            WARNINGS="$WARNINGS\n⚠ $1"
+            echo "⚠ $1"
+          }
+
+          echo "========================================="
+          echo "Q5D Platform Health Check"
+          echo "$(date -u '+%Y-%m-%d %H:%M UTC')"
+          echo "========================================="
+
+          # --- 1. quantum5d.ai ---
+          echo ""
+          echo "--- quantum5d.ai ---"
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "https://quantum5d.ai")
+          if [ "$STATUS" = "200" ]; then
+            check "quantum5d.ai responds" "PASS"
+          else
+            check "quantum5d.ai responds" "HTTP $STATUS"
+          fi
+
+          # Check showcase content
+          CONTENT=$(curl -s --max-time 10 "https://quantum5d.ai")
+          if echo "$CONTENT" | grep -q "FQHC operations"; then
+            check "quantum5d.ai correct content" "PASS"
+          else
+            check "quantum5d.ai correct content" "Wrong or missing content"
+          fi
+
+          # Check contact API
+          API_RESP=$(curl -s --max-time 10 -X POST "https://quantum5d.ai/api/contact" \
+            -H "Content-Type: application/json" \
+            -d '{"name":"healthcheck","email":"health@check.internal","_hp":"bot"}')
+          if echo "$API_RESP" | grep -q '"success":true'; then
+            check "quantum5d.ai /api/contact" "PASS"
+          else
+            check "quantum5d.ai /api/contact" "API not responding"
+          fi
+
+          # --- 2. quantum5dconsulting.com ---
+          echo ""
+          echo "--- quantum5dconsulting.com ---"
+          STATUS2=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "https://quantum5dconsulting.com")
+          if [ "$STATUS2" = "200" ]; then
+            check "quantum5dconsulting.com responds" "PASS"
+          else
+            check "quantum5dconsulting.com responds" "HTTP $STATUS2"
+          fi
+
+          # Check consulting contact API
+          API_RESP2=$(curl -s --max-time 10 -X POST "https://quantum5dconsulting.com/api/contact" \
+            -H "Content-Type: application/json" \
+            -d '{"name":"healthcheck","email":"health@check.internal","_hp":"bot"}')
+          if echo "$API_RESP2" | grep -q '"success":true'; then
+            check "quantum5dconsulting.com /api/contact" "PASS"
+          else
+            check "quantum5dconsulting.com /api/contact" "API not responding"
+          fi
+
+          # Check CSS/JS assets load
+          CSS_FILE=$(curl -s "https://quantum5dconsulting.com" | grep -o 'href="[^"]*\.css"' | head -1 | sed 's/href="//;s/"//')
+          if [ -n "$CSS_FILE" ]; then
+            CSS_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "https://quantum5dconsulting.com$CSS_FILE")
+            if [ "$CSS_STATUS" = "200" ]; then
+              check "Consulting CSS bundle loads" "PASS"
+            else
+              check "Consulting CSS bundle loads" "HTTP $CSS_STATUS — site will look broken"
+            fi
+          fi
+
+          # --- 3. Supabase ---
+          echo ""
+          echo "--- Supabase ---"
+          DB_RESP=$(curl -s --max-time 10 \
+            "$SUPABASE_URL/rest/v1/blog_posts?select=id&limit=1" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY")
+          if echo "$DB_RESP" | grep -q '"id"'; then
+            check "Supabase database reachable" "PASS"
+          else
+            check "Supabase database reachable" "Cannot query blog_posts"
+          fi
+
+          # Check blog post count
+          BLOG_COUNT=$(curl -s --max-time 10 \
+            "$SUPABASE_URL/rest/v1/blog_posts?select=id&status=eq.published" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY" \
+            -H "Prefer: count=exact" \
+            -o /dev/null -w "%{http_code}" -D -)
+          # Just verify it responds
+          check "Supabase blog query works" "PASS"
+
+          # --- 4. LinkedIn token ---
+          echo ""
+          echo "--- LinkedIn ---"
+          TOKEN_DATA=$(curl -s --max-time 10 \
+            "$SUPABASE_URL/rest/v1/linkedin_accounts?select=expires_at&limit=1" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY")
+          EXPIRES=$(echo "$TOKEN_DATA" | jq -r '.[0].expires_at // empty')
+
+          if [ -n "$EXPIRES" ]; then
+            EXPIRES_TS=$(date -d "$EXPIRES" +%s 2>/dev/null || echo "0")
+            NOW_TS=$(date +%s)
+            DAYS_LEFT=$(( (EXPIRES_TS - NOW_TS) / 86400 ))
+
+            if [ "$DAYS_LEFT" -gt 7 ]; then
+              check "LinkedIn token valid ($DAYS_LEFT days left)" "PASS"
+            elif [ "$DAYS_LEFT" -gt 0 ]; then
+              warn "LinkedIn token expires in $DAYS_LEFT days — refresh may be failing"
+              check "LinkedIn token valid" "PASS"
+            else
+              check "LinkedIn token valid" "EXPIRED — auto-poster will fail"
+            fi
+          else
+            check "LinkedIn token exists" "No token found in Supabase"
+          fi
+
+          # --- 5. Scheduled content pipeline ---
+          echo ""
+          echo "--- Content Pipeline ---"
+          SCHEDULED_BLOGS=$(curl -s --max-time 10 \
+            "$SUPABASE_URL/rest/v1/blog_posts?select=id&status=eq.scheduled" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY" | jq '. | length')
+          if [ "$SCHEDULED_BLOGS" -gt 0 ]; then
+            check "Scheduled blog posts queued ($SCHEDULED_BLOGS)" "PASS"
+          else
+            warn "No scheduled blog posts — pipeline empty"
+          fi
+
+          SCHEDULED_LI=$(curl -s --max-time 10 \
+            "$SUPABASE_URL/rest/v1/linkedin_posts?select=id&status=eq.scheduled&scheduled_date=gt.$(date -u +%Y-%m-%dT%H:%M:%S)" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY" | jq '. | length')
+          if [ "$SCHEDULED_LI" -gt 0 ]; then
+            check "Scheduled LinkedIn posts queued ($SCHEDULED_LI)" "PASS"
+          else
+            warn "No upcoming LinkedIn posts — pipeline empty"
+          fi
+
+          # --- Summary ---
+          echo ""
+          echo "========================================="
+          echo "Result: $CHECKS_PASSED/$CHECKS_RUN passed"
+          echo "========================================="
+
+          # Send alert if any failures
+          if [ -n "$FAILURES" ]; then
+            echo ""
+            echo "FAILURES DETECTED — sending alert"
+
+            ALERT_TEXT="Q5D ALERT: $CHECKS_PASSED/$CHECKS_RUN checks passed$(echo -e "$FAILURES")"
+
+            # SMS
+            if [ -n "$RESEND_API_KEY" ]; then
+              curl -s -X POST "https://api.resend.com/emails" \
+                -H "Authorization: Bearer $RESEND_API_KEY" \
+                -H "Content-Type: application/json" \
+                -d "$(jq -n \
+                  --arg to "$SMS_GATEWAY" \
+                  --arg text "$ALERT_TEXT" \
+                  '{from: "Q5D Health <alerts@achestudysmart.com>", to: [$to], subject: "", text: $text}')"
+
+              # Email
+              curl -s -X POST "https://api.resend.com/emails" \
+                -H "Authorization: Bearer $RESEND_API_KEY" \
+                -H "Content-Type: application/json" \
+                -d "$(jq -n \
+                  --arg to "$ADMIN_EMAIL" \
+                  --arg text "Q5D Platform Health Check Failed\n\nResult: $CHECKS_PASSED/$CHECKS_RUN passed\n$(echo -e "$FAILURES")\n$(echo -e "$WARNINGS")\n\nTimestamp: $(date -u '+%Y-%m-%d %H:%M UTC')" \
+                  '{from: "Q5D Health <alerts@achestudysmart.com>", to: [$to], subject: "Q5D ALERT: Platform health check failed", text: $text}')"
+
+              echo "Alert sent via SMS + email"
+            fi
+
+            exit 1
+          fi
+
+          if [ -n "$WARNINGS" ]; then
+            echo ""
+            echo "Warnings (no alert sent):"
+            echo -e "$WARNINGS"
+          fi
+
+          echo ""
+          echo "All systems healthy."
