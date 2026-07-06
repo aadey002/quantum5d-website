@@ -18,7 +18,8 @@
   ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/admin", "destination": "/admin.html" },
     { "source": "/", "destination": "/quantum5d-site-index.html" },
-    { "source": "/((?!api|assets|images|resources|robots.txt|sitemap.xml|logo.png|quantum5d-site-index.html).*)", "destination": "/quantum5d-site-index.html" }
+    { "source": "/((?!api|assets|images|resources|robots.txt|sitemap.xml|logo.png|quantum5d-site-index.html|admin.html).*)", "destination": "/quantum5d-site-index.html" }
   ]
 }

@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Q5D Admin Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --purple:#5347A4;--charcoal:#3F3F3F;--navy:#0B0833;--soft-purple:#938ABD;
+  --bg:#f5f4f9;--card-bg:#fff;--border:#e2e0ed;--success:#2d9a5c;--warn:#d4a017;--danger:#c0392b;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--charcoal);min-height:100vh}
+h1,h2,h3{font-family:'Cormorant Garamond',serif;color:var(--navy)}
+.mono{font-family:'IBM Plex Mono',monospace}
+
+/* Auth gate */
+#authGate{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--navy)}
+#authGate .auth-box{background:var(--card-bg);border-radius:12px;padding:48px 40px;text-align:center;max-width:380px;width:90%}
+#authGate .auth-box h1{margin-bottom:8px;font-size:28px}
+#authGate .auth-box p{color:var(--soft-purple);margin-bottom:24px;font-size:14px}
+#authGate input{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:8px;font-size:16px;outline:none;font-family:'Inter',sans-serif}
+#authGate input:focus{border-color:var(--purple)}
+#authGate button{width:100%;margin-top:16px;padding:12px;background:var(--purple);color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer}
+#authGate button:hover{background:var(--navy)}
+#authError{color:var(--danger);margin-top:12px;font-size:13px;display:none}
+
+/* Dashboard */
+#dashboard{display:none}
+header{background:var(--navy);color:#fff;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+header h1{color:#fff;font-size:24px}
+header .logout{background:none;border:1px solid rgba(255,255,255,.3);color:#fff;padding:6px 16px;border-radius:6px;cursor:pointer;font-size:13px}
+header .logout:hover{background:rgba(255,255,255,.1)}
+
+/* Tabs */
+.tabs{display:flex;gap:0;background:var(--card-bg);border-bottom:2px solid var(--border);padding:0 24px;overflow-x:auto}
+.tabs button{padding:14px 20px;border:none;background:none;font-size:14px;font-weight:600;color:var(--charcoal);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;font-family:'Inter',sans-serif}
+.tabs button.active{color:var(--purple);border-bottom-color:var(--purple)}
+.tabs button:hover{color:var(--purple)}
+
+/* Content */
+.content{padding:24px;max-width:1280px;margin:0 auto}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* Cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-bottom:32px}
+.card{background:var(--card-bg);border-radius:10px;padding:20px;border:1px solid var(--border)}
+.card .label{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--soft-purple);margin-bottom:6px;font-family:'IBM Plex Mono',monospace}
+.card .value{font-size:28px;font-weight:700;color:var(--navy);font-family:'IBM Plex Mono',monospace}
+.card .sub{font-size:12px;color:var(--charcoal);margin-top:4px}
+
+/* Token status */
+.token-ok{color:var(--success)}
+.token-warn{color:var(--warn)}
+.token-danger{color:var(--danger)}
+
+/* Tables */
+.table-wrap{background:var(--card-bg);border-radius:10px;border:1px solid var(--border);overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead{background:var(--navy);color:#fff}
+th{padding:12px 14px;text-align:left;font-weight:600;white-space:nowrap;font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover{background:#f9f8fd}
+
+/* Badges */
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase;font-family:'IBM Plex Mono',monospace}
+.badge-green{background:#e6f9ee;color:var(--success)}
+.badge-yellow{background:#fef9e7;color:var(--warn)}
+.badge-blue{background:#eef0fb;color:var(--purple)}
+.badge-red{background:#fde8e8;color:var(--danger)}
+
+/* Bar chart */
+.bar-chart{display:flex;flex-direction:column;gap:6px;margin-top:16px}
+.bar-row{display:flex;align-items:center;gap:10px}
+.bar-label{width:200px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0}
+.bar-track{flex:1;height:20px;background:var(--border);border-radius:4px;position:relative;min-width:60px}
+.bar-fill{height:100%;background:var(--purple);border-radius:4px;min-width:2px;transition:width .3s}
+.bar-count{font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--charcoal);width:40px;text-align:right;flex-shrink:0}
+
+/* Line chart */
+.chart-container{background:var(--card-bg);border-radius:10px;border:1px solid var(--border);padding:20px;margin-top:16px}
+.chart-container h3{margin-bottom:12px;font-size:18px}
+
+/* Timeline */
+.timeline{display:flex;flex-direction:column;gap:12px}
+.timeline-item{display:flex;gap:16px;align-items:flex-start;padding:14px 18px;background:var(--card-bg);border-radius:10px;border:1px solid var(--border)}
+.timeline-date{min-width:100px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--purple);font-weight:500;padding-top:2px}
+.timeline-body{flex:1}
+.timeline-body .type{font-size:11px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;margin-bottom:4px}
+.timeline-body .title{font-size:14px;font-weight:500}
+
+/* Section titles */
+.section-title{font-size:20px;margin-bottom:16px}
+
+/* Footer */
+footer{text-align:center;padding:20px;font-size:12px;color:var(--soft-purple);font-family:'IBM Plex Mono',monospace}
+
+/* Loading */
+.loading{text-align:center;padding:40px;color:var(--soft-purple)}
+.spinner{display:inline-block;width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--purple);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Responsive */
+@media(max-width:640px){
+  .cards{grid-template-columns:1fr 1fr}
+  .card .value{font-size:22px}
+  .bar-label{width:120px}
+  header{padding:12px 16px}
+  .content{padding:16px}
+  .tabs button{padding:12px 14px;font-size:13px}
+}
+@media(max-width:400px){
+  .cards{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- Auth Gate -->
+<div id="authGate">
+  <div class="auth-box">
+    <h1>Q5D Admin</h1>
+    <p>Quantum 5D Consulting Dashboard</p>
+    <form id="authForm">
+      <input type="password" id="authPwd" placeholder="Enter password" autocomplete="off">
+      <button type="submit">Sign In</button>
+      <div id="authError">Incorrect password</div>
+    </form>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard">
+  <header>
+    <h1>Q5D Admin</h1>
+    <button class="logout" onclick="logout()">Sign Out</button>
+  </header>
+
+  <div class="tabs" id="tabBar">
+    <button class="active" data-tab="overview">Overview</button>
+    <button data-tab="leads">Leads</button>
+    <button data-tab="blog">Blog</button>
+    <button data-tab="linkedin">LinkedIn</button>
+    <button data-tab="pipeline">Pipeline</button>
+  </div>
+
+  <div class="content">
+    <!-- Overview -->
+    <div class="tab-panel active" id="panel-overview">
+      <div class="cards" id="overviewCards">
+        <div class="card"><div class="label">Total Leads</div><div class="value" id="statTotalLeads">--</div></div>
+        <div class="card"><div class="label">Leads This Week</div><div class="value" id="statWeekLeads">--</div></div>
+        <div class="card"><div class="label">Total Blog Views</div><div class="value" id="statTotalViews">--</div></div>
+        <div class="card"><div class="label">Views This Week</div><div class="value" id="statWeekViews">--</div></div>
+        <div class="card"><div class="label">LinkedIn Posts</div><div class="value" id="statLinkedInPosts">--</div></div>
+        <div class="card"><div class="label">Total Engagement</div><div class="value" id="statEngagement">--</div></div>
+        <div class="card"><div class="label">LinkedIn Token</div><div class="value" id="statTokenStatus">--</div><div class="sub" id="statTokenSub"></div></div>
+      </div>
+    </div>
+
+    <!-- Leads -->
+    <div class="tab-panel" id="panel-leads">
+      <h2 class="section-title">Leads</h2>
+      <div id="leadsContent" class="loading"><div class="spinner"></div><div>Loading...</div></div>
+    </div>
+
+    <!-- Blog -->
+    <div class="tab-panel" id="panel-blog">
+      <h2 class="section-title">Blog Posts</h2>
+      <div id="blogContent" class="loading"><div class="spinner"></div><div>Loading...</div></div>
+    </div>
+
+    <!-- LinkedIn -->
+    <div class="tab-panel" id="panel-linkedin">
+      <h2 class="section-title">LinkedIn Posts</h2>
+      <div id="linkedinContent" class="loading"><div class="spinner"></div><div>Loading...</div></div>
+    </div>
+
+    <!-- Pipeline -->
+    <div class="tab-panel" id="panel-pipeline">
+      <h2 class="section-title">Upcoming Content Pipeline</h2>
+      <div id="pipelineContent" class="loading"><div class="spinner"></div><div>Loading...</div></div>
+    </div>
+  </div>
+
+  <footer>
+    <span id="lastUpdated">Last updated: --</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var SB_URL = 'https://kolxfjisvizwayyrlzyx.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvbHhmamlzdml6d2F5eXJsenl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIxMzI0MzAsImV4cCI6MjA2NzcwODQzMH0.7dG4aLMWc25eXyMT4f1PkQgQtZiDzSntQW0Js-IDZ7c';
+  // SHA-256 hash of "q5d2026"
+  var PWD_HASH = 'bdb8ef9d9f9b64b5b74f75931e144f589f7b0ab405d3c77c3c773684e40d6c1b';
+  var refreshTimer = null;
+
+  // --- Auth ---
+  function hashPassword(pwd) {
+    var encoder = new TextEncoder();
+    return crypto.subtle.digest('SHA-256', encoder.encode(pwd)).then(function(buf) {
+      var arr = Array.from(new Uint8Array(buf));
+      return arr.map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+    });
+  }
+
+  document.getElementById('authForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var pwd = document.getElementById('authPwd').value;
+    hashPassword(pwd).then(function(h) {
+      if (h === PWD_HASH) {
+        sessionStorage.setItem('q5d_auth','1');
+        showDashboard();
+      } else {
+        document.getElementById('authError').style.display = 'block';
+      }
+    });
+  });
+
+  function showDashboard() {
+    document.getElementById('authGate').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    loadAll();
+    refreshTimer = setInterval(loadAll, 60000);
+  }
+
+  window.logout = function() {
+    sessionStorage.removeItem('q5d_auth');
+    clearInterval(refreshTimer);
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('authGate').style.display = 'flex';
+    document.getElementById('authPwd').value = '';
+    document.getElementById('authError').style.display = 'none';
+  };
+
+  if (sessionStorage.getItem('q5d_auth') === '1') {
+    showDashboard();
+  }
+
+  // --- Tabs ---
+  document.getElementById('tabBar').addEventListener('click', function(e) {
+    if (e.target.tagName !== 'BUTTON') return;
+    var tabs = document.querySelectorAll('#tabBar button');
+    var panels = document.querySelectorAll('.tab-panel');
+    tabs.forEach(function(t){ t.classList.remove('active'); });
+    panels.forEach(function(p){ p.classList.remove('active'); });
+    e.target.classList.add('active');
+    document.getElementById('panel-' + e.target.dataset.tab).classList.add('active');
+  });
+
+  // --- API Helper ---
+  function sbFetch(path) {
+    return fetch(SB_URL + '/rest/v1/' + path, {
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+    }).then(function(r) {
+      if (!r.ok) throw new Error('API ' + r.status);
+      return r.json();
+    });
+  }
+
+  function sbCount(table) {
+    return fetch(SB_URL + '/rest/v1/' + table + '?select=*', {
+      method: 'HEAD',
+      headers: {
+        'apikey': SB_KEY,
+        'Authorization': 'Bearer ' + SB_KEY,
+        'Prefer': 'count=exact',
+        'Range-Unit': 'items',
+        'Range': '0-0'
+      }
+    }).then(function(r) {
+      var range = r.headers.get('content-range');
+      if (range) {
+        var parts = range.split('/');
+        return parseInt(parts[1]) || 0;
+      }
+      return 0;
+    });
+  }
+
+  // --- Formatting ---
+  function fmtDate(d) {
+    if (!d) return '--';
+    var dt = new Date(d);
+    return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  function fmtDateTime(d) {
+    if (!d) return '--';
+    var dt = new Date(d);
+    return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' + dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function truncate(s, n) {
+    if (!s) return '';
+    return s.length > n ? s.substring(0, n) + '...' : s;
+  }
+
+  function escHtml(s) {
+    if (!s) return '';
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function startOfWeek() {
+    var now = new Date();
+    var day = now.getDay();
+    var diff = now.getDate() - day + (day === 0 ? -6 : 1);
+    var mon = new Date(now);
+    mon.setDate(diff);
+    mon.setHours(0,0,0,0);
+    return mon.toISOString();
+  }
+
+  function statusBadge(status) {
+    if (!status) return '';
+    var s = status.toLowerCase();
+    var cls = 'badge-blue';
+    if (s === 'published' || s === 'posted') cls = 'badge-green';
+    else if (s === 'scheduled') cls = 'badge-yellow';
+    else if (s === 'draft') cls = 'badge-blue';
+    else if (s === 'failed') cls = 'badge-red';
+    return '<span class="badge ' + cls + '">' + escHtml(status) + '</span>';
+  }
+
+  // --- Load All ---
+  function loadAll() {
+    loadOverview();
+    loadLeads();
+    loadBlog();
+    loadLinkedIn();
+    loadPipeline();
+    document.getElementById('lastUpdated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+  }
+
+  // --- Overview ---
+  function loadOverview() {
+    // Total leads
+    sbCount('leads').then(function(c) {
+      document.getElementById('statTotalLeads').textContent = c;
+    }).catch(function() {
+      document.getElementById('statTotalLeads').textContent = '0';
+    });
+
+    // Leads this week
+    var weekStart = startOfWeek();
+    sbFetch('leads?select=id&created_at=gte.' + weekStart).then(function(d) {
+      document.getElementById('statWeekLeads').textContent = d.length;
+    }).catch(function() {
+      document.getElementById('statWeekLeads').textContent = '0';
+    });
+
+    // Total blog views
+    sbCount('blog_views').then(function(c) {
+      document.getElementById('statTotalViews').textContent = c;
+    }).catch(function() {
+      document.getElementById('statTotalViews').textContent = '0';
+    });
+
+    // Views this week
+    sbFetch('blog_views?select=id&created_at=gte.' + weekStart).then(function(d) {
+      document.getElementById('statWeekViews').textContent = d.length;
+    }).catch(function() {
+      document.getElementById('statWeekViews').textContent = '0';
+    });
+
+    // LinkedIn posts published
+    sbFetch('linkedin_posts?select=id&status=eq.posted').then(function(d) {
+      document.getElementById('statLinkedInPosts').textContent = d.length;
+    }).catch(function() {
+      document.getElementById('statLinkedInPosts').textContent = '0';
+    });
+
+    // Total engagement
+    sbFetch('linkedin_posts?select=engagement_data').then(function(d) {
+      var total = 0;
+      d.forEach(function(row) {
+        if (row.engagement_data) {
+          var ed = typeof row.engagement_data === 'string' ? JSON.parse(row.engagement_data) : row.engagement_data;
+          total += (parseInt(ed.likes) || 0) + (parseInt(ed.comments) || 0);
+        }
+      });
+      document.getElementById('statEngagement').textContent = total;
+    }).catch(function() {
+      document.getElementById('statEngagement').textContent = '0';
+    });
+
+    // Token status
+    sbFetch('linkedin_accounts?select=expires_at&limit=1').then(function(d) {
+      var el = document.getElementById('statTokenStatus');
+      var sub = document.getElementById('statTokenSub');
+      if (!d.length || !d[0].expires_at) {
+        el.textContent = 'N/A';
+        el.className = 'value';
+        sub.textContent = 'No token found';
+        return;
+      }
+      var exp = new Date(d[0].expires_at);
+      var now = new Date();
+      var days = Math.ceil((exp - now) / (1000 * 60 * 60 * 24));
+      if (days < 0) {
+        el.textContent = 'Expired';
+        el.className = 'value token-danger';
+        sub.textContent = 'Expired ' + Math.abs(days) + ' days ago';
+      } else if (days <= 7) {
+        el.textContent = days + 'd';
+        el.className = 'value token-danger';
+        sub.textContent = 'Expires soon!';
+      } else if (days <= 30) {
+        el.textContent = days + 'd';
+        el.className = 'value token-warn';
+        sub.textContent = 'Renew soon';
+      } else {
+        el.textContent = days + 'd';
+        el.className = 'value token-ok';
+        sub.textContent = 'Valid until ' + fmtDate(d[0].expires_at);
+      }
+    }).catch(function() {
+      document.getElementById('statTokenStatus').textContent = 'N/A';
+      document.getElementById('statTokenSub').textContent = '';
+    });
+  }
+
+  // --- Leads ---
+  function loadLeads() {
+    sbFetch('leads?select=*&order=created_at.desc').then(function(data) {
+      if (!data.length) {
+        document.getElementById('leadsContent').innerHTML = '<p style="padding:20px;color:var(--soft-purple)">No leads yet.</p>';
+        return;
+      }
+      var html = '<div class="table-wrap"><table><thead><tr><th>Name</th><th>Organization</th><th>Email</th><th>Message</th><th>Source</th><th>Date</th></tr></thead><tbody>';
+      data.forEach(function(r) {
+        html += '<tr>';
+        html += '<td>' + escHtml(r.name) + '</td>';
+        html += '<td>' + escHtml(r.organization) + '</td>';
+        html += '<td>' + escHtml(r.email) + '</td>';
+        html += '<td>' + escHtml(truncate(r.message, 60)) + '</td>';
+        html += '<td>' + (r.source ? statusBadge(r.source) : '--') + '</td>';
+        html += '<td class="mono" style="white-space:nowrap">' + fmtDate(r.created_at) + '</td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table></div>';
+      document.getElementById('leadsContent').innerHTML = html;
+    }).catch(function(e) {
+      document.getElementById('leadsContent').innerHTML = '<p style="padding:20px;color:var(--danger)">Error loading leads: ' + escHtml(e.message) + '</p>';
+    });
+  }
+
+  // --- Blog ---
+  function loadBlog() {
+    Promise.all([
+      sbFetch('blog_posts?select=*&order=published_date.desc'),
+      sbFetch('blog_views?select=post_id')
+    ]).then(function(results) {
+      var posts = results[0];
+      var views = results[1];
+
+      // Count views per post
+      var viewCounts = {};
+      views.forEach(function(v) {
+        var pid = v.post_id;
+        viewCounts[pid] = (viewCounts[pid] || 0) + 1;
+      });
+
+      if (!posts.length) {
+        document.getElementById('blogContent').innerHTML = '<p style="padding:20px;color:var(--soft-purple)">No blog posts yet.</p>';
+        return;
+      }
+
+      // Table
+      var html = '<div class="table-wrap"><table><thead><tr><th>Title</th><th>Status</th><th>Published</th><th>Views</th></tr></thead><tbody>';
+      posts.forEach(function(p) {
+        var vc = viewCounts[p.id] || 0;
+        html += '<tr>';
+        html += '<td>' + escHtml(p.title) + '</td>';
+        html += '<td>' + statusBadge(p.status) + '</td>';
+        html += '<td class="mono" style="white-space:nowrap">' + fmtDate(p.published_date) + '</td>';
+        html += '<td class="mono">' + vc + '</td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table></div>';
+
+      // Bar chart of views per post
+      var maxViews = 1;
+      posts.forEach(function(p) {
+        var vc = viewCounts[p.id] || 0;
+        if (vc > maxViews) maxViews = vc;
+      });
+
+      html += '<div class="chart-container"><h3>Views by Post</h3><div class="bar-chart">';
+      posts.forEach(function(p) {
+        var vc = viewCounts[p.id] || 0;
+        var pct = Math.round((vc / maxViews) * 100);
+        html += '<div class="bar-row">';
+        html += '<div class="bar-label" title="' + escHtml(p.title) + '">' + escHtml(truncate(p.title, 30)) + '</div>';
+        html += '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%"></div></div>';
+        html += '<div class="bar-count">' + vc + '</div>';
+        html += '</div>';
+      });
+      html += '</div></div>';
+
+      document.getElementById('blogContent').innerHTML = html;
+    }).catch(function(e) {
+      document.getElementById('blogContent').innerHTML = '<p style="padding:20px;color:var(--danger)">Error loading blog: ' + escHtml(e.message) + '</p>';
+    });
+  }
+
+  // --- LinkedIn ---
+  function loadLinkedIn() {
+    sbFetch('linkedin_posts?select=*&order=scheduled_date.desc').then(function(data) {
+      if (!data.length) {
+        document.getElementById('linkedinContent').innerHTML = '<p style="padding:20px;color:var(--soft-purple)">No LinkedIn posts yet.</p>';
+        return;
+      }
+
+      // Table
+      var html = '<div class="table-wrap"><table><thead><tr><th>Content</th><th>Category</th><th>Status</th><th>Scheduled</th><th>Posted</th><th>Likes</th><th>Comments</th></tr></thead><tbody>';
+      var engagementData = [];
+      data.forEach(function(p) {
+        var ed = null;
+        if (p.engagement_data) {
+          ed = typeof p.engagement_data === 'string' ? JSON.parse(p.engagement_data) : p.engagement_data;
+        }
+        var likes = ed ? (parseInt(ed.likes) || 0) : 0;
+        var comments = ed ? (parseInt(ed.comments) || 0) : 0;
+        if (p.posted_at) {
+          engagementData.push({ date: p.posted_at, likes: likes });
+        }
+        html += '<tr>';
+        html += '<td>' + escHtml(truncate(p.content, 80)) + '</td>';
+        html += '<td>' + escHtml(p.category || '--') + '</td>';
+        html += '<td>' + statusBadge(p.status) + '</td>';
+        html += '<td class="mono" style="white-space:nowrap">' + fmtDate(p.scheduled_date) + '</td>';
+        html += '<td class="mono" style="white-space:nowrap">' + fmtDate(p.posted_at) + '</td>';
+        html += '<td class="mono">' + likes + '</td>';
+        html += '<td class="mono">' + comments + '</td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table></div>';
+
+      // Engagement trend chart (SVG)
+      if (engagementData.length > 1) {
+        engagementData.sort(function(a, b) { return new Date(a.date) - new Date(b.date); });
+        var maxLikes = 1;
+        engagementData.forEach(function(d) { if (d.likes > maxLikes) maxLikes = d.likes; });
+
+        var svgW = 600, svgH = 200, padX = 40, padY = 20;
+        var plotW = svgW - padX * 2, plotH = svgH - padY * 2;
+        var points = [];
+        engagementData.forEach(function(d, i) {
+          var x = padX + (i / (engagementData.length - 1)) * plotW;
+          var y = padY + plotH - (d.likes / maxLikes) * plotH;
+          points.push(x + ',' + y);
+        });
+
+        html += '<div class="chart-container"><h3>Engagement Trend (Likes)</h3>';
+        html += '<svg viewBox="0 0 ' + svgW + ' ' + svgH + '" style="width:100%;max-width:600px;height:auto">';
+        // Grid lines
+        for (var i = 0; i <= 4; i++) {
+          var gy = padY + (plotH / 4) * i;
+          var val = Math.round(maxLikes - (maxLikes / 4) * i);
+          html += '<line x1="' + padX + '" y1="' + gy + '" x2="' + (svgW - padX) + '" y2="' + gy + '" stroke="#e2e0ed" stroke-width="1"/>';
+          html += '<text x="' + (padX - 6) + '" y="' + (gy + 4) + '" text-anchor="end" fill="#938ABD" font-size="10" font-family="IBM Plex Mono">' + val + '</text>';
+        }
+        // Line
+        html += '<polyline fill="none" stroke="#5347A4" stroke-width="2.5" stroke-linejoin="round" points="' + points.join(' ') + '"/>';
+        // Dots
+        engagementData.forEach(function(d, i) {
+          var x = padX + (i / (engagementData.length - 1)) * plotW;
+          var y = padY + plotH - (d.likes / maxLikes) * plotH;
+          html += '<circle cx="' + x + '" cy="' + y + '" r="4" fill="#5347A4"/>';
+        });
+        html += '</svg></div>';
+      }
+
+      document.getElementById('linkedinContent').innerHTML = html;
+    }).catch(function(e) {
+      document.getElementById('linkedinContent').innerHTML = '<p style="padding:20px;color:var(--danger)">Error loading LinkedIn: ' + escHtml(e.message) + '</p>';
+    });
+  }
+
+  // --- Pipeline ---
+  function loadPipeline() {
+    Promise.all([
+      sbFetch('blog_posts?select=id,title,published_date,status&status=eq.scheduled&order=published_date.asc&limit=5'),
+      sbFetch('linkedin_posts?select=id,content,scheduled_date,category,status&status=eq.scheduled&order=scheduled_date.asc&limit=10')
+    ]).then(function(results) {
+      var blogs = results[0];
+      var lins = results[1];
+
+      if (!blogs.length && !lins.length) {
+        document.getElementById('pipelineContent').innerHTML = '<p style="padding:20px;color:var(--soft-purple)">No upcoming content scheduled.</p>';
+        return;
+      }
+
+      // Merge and sort by date
+      var items = [];
+      blogs.forEach(function(b) {
+        items.push({ type: 'Blog Post', title: b.title, date: b.published_date, status: b.status });
+      });
+      lins.forEach(function(l) {
+        items.push({ type: 'LinkedIn' + (l.category ? ' / ' + l.category : ''), title: truncate(l.content, 100), date: l.scheduled_date, status: l.status });
+      });
+      items.sort(function(a, b) { return new Date(a.date) - new Date(b.date); });
+
+      var html = '<div class="timeline">';
+      items.forEach(function(item) {
+        html += '<div class="timeline-item">';
+        html += '<div class="timeline-date">' + fmtDate(item.date) + '</div>';
+        html += '<div class="timeline-body">';
+        html += '<div class="type">' + escHtml(item.type) + ' ' + statusBadge(item.status) + '</div>';
+        html += '<div class="title">' + escHtml(item.title) + '</div>';
+        html += '</div></div>';
+      });
+      html += '</div>';
+
+      document.getElementById('pipelineContent').innerHTML = html;
+    }).catch(function(e) {
+      document.getElementById('pipelineContent').innerHTML = '<p style="padding:20px;color:var(--danger)">Error loading pipeline: ' + escHtml(e.message) + '</p>';
+    });
+  }
+
+})();
+</script>
+</body>
+</html>
