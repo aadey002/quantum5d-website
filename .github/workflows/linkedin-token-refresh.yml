@@ -1,0 +1,83 @@
+name: LinkedIn Token Auto-Refresh
+# Refreshes the LinkedIn access token weekly using the refresh token
+# Access tokens expire in ~60 days; refresh tokens in ~1 year
+# This runs weekly so the access token never expires
+
+on:
+  schedule:
+    - cron: '0 12 * * 1'  # Every Monday at 8am ET (12:00 UTC)
+  workflow_dispatch:
+
+jobs:
+  refresh-token:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Refresh LinkedIn access token
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          LINKEDIN_CLIENT_ID: ${{ secrets.LINKEDIN_CLIENT_ID }}
+          LINKEDIN_CLIENT_SECRET: ${{ secrets.LINKEDIN_CLIENT_SECRET }}
+        run: |
+          set -e
+
+          echo "Fetching current refresh token from Supabase..."
+          ACCOUNT=$(curl -s \
+            "$SUPABASE_URL/rest/v1/linkedin_accounts?select=refresh_token,expires_at,linkedin_user_id&limit=1" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY")
+
+          REFRESH_TOKEN=$(echo "$ACCOUNT" | jq -r '.[0].refresh_token // empty')
+          CURRENT_EXPIRY=$(echo "$ACCOUNT" | jq -r '.[0].expires_at // empty')
+
+          if [ -z "$REFRESH_TOKEN" ]; then
+            echo "ERROR: No refresh token found in Supabase"
+            exit 1
+          fi
+
+          echo "Current token expires: $CURRENT_EXPIRY"
+          echo "Requesting new access token from LinkedIn..."
+
+          RESPONSE=$(curl -s -X POST "https://www.linkedin.com/oauth/v2/accessToken" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "grant_type=refresh_token" \
+            -d "refresh_token=$REFRESH_TOKEN" \
+            -d "client_id=$LINKEDIN_CLIENT_ID" \
+            -d "client_secret=$LINKEDIN_CLIENT_SECRET")
+
+          NEW_ACCESS_TOKEN=$(echo "$RESPONSE" | jq -r '.access_token // empty')
+          NEW_REFRESH_TOKEN=$(echo "$RESPONSE" | jq -r '.refresh_token // empty')
+          EXPIRES_IN=$(echo "$RESPONSE" | jq -r '.expires_in // empty')
+
+          if [ -z "$NEW_ACCESS_TOKEN" ]; then
+            ERROR=$(echo "$RESPONSE" | jq -r '.error_description // .error // "Unknown error"')
+            echo "ERROR: Token refresh failed — $ERROR"
+            echo "$RESPONSE"
+            exit 1
+          fi
+
+          # Calculate new expiry timestamp
+          NOW=$(date -u +%s)
+          NEW_EXPIRY_TS=$((NOW + EXPIRES_IN))
+          NEW_EXPIRY=$(date -u -d "@$NEW_EXPIRY_TS" +%Y-%m-%dT%H:%M:%S 2>/dev/null || date -u -r "$NEW_EXPIRY_TS" +%Y-%m-%dT%H:%M:%S)
+
+          echo "New access token obtained (expires: $NEW_EXPIRY)"
+
+          # Build update payload
+          UPDATE="{\"access_token\": \"$NEW_ACCESS_TOKEN\", \"expires_at\": \"$NEW_EXPIRY\", \"updated_at\": \"$(date -u +%Y-%m-%dT%H:%M:%S)\"}"
+
+          # If LinkedIn returned a new refresh token, save that too
+          if [ -n "$NEW_REFRESH_TOKEN" ] && [ "$NEW_REFRESH_TOKEN" != "null" ]; then
+            UPDATE="{\"access_token\": \"$NEW_ACCESS_TOKEN\", \"refresh_token\": \"$NEW_REFRESH_TOKEN\", \"expires_at\": \"$NEW_EXPIRY\", \"updated_at\": \"$(date -u +%Y-%m-%dT%H:%M:%S)\"}"
+            echo "New refresh token also saved"
+          fi
+
+          # Update Supabase
+          curl -s -X PATCH \
+            "$SUPABASE_URL/rest/v1/linkedin_accounts?linkedin_user_id=eq.FXAy8qKKKv" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY" \
+            -H "Content-Type: application/json" \
+            -d "$UPDATE"
+
+          echo "Token refreshed and saved to Supabase. New expiry: $NEW_EXPIRY"
