@@ -1,0 +1,144 @@
+name: Weekly Engagement Digest
+# Sends a Monday morning summary of all Q5D engagement metrics
+
+on:
+  schedule:
+    - cron: '0 13 * * 1'  # Monday 9am ET (13:00 UTC)
+  workflow_dispatch:
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compile and send digest
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          WEEK_AGO=$(date -u -d '7 days ago' +%Y-%m-%dT00:00:00 2>/dev/null || date -u -v-7d +%Y-%m-%dT00:00:00)
+          NOW=$(date -u +%Y-%m-%dT%H:%M:%S)
+          TODAY=$(date '+%B %d, %Y')
+
+          echo "Q5D Weekly Digest — week ending $TODAY"
+          echo "Period: $WEEK_AGO to $NOW"
+
+          # --- Leads this week ---
+          LEADS=$(curl -s \
+            "$SUPABASE_URL/rest/v1/leads?created_at=gte.$WEEK_AGO&select=name,email,organization,source,created_at&order=created_at.desc" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY")
+          LEAD_COUNT=$(echo "$LEADS" | jq '. | length')
+          LEAD_DETAILS=""
+          if [ "$LEAD_COUNT" -gt 0 ]; then
+            LEAD_DETAILS=$(echo "$LEADS" | jq -r '.[] | "  - " + .name + " (" + .email + ") via " + .source')
+          fi
+
+          # --- Blog views this week ---
+          VIEWS=$(curl -s \
+            "$SUPABASE_URL/rest/v1/blog_views?viewed_at=gte.$WEEK_AGO&select=slug" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY")
+          TOTAL_VIEWS=$(echo "$VIEWS" | jq '. | length')
+          TOP_POSTS=""
+          if [ "$TOTAL_VIEWS" -gt 0 ]; then
+            TOP_POSTS=$(echo "$VIEWS" | jq -r '[group_by(.slug)[] | {slug: .[0].slug, count: length}] | sort_by(-.count) | .[:5][] | "  - " + .slug + ": " + (.count | tostring) + " views"')
+          fi
+
+          # --- LinkedIn posts this week ---
+          LI_POSTED=$(curl -s \
+            "$SUPABASE_URL/rest/v1/linkedin_posts?posted_at=gte.$WEEK_AGO&status=eq.posted&select=id,content,engagement_data,posted_at" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY")
+          LI_COUNT=$(echo "$LI_POSTED" | jq '. | length')
+          TOTAL_LIKES=0
+          TOTAL_COMMENTS=0
+          if [ "$LI_COUNT" -gt 0 ]; then
+            TOTAL_LIKES=$(echo "$LI_POSTED" | jq '[.[].engagement_data.likes // 0] | add')
+            TOTAL_COMMENTS=$(echo "$LI_POSTED" | jq '[.[].engagement_data.comments // 0] | add')
+          fi
+
+          # --- Upcoming content ---
+          UPCOMING_BLOGS=$(curl -s \
+            "$SUPABASE_URL/rest/v1/blog_posts?status=eq.scheduled&select=title,published_date&order=published_date.asc&limit=3" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY")
+          NEXT_BLOGS=$(echo "$UPCOMING_BLOGS" | jq -r '.[] | "  - " + .title + " (" + (.published_date | split("T")[0]) + ")"')
+
+          UPCOMING_LI=$(curl -s \
+            "$SUPABASE_URL/rest/v1/linkedin_posts?status=eq.scheduled&scheduled_date=gte.$NOW&select=scheduled_date,category&order=scheduled_date.asc&limit=5" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY")
+          NEXT_LI_COUNT=$(echo "$UPCOMING_LI" | jq '. | length')
+
+          # --- LinkedIn token status ---
+          TOKEN_EXP=$(curl -s \
+            "$SUPABASE_URL/rest/v1/linkedin_accounts?select=expires_at&limit=1" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY")
+          TOKEN_DAYS=$(echo "$TOKEN_EXP" | jq -r '.[0].expires_at // empty')
+          if [ -n "$TOKEN_DAYS" ]; then
+            EXP_TS=$(date -d "$TOKEN_DAYS" +%s 2>/dev/null || echo "0")
+            NOW_TS=$(date +%s)
+            DAYS_LEFT=$(( (EXP_TS - NOW_TS) / 86400 ))
+            TOKEN_STATUS="Valid ($DAYS_LEFT days)"
+          else
+            TOKEN_STATUS="Unknown"
+          fi
+
+          # --- Build the digest ---
+          DIGEST="Q5D WEEKLY DIGEST — $TODAY
+
+LEADS: $LEAD_COUNT new this week"
+          if [ -n "$LEAD_DETAILS" ]; then
+            DIGEST="$DIGEST
+$LEAD_DETAILS"
+          fi
+
+          DIGEST="$DIGEST
+
+BLOG: $TOTAL_VIEWS views this week"
+          if [ -n "$TOP_POSTS" ]; then
+            DIGEST="$DIGEST
+Top posts:
+$TOP_POSTS"
+          fi
+
+          DIGEST="$DIGEST
+
+LINKEDIN: $LI_COUNT posts published
+  Likes: $TOTAL_LIKES | Comments: $TOTAL_COMMENTS
+
+PIPELINE:
+  Blog scheduled: $(echo "$UPCOMING_BLOGS" | jq '. | length')
+  LinkedIn queued: $NEXT_LI_COUNT
+  Token: $TOKEN_STATUS"
+
+          if [ -n "$NEXT_BLOGS" ]; then
+            DIGEST="$DIGEST
+  Next blogs:
+$NEXT_BLOGS"
+          fi
+
+          echo "$DIGEST"
+
+          # --- Send SMS ---
+          SMS_TEXT="Q5D Week: ${LEAD_COUNT} leads, ${TOTAL_VIEWS} blog views, ${LI_COUNT} LI posts (${TOTAL_LIKES} likes). Token: ${TOKEN_STATUS}"
+
+          curl -s -X POST "https://api.resend.com/emails" \
+            -H "Authorization: Bearer $RESEND_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n \
+              --arg text "$SMS_TEXT" \
+              '{from: "Q5D Digest <alerts@achestudysmart.com>", to: ["4107107406@vtext.com"], subject: "", text: $text}')"
+
+          # --- Send email with full digest ---
+          curl -s -X POST "https://api.resend.com/emails" \
+            -H "Authorization: Bearer $RESEND_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n \
+              --arg text "$DIGEST" \
+              '{from: "Q5D Digest <alerts@achestudysmart.com>", to: ["aadey002@gmail.com"], subject: "Q5D Weekly Digest", text: $text}')"
+
+          echo ""
+          echo "Digest sent via SMS + email"

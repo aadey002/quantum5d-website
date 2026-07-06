@@ -17,6 +17,17 @@ export function BlogPostPage() {
     }
   }, [slug])
 
+  // Track page view
+  useEffect(() => {
+    if (post && post.slug) {
+      fetch('/api/track-view', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ post_id: post.id, slug: post.slug }),
+      }).catch(() => {})
+    }
+  }, [post])
+
   const loadBlogPost = async (postSlug: string) => {
     try {
       setLoading(true)

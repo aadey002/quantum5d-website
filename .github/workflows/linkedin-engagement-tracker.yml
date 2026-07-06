@@ -1,0 +1,83 @@
+name: LinkedIn Engagement Tracker
+# Pulls engagement metrics for all posted LinkedIn content daily
+
+on:
+  schedule:
+    - cron: '0 22 * * *'  # 6pm ET (22:00 UTC) daily
+  workflow_dispatch:
+
+jobs:
+  track-engagement:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch LinkedIn engagement data
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          set -e
+
+          # Get LinkedIn access token
+          TOKEN=$(curl -s \
+            "$SUPABASE_URL/rest/v1/linkedin_accounts?select=access_token,linkedin_user_id&limit=1" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY")
+
+          ACCESS_TOKEN=$(echo "$TOKEN" | jq -r '.[0].access_token // empty')
+          LI_USER_ID=$(echo "$TOKEN" | jq -r '.[0].linkedin_user_id // empty')
+
+          if [ -z "$ACCESS_TOKEN" ]; then
+            echo "No LinkedIn access token found"
+            exit 0
+          fi
+
+          # Get all posted LinkedIn posts with post IDs
+          POSTS=$(curl -s \
+            "$SUPABASE_URL/rest/v1/linkedin_posts?status=eq.posted&linkedin_post_id=not.is.null&select=id,linkedin_post_id" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY")
+
+          POST_COUNT=$(echo "$POSTS" | jq '. | length')
+          echo "Found $POST_COUNT posted LinkedIn items to track"
+
+          if [ "$POST_COUNT" = "0" ]; then
+            echo "No posts to track"
+            exit 0
+          fi
+
+          UPDATED=0
+
+          echo "$POSTS" | jq -c '.[]' | while read -r POST; do
+            POST_ID=$(echo "$POST" | jq -r '.id')
+            LI_POST_ID=$(echo "$POST" | jq -r '.linkedin_post_id')
+
+            # Fetch social actions (likes, comments) from LinkedIn API
+            # Using the socialActions endpoint
+            STATS=$(curl -s \
+              "https://api.linkedin.com/v2/socialActions/$LI_POST_ID?projection=(likesSummary,commentsSummary)" \
+              -H "Authorization: Bearer $ACCESS_TOKEN" \
+              -H "X-Restli-Protocol-Version: 2.0.0")
+
+            LIKES=$(echo "$STATS" | jq -r '.likesSummary.totalLikes // 0')
+            COMMENTS=$(echo "$STATS" | jq -r '.commentsSummary.totalFirstLevelComments // 0')
+
+            if [ "$LIKES" != "null" ] || [ "$COMMENTS" != "null" ]; then
+              ENGAGEMENT="{\"likes\": $LIKES, \"comments\": $COMMENTS, \"tracked_at\": \"$(date -u +%Y-%m-%dT%H:%M:%S)\"}"
+
+              curl -s -X PATCH \
+                "$SUPABASE_URL/rest/v1/linkedin_posts?id=eq.$POST_ID" \
+                -H "apikey: $SUPABASE_KEY" \
+                -H "Authorization: Bearer $SUPABASE_KEY" \
+                -H "Content-Type: application/json" \
+                -d "{\"engagement_data\": $ENGAGEMENT}"
+
+              echo "Updated $POST_ID: $LIKES likes, $COMMENTS comments"
+              UPDATED=$((UPDATED + 1))
+            else
+              echo "No engagement data for $POST_ID"
+            fi
+
+            sleep 1
+          done
+
+          echo "Done. Updated engagement for $UPDATED posts."
