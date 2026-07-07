@@ -17,29 +17,37 @@ export const trackResourceDownload = async (data: {
   downloadUrl: string;
 }) => {
   try {
-    const response = await fetch(`${supabaseUrl}/functions/v1/resource-download-tracker?action=track-download`, {
+    // Save as a lead via /api/contact
+    const response = await fetch('/api/contact', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${supabaseAnonKey}`
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        ...data,
-        ipAddress: await getClientIP(),
-        userAgent: navigator.userAgent,
-        referrerUrl: document.referrer || window.location.href
+        name: data.name || 'Resource Download',
+        organization: data.organization || '',
+        email: data.email,
+        message: 'Resource download: ' + data.resourceName + ' (' + data.resourceType + ', ' + data.resourceCategory + ')',
       })
     });
 
+    // Also track the download event
+    fetch('/api/track-event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event_type: 'resource_download',
+        event_name: data.resourceName,
+        site: 'quantum5dconsulting.com',
+        metadata: { url: data.downloadUrl, email: data.email, category: data.resourceCategory }
+      })
+    }).catch(() => {});
+
     if (!response.ok) {
-      console.warn('Failed to track download, proceeding without tracking');
       return { success: true, fallback: true };
     }
 
-    const result = await response.json();
-    return result;
+    return await response.json();
   } catch (error) {
-    console.warn('Error tracking download, proceeding without tracking:', error);
+    console.warn('Error tracking download:', error);
     return { success: true, fallback: true };
   }
 };
