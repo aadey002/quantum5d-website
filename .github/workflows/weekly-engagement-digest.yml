@@ -87,37 +87,18 @@ jobs:
           fi
 
           # --- Build the digest ---
-          DIGEST="Q5D WEEKLY DIGEST — $TODAY
-
-LEADS: $LEAD_COUNT new this week"
+          BLOG_SCHEDULED=$(echo "$UPCOMING_BLOGS" | jq '. | length')
+          DIGEST=$(printf 'Q5D WEEKLY DIGEST — %s\n\nLEADS: %s new this week' "$TODAY" "$LEAD_COUNT")
           if [ -n "$LEAD_DETAILS" ]; then
-            DIGEST="$DIGEST
-$LEAD_DETAILS"
+            DIGEST=$(printf '%s\n%s' "$DIGEST" "$LEAD_DETAILS")
           fi
-
-          DIGEST="$DIGEST
-
-BLOG: $TOTAL_VIEWS views this week"
+          DIGEST=$(printf '%s\n\nBLOG: %s views this week' "$DIGEST" "$TOTAL_VIEWS")
           if [ -n "$TOP_POSTS" ]; then
-            DIGEST="$DIGEST
-Top posts:
-$TOP_POSTS"
+            DIGEST=$(printf '%s\nTop posts:\n%s' "$DIGEST" "$TOP_POSTS")
           fi
-
-          DIGEST="$DIGEST
-
-LINKEDIN: $LI_COUNT posts published
-  Likes: $TOTAL_LIKES | Comments: $TOTAL_COMMENTS
-
-PIPELINE:
-  Blog scheduled: $(echo "$UPCOMING_BLOGS" | jq '. | length')
-  LinkedIn queued: $NEXT_LI_COUNT
-  Token: $TOKEN_STATUS"
-
+          DIGEST=$(printf '%s\n\nLINKEDIN: %s posts published\n  Likes: %s | Comments: %s\n\nPIPELINE:\n  Blog scheduled: %s\n  LinkedIn queued: %s\n  Token: %s' "$DIGEST" "$LI_COUNT" "$TOTAL_LIKES" "$TOTAL_COMMENTS" "$BLOG_SCHEDULED" "$NEXT_LI_COUNT" "$TOKEN_STATUS")
           if [ -n "$NEXT_BLOGS" ]; then
-            DIGEST="$DIGEST
-  Next blogs:
-$NEXT_BLOGS"
+            DIGEST=$(printf '%s\n  Next blogs:\n%s' "$DIGEST" "$NEXT_BLOGS")
           fi
 
           echo "$DIGEST"

@@ -56,9 +56,7 @@ jobs:
             # Append hashtags to content
             FULL_CONTENT="$CONTENT"
             if [ -n "$HASHTAGS" ] && [ "$HASHTAGS" != "" ]; then
-              FULL_CONTENT="$CONTENT
-
-$HASHTAGS"
+              FULL_CONTENT=$(printf '%s\n\n%s' "$CONTENT" "$HASHTAGS")
             fi
 
             echo "Posting: $POST_ID"
