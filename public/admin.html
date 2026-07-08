@@ -100,6 +100,14 @@ tr:hover{background:#f9f8fd}
 /* Footer */
 footer{text-align:center;padding:20px;font-size:12px;color:var(--soft-purple);font-family:'IBM Plex Mono',monospace}
 
+/* Data table (recent events) */
+.data-table{width:100%;border-collapse:collapse;font-size:13px;background:var(--card-bg);border-radius:10px;border:1px solid var(--border)}
+.data-table thead{background:var(--navy);color:#fff}
+.data-table th{padding:12px 14px;text-align:left;font-weight:600;white-space:nowrap;font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.data-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover{background:#f9f8fd}
+
 /* Loading */
 .loading{text-align:center;padding:40px;color:var(--soft-purple)}
 .spinner{display:inline-block;width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--purple);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:8px}
@@ -387,7 +395,7 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--soft-purple);fo
     });
 
     // Views this week
-    sbFetch('blog_views?select=id&created_at=gte.' + weekStart).then(function(d) {
+    sbFetch('blog_views?select=id&viewed_at=gte.' + weekStart).then(function(d) {
       document.getElementById('statWeekViews').textContent = d.length;
     }).catch(function() {
       document.getElementById('statWeekViews').textContent = '0';
@@ -413,6 +421,17 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--soft-purple);fo
     }).catch(function() {
       document.getElementById('statEngagement').textContent = '0';
     });
+
+    // Overview website stats (loaded here so they don't wait for Website tab)
+    sbCount('site_events?event_type=eq.page_view').then(function(c) {
+      document.getElementById('statOverviewPageViews').textContent = c;
+    }).catch(function() { document.getElementById('statOverviewPageViews').textContent = '0'; });
+    sbCount('site_events?event_type=eq.proto_launch').then(function(c) {
+      document.getElementById('statOverviewProtos').textContent = c;
+    }).catch(function() { document.getElementById('statOverviewProtos').textContent = '0'; });
+    sbCount('site_events?event_type=eq.resource_download').then(function(c) {
+      document.getElementById('statOverviewDownloads').textContent = c;
+    }).catch(function() { document.getElementById('statOverviewDownloads').textContent = '0'; });
 
     // Token status
     sbFetch('linkedin_accounts?select=expires_at&limit=1').then(function(d) {
@@ -653,23 +672,30 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--soft-purple);fo
   function loadWebsite() {
     var weekStart = startOfWeek();
 
-    // Fetch all site events
-    sbFetch('site_events?select=event_type,event_name,metadata,created_at&order=created_at.desc&limit=500').then(function(events) {
-      var pageViews = events.filter(function(e) { return e.event_type === 'page_view'; });
+    // Get true counts via HEAD requests, then fetch recent rows for charts
+    Promise.all([
+      sbCount('site_events?event_type=eq.page_view'),
+      sbCount('site_events?event_type=eq.proto_launch'),
+      sbCount('site_events?event_type=eq.resource_download'),
+      sbFetch('site_events?select=id&event_type=eq.page_view&created_at=gte.' + weekStart),
+      sbFetch('site_events?select=event_type,event_name,metadata,created_at&order=created_at.desc&limit=500')
+    ]).then(function(results) {
+      var totalPageViews = results[0];
+      var totalProtos = results[1];
+      var totalDownloads = results[2];
+      var weekPvRows = results[3];
+      var events = results[4];
+
       var protos = events.filter(function(e) { return e.event_type === 'proto_launch'; });
       var downloads = events.filter(function(e) { return e.event_type === 'resource_download'; });
-      var weekPageViews = pageViews.filter(function(e) { return e.created_at >= weekStart; });
 
       // Stats cards in Website tab
-      document.getElementById('statPageViews').textContent = pageViews.length;
-      document.getElementById('statWeekPageViews').textContent = weekPageViews.length;
-      document.getElementById('statProtoLaunches').textContent = protos.length;
-      document.getElementById('statDownloads').textContent = downloads.length;
+      document.getElementById('statPageViews').textContent = totalPageViews;
+      document.getElementById('statWeekPageViews').textContent = weekPvRows.length;
+      document.getElementById('statProtoLaunches').textContent = totalProtos;
+      document.getElementById('statDownloads').textContent = totalDownloads;
 
-      // Overview tab cards
-      document.getElementById('statOverviewPageViews').textContent = pageViews.length;
-      document.getElementById('statOverviewProtos').textContent = protos.length;
-      document.getElementById('statOverviewDownloads').textContent = downloads.length;
+
 
       // Proto launch chart
       var protoCounts = {};
@@ -687,9 +713,12 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--soft-purple);fo
       }
       document.getElementById('protoChart').innerHTML = protoHtml;
 
-      // Download chart
+      // Download chart — prefer filename from metadata, fall back to event_name
       var dlCounts = {};
-      downloads.forEach(function(e) { dlCounts[e.event_name] = (dlCounts[e.event_name] || 0) + 1; });
+      downloads.forEach(function(e) {
+        var label = (e.metadata && e.metadata.filename) ? e.metadata.filename : e.event_name;
+        dlCounts[label] = (dlCounts[label] || 0) + 1;
+      });
       var dlSorted = Object.entries(dlCounts).sort(function(a, b) { return b[1] - a[1]; });
       var maxDl = dlSorted.length > 0 ? dlSorted[0][1] : 1;
       var dlHtml = '';
@@ -710,8 +739,9 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--soft-purple);fo
         var typeLabel = e.event_type === 'page_view' ? '<span style="color:var(--purple)">Page View</span>' : e.event_type === 'proto_launch' ? '<span style="color:#f59e0b">Proto Launch</span>' : '<span style="color:#4ade80">Download</span>';
         var detail = '';
         if (e.metadata) {
-          if (e.metadata.url) detail = escHtml(e.metadata.url.split('/').pop());
-          else if (e.metadata.id) detail = 'ID: ' + e.metadata.id;
+          if (e.metadata.filename) detail = escHtml(e.metadata.filename);
+          else if (e.metadata.url) detail = escHtml(e.metadata.url.split('/').pop());
+          else if (e.metadata.id) detail = 'ID: ' + escHtml(e.metadata.id);
         }
         recentHtml += '<tr><td>' + new Date(e.created_at).toLocaleString() + '</td><td>' + typeLabel + '</td><td>' + escHtml(e.event_name) + '</td><td style="font-family:IBM Plex Mono,monospace;font-size:12px;color:var(--muted)">' + detail + '</td></tr>';
       });
