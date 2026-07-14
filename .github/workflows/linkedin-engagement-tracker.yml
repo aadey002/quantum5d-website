@@ -51,8 +51,7 @@ jobs:
             POST_ID=$(echo "$POST" | jq -r '.id')
             LI_POST_ID=$(echo "$POST" | jq -r '.linkedin_post_id')
 
-            # Fetch social actions (likes, comments) from LinkedIn API
-            # Using the socialActions endpoint
+            # 1. Social actions: likes + comments
             STATS=$(curl -s \
               "https://api.linkedin.com/v2/socialActions/$LI_POST_ID?projection=(likesSummary,commentsSummary)" \
               -H "Authorization: Bearer $ACCESS_TOKEN" \
@@ -61,21 +60,58 @@ jobs:
             LIKES=$(echo "$STATS" | jq -r '.likesSummary.totalLikes // 0')
             COMMENTS=$(echo "$STATS" | jq -r '.commentsSummary.totalFirstLevelComments // 0')
 
-            if [ "$LIKES" != "null" ] || [ "$COMMENTS" != "null" ]; then
-              ENGAGEMENT="{\"likes\": $LIKES, \"comments\": $COMMENTS, \"tracked_at\": \"$(date -u +%Y-%m-%dT%H:%M:%S)\"}"
+            # 2. Share statistics: impressions, clicks, shares/reposts
+            # Encode the URN for the query parameter
+            ENCODED_URN=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$LI_POST_ID', safe=''))")
+            SHARE_STATS=$(curl -s \
+              "https://api.linkedin.com/v2/shareStatistics?shares=$ENCODED_URN&q=shares" \
+              -H "Authorization: Bearer $ACCESS_TOKEN" \
+              -H "X-Restli-Protocol-Version: 2.0.0")
 
-              curl -s -X PATCH \
-                "$SUPABASE_URL/rest/v1/linkedin_posts?id=eq.$POST_ID" \
-                -H "apikey: $SUPABASE_KEY" \
-                -H "Authorization: Bearer $SUPABASE_KEY" \
-                -H "Content-Type: application/json" \
-                -d "{\"engagement_data\": $ENGAGEMENT}"
+            IMPRESSIONS=$(echo "$SHARE_STATS" | jq -r '.elements[0].totalShareStatistics.impressionCount // 0')
+            UNIQUE_IMPRESSIONS=$(echo "$SHARE_STATS" | jq -r '.elements[0].totalShareStatistics.uniqueImpressionsCount // 0')
+            CLICKS=$(echo "$SHARE_STATS" | jq -r '.elements[0].totalShareStatistics.clickCount // 0')
+            SHARES=$(echo "$SHARE_STATS" | jq -r '.elements[0].totalShareStatistics.shareCount // 0')
 
-              echo "Updated $POST_ID: $LIKES likes, $COMMENTS comments"
-              UPDATED=$((UPDATED + 1))
-            else
-              echo "No engagement data for $POST_ID"
+            # Fallback: if shareStatistics returns nothing, try networkSizes approach
+            if [ "$IMPRESSIONS" = "0" ] && [ "$CLICKS" = "0" ]; then
+              # Try the socialMetadata endpoint as fallback
+              META=$(curl -s \
+                "https://api.linkedin.com/v2/socialMetadata/$LI_POST_ID" \
+                -H "Authorization: Bearer $ACCESS_TOKEN" \
+                -H "X-Restli-Protocol-Version: 2.0.0")
+
+              META_SHARES=$(echo "$META" | jq -r '.shareCount // 0')
+              if [ "$META_SHARES" != "0" ] && [ "$META_SHARES" != "null" ]; then
+                SHARES=$META_SHARES
+              fi
             fi
+
+            # Build engagement JSON
+            ENGAGEMENT=$(cat <<EJSON
+            {
+              "likes": $LIKES,
+              "comments": $COMMENTS,
+              "impressions": $IMPRESSIONS,
+              "unique_impressions": $UNIQUE_IMPRESSIONS,
+              "clicks": $CLICKS,
+              "shares": $SHARES,
+              "tracked_at": "$(date -u +%Y-%m-%dT%H:%M:%S)"
+            }
+          EJSON
+            )
+            # Compact JSON
+            ENGAGEMENT=$(echo "$ENGAGEMENT" | jq -c '.')
+
+            curl -s -X PATCH \
+              "$SUPABASE_URL/rest/v1/linkedin_posts?id=eq.$POST_ID" \
+              -H "apikey: $SUPABASE_KEY" \
+              -H "Authorization: Bearer $SUPABASE_KEY" \
+              -H "Content-Type: application/json" \
+              -d "{\"engagement_data\": $ENGAGEMENT}"
+
+            echo "Updated $POST_ID: $LIKES likes, $COMMENTS comments, $IMPRESSIONS impressions, $CLICKS clicks, $SHARES shares"
+            UPDATED=$((UPDATED + 1))
 
             sleep 1
           done
