@@ -155,6 +155,7 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--soft-purple);fo
     <button data-tab="blog">Blog</button>
     <button data-tab="linkedin">LinkedIn</button>
     <button data-tab="pipeline">Pipeline</button>
+    <button data-tab="engagement">Engagement</button>
     <button data-tab="website">Website</button>
   </div>
 
@@ -197,6 +198,27 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--soft-purple);fo
     <div class="tab-panel" id="panel-pipeline">
       <h2 class="section-title">Upcoming Content Pipeline</h2>
       <div id="pipelineContent" class="loading"><div class="spinner"></div><div>Loading...</div></div>
+    </div>
+
+    <!-- Engagement -->
+    <div class="tab-panel" id="panel-engagement">
+      <h2 class="section-title">Visitor Engagement</h2>
+      <div class="cards" id="engagementCards">
+        <div class="card"><div class="label">Avg Time on Page</div><div class="value" id="statAvgTime">--</div></div>
+        <div class="card"><div class="label">Avg Active Time</div><div class="value" id="statAvgActive">--</div></div>
+        <div class="card"><div class="label">Avg Scroll Depth</div><div class="value" id="statAvgScroll">--</div></div>
+        <div class="card"><div class="label">Bounce Rate</div><div class="value" id="statBounceRate">--</div><div class="sub">Under 10s on page</div></div>
+        <div class="card"><div class="label">Sessions Tracked</div><div class="value" id="statEngSessions">--</div></div>
+        <div class="card"><div class="label">Top Referrer</div><div class="value" id="statTopReferrer" style="font-size:16px">--</div></div>
+      </div>
+      <h3 style="margin:28px 0 12px;font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600">Time on Page Distribution</h3>
+      <div id="timeDistChart"></div>
+      <h3 style="margin:28px 0 12px;font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600">Scroll Depth Distribution</h3>
+      <div id="scrollDistChart"></div>
+      <h3 style="margin:28px 0 12px;font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600">Referrer Sources</h3>
+      <div id="referrerChart"></div>
+      <h3 style="margin:28px 0 12px;font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600">Recent Sessions</h3>
+      <div id="engagementTable"></div>
     </div>
 
     <!-- Website -->
@@ -366,6 +388,7 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--soft-purple);fo
     loadBlog();
     loadLinkedIn();
     loadPipeline();
+    loadEngagement();
     loadWebsite();
     document.getElementById('lastUpdated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
   }
@@ -408,13 +431,13 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--soft-purple);fo
       document.getElementById('statLinkedInPosts').textContent = '0';
     });
 
-    // Total engagement
+    // Total engagement (likes + comments + shares + clicks)
     sbFetch('linkedin_posts?select=engagement_data').then(function(d) {
       var total = 0;
       d.forEach(function(row) {
         if (row.engagement_data) {
           var ed = typeof row.engagement_data === 'string' ? JSON.parse(row.engagement_data) : row.engagement_data;
-          total += (parseInt(ed.likes) || 0) + (parseInt(ed.comments) || 0);
+          total += (parseInt(ed.likes) || 0) + (parseInt(ed.comments) || 0) + (parseInt(ed.shares) || 0) + (parseInt(ed.clicks) || 0);
         }
       });
       document.getElementById('statEngagement').textContent = total;
@@ -561,8 +584,32 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--soft-purple);fo
         return;
       }
 
+      // Summary cards
+      var totLikes = 0, totComments = 0, totImpressions = 0, totClicks = 0, totShares = 0;
+      data.forEach(function(p) {
+        if (!p.engagement_data) return;
+        var ed = typeof p.engagement_data === 'string' ? JSON.parse(p.engagement_data) : p.engagement_data;
+        totLikes += parseInt(ed.likes) || 0;
+        totComments += parseInt(ed.comments) || 0;
+        totImpressions += parseInt(ed.impressions) || 0;
+        totClicks += parseInt(ed.clicks) || 0;
+        totShares += parseInt(ed.shares) || 0;
+      });
+      var ctr = totImpressions > 0 ? ((totClicks / totImpressions) * 100).toFixed(1) + '%' : '--';
+      var engRate = totImpressions > 0 ? (((totLikes + totComments + totShares) / totImpressions) * 100).toFixed(1) + '%' : '--';
+
+      var html = '<div class="cards">';
+      html += '<div class="card"><div class="label">Impressions</div><div class="value">' + totImpressions.toLocaleString() + '</div></div>';
+      html += '<div class="card"><div class="label">Clicks</div><div class="value">' + totClicks + '</div></div>';
+      html += '<div class="card"><div class="label">CTR</div><div class="value">' + ctr + '</div></div>';
+      html += '<div class="card"><div class="label">Likes</div><div class="value">' + totLikes + '</div></div>';
+      html += '<div class="card"><div class="label">Comments</div><div class="value">' + totComments + '</div></div>';
+      html += '<div class="card"><div class="label">Shares / Reposts</div><div class="value">' + totShares + '</div></div>';
+      html += '<div class="card"><div class="label">Engagement Rate</div><div class="value">' + engRate + '</div></div>';
+      html += '</div>';
+
       // Table
-      var html = '<div class="table-wrap"><table><thead><tr><th>Content</th><th>Category</th><th>Status</th><th>Scheduled</th><th>Posted</th><th>Likes</th><th>Comments</th></tr></thead><tbody>';
+      html += '<div class="table-wrap"><table><thead><tr><th>Content</th><th>Category</th><th>Status</th><th>Posted</th><th>Impressions</th><th>Clicks</th><th>Likes</th><th>Comments</th><th>Shares</th></tr></thead><tbody>';
       var engagementData = [];
       data.forEach(function(p) {
         var ed = null;
@@ -571,17 +618,22 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--soft-purple);fo
         }
         var likes = ed ? (parseInt(ed.likes) || 0) : 0;
         var comments = ed ? (parseInt(ed.comments) || 0) : 0;
+        var impressions = ed ? (parseInt(ed.impressions) || 0) : 0;
+        var clicks = ed ? (parseInt(ed.clicks) || 0) : 0;
+        var shares = ed ? (parseInt(ed.shares) || 0) : 0;
         if (p.posted_at) {
-          engagementData.push({ date: p.posted_at, likes: likes });
+          engagementData.push({ date: p.posted_at, likes: likes, impressions: impressions, clicks: clicks });
         }
         html += '<tr>';
         html += '<td>' + escHtml(truncate(p.content, 80)) + '</td>';
         html += '<td>' + escHtml(p.category || '--') + '</td>';
         html += '<td>' + statusBadge(p.status) + '</td>';
-        html += '<td class="mono" style="white-space:nowrap">' + fmtDate(p.scheduled_date) + '</td>';
-        html += '<td class="mono" style="white-space:nowrap">' + fmtDate(p.posted_at) + '</td>';
+        html += '<td class="mono" style="white-space:nowrap">' + fmtDate(p.posted_at || p.scheduled_date) + '</td>';
+        html += '<td class="mono">' + (impressions ? impressions.toLocaleString() : '--') + '</td>';
+        html += '<td class="mono">' + (clicks || '--') + '</td>';
         html += '<td class="mono">' + likes + '</td>';
         html += '<td class="mono">' + comments + '</td>';
+        html += '<td class="mono">' + (shares || '--') + '</td>';
         html += '</tr>';
       });
       html += '</tbody></table></div>';
@@ -668,6 +720,133 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--soft-purple);fo
     });
   }
 
+  // --- Visitor Engagement ---
+  function loadEngagement() {
+    sbFetch('site_events?select=event_name,metadata,created_at&event_type=eq.page_engagement&order=created_at.desc&limit=500').then(function(data) {
+      if (!data.length) {
+        document.getElementById('statAvgTime').textContent = '0';
+        document.getElementById('statAvgActive').textContent = '0';
+        document.getElementById('statAvgScroll').textContent = '0%';
+        document.getElementById('statBounceRate').textContent = '0%';
+        document.getElementById('statEngSessions').textContent = '0';
+        document.getElementById('statTopReferrer').textContent = '--';
+        document.getElementById('timeDistChart').innerHTML = '<p style="color:var(--soft-purple);font-size:14px">No engagement data yet. Sessions are recorded when visitors leave the page.</p>';
+        document.getElementById('scrollDistChart').innerHTML = '';
+        document.getElementById('referrerChart').innerHTML = '';
+        document.getElementById('engagementTable').innerHTML = '';
+        return;
+      }
+
+      var totalTime = 0, totalActive = 0, totalScroll = 0, bounces = 0;
+      var refCounts = {};
+      var timeBuckets = {'0-10s':0,'10-30s':0,'30-60s':0,'1-3m':0,'3-5m':0,'5m+':0};
+      var scrollBuckets = {'0-25%':0,'25-50%':0,'50-75%':0,'75-100%':0};
+
+      data.forEach(function(row) {
+        var m = row.metadata || {};
+        var ts = parseInt(m.total_seconds) || 0;
+        var as = parseInt(m.active_seconds) || 0;
+        var sc = parseInt(m.max_scroll_pct) || 0;
+        var ref = m.referrer || 'direct';
+
+        totalTime += ts;
+        totalActive += as;
+        totalScroll += sc;
+        if (ts < 10) bounces++;
+
+        // Referrer
+        if (ref === '' || ref === 'direct') ref = 'Direct';
+        else {
+          try { ref = new URL(ref).hostname.replace('www.',''); } catch(e) {}
+        }
+        refCounts[ref] = (refCounts[ref] || 0) + 1;
+
+        // Time buckets
+        if (ts < 10) timeBuckets['0-10s']++;
+        else if (ts < 30) timeBuckets['10-30s']++;
+        else if (ts < 60) timeBuckets['30-60s']++;
+        else if (ts < 180) timeBuckets['1-3m']++;
+        else if (ts < 300) timeBuckets['3-5m']++;
+        else timeBuckets['5m+']++;
+
+        // Scroll buckets
+        if (sc <= 25) scrollBuckets['0-25%']++;
+        else if (sc <= 50) scrollBuckets['25-50%']++;
+        else if (sc <= 75) scrollBuckets['50-75%']++;
+        else scrollBuckets['75-100%']++;
+      });
+
+      var n = data.length;
+      var avgTime = Math.round(totalTime / n);
+      var avgActive = Math.round(totalActive / n);
+      var avgScroll = Math.round(totalScroll / n);
+
+      function fmtSec(s) {
+        if (s < 60) return s + 's';
+        return Math.floor(s / 60) + 'm ' + (s % 60) + 's';
+      }
+
+      document.getElementById('statAvgTime').textContent = fmtSec(avgTime);
+      document.getElementById('statAvgActive').textContent = fmtSec(avgActive);
+      document.getElementById('statAvgScroll').textContent = avgScroll + '%';
+      document.getElementById('statBounceRate').textContent = Math.round(bounces / n * 100) + '%';
+      document.getElementById('statEngSessions').textContent = n;
+
+      // Top referrer
+      var topRef = Object.entries(refCounts).sort(function(a,b){return b[1]-a[1];})[0];
+      document.getElementById('statTopReferrer').textContent = topRef ? topRef[0] : '--';
+
+      // Bar chart helper
+      function renderBarChart(containerId, buckets, color) {
+        var entries = Object.entries(buckets);
+        var max = 1;
+        entries.forEach(function(e){ if(e[1]>max) max=e[1]; });
+        var html = '';
+        entries.forEach(function(e) {
+          var pct = Math.round((e[1] / max) * 100);
+          html += '<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px"><span>' + escHtml(e[0]) + '</span><span style="font-family:IBM Plex Mono,monospace;font-weight:600">' + e[1] + '</span></div><div style="background:var(--border);border-radius:4px;height:8px;overflow:hidden"><div style="background:' + color + ';height:100%;width:' + pct + '%;border-radius:4px"></div></div></div>';
+        });
+        document.getElementById(containerId).innerHTML = html;
+      }
+
+      renderBarChart('timeDistChart', timeBuckets, 'var(--purple)');
+      renderBarChart('scrollDistChart', scrollBuckets, '#4ade80');
+
+      // Referrer chart
+      var refSorted = Object.entries(refCounts).sort(function(a,b){return b[1]-a[1];}).slice(0,10);
+      var refBuckets = {};
+      refSorted.forEach(function(r){ refBuckets[r[0]] = r[1]; });
+      renderBarChart('referrerChart', refBuckets, '#f59e0b');
+
+      // Recent sessions table
+      var recent = data.slice(0, 30);
+      var tHtml = '<table class="data-table"><thead><tr><th>Time</th><th>Duration</th><th>Active</th><th>Scroll</th><th>Referrer</th><th>Screen</th></tr></thead><tbody>';
+      recent.forEach(function(row) {
+        var m = row.metadata || {};
+        var ts = parseInt(m.total_seconds) || 0;
+        var as = parseInt(m.active_seconds) || 0;
+        var sc = parseInt(m.max_scroll_pct) || 0;
+        var ref = m.referrer || 'direct';
+        if (ref === '' || ref === 'direct') ref = 'Direct';
+        else { try { ref = new URL(ref).hostname.replace('www.',''); } catch(e){} }
+        var scr = m.screen || '--';
+        var durColor = ts < 10 ? 'var(--danger)' : ts < 30 ? 'var(--warn)' : 'var(--success)';
+        tHtml += '<tr>';
+        tHtml += '<td class="mono" style="white-space:nowrap">' + fmtDateTime(row.created_at) + '</td>';
+        tHtml += '<td class="mono" style="color:' + durColor + '">' + fmtSec(ts) + '</td>';
+        tHtml += '<td class="mono">' + fmtSec(as) + '</td>';
+        tHtml += '<td class="mono">' + sc + '%</td>';
+        tHtml += '<td>' + escHtml(ref) + '</td>';
+        tHtml += '<td class="mono" style="font-size:11px">' + escHtml(scr) + '</td>';
+        tHtml += '</tr>';
+      });
+      tHtml += '</tbody></table>';
+      document.getElementById('engagementTable').innerHTML = tHtml;
+    }).catch(function(e) {
+      document.getElementById('timeDistChart').innerHTML = '<p style="color:var(--danger)">Error: ' + escHtml(e.message) + '</p>';
+    });
+  }
+
   // --- Website Engagement ---
   function loadWebsite() {
     var weekStart = startOfWeek();
@@ -736,10 +915,14 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--soft-purple);fo
       var recent = events.slice(0, 20);
       var recentHtml = '<table class="data-table"><thead><tr><th>Time</th><th>Type</th><th>Name</th><th>Detail</th></tr></thead><tbody>';
       recent.forEach(function(e) {
-        var typeLabel = e.event_type === 'page_view' ? '<span style="color:var(--purple)">Page View</span>' : e.event_type === 'proto_launch' ? '<span style="color:#f59e0b">Proto Launch</span>' : '<span style="color:#4ade80">Download</span>';
+        var typeLabel = e.event_type === 'page_view' ? '<span style="color:var(--purple)">Page View</span>' : e.event_type === 'proto_launch' ? '<span style="color:#f59e0b">Proto Launch</span>' : e.event_type === 'page_engagement' ? '<span style="color:#818cf8">Engagement</span>' : '<span style="color:#4ade80">Download</span>';
         var detail = '';
         if (e.metadata) {
-          if (e.metadata.filename) detail = escHtml(e.metadata.filename);
+          if (e.event_type === 'page_engagement') {
+            var ts = parseInt(e.metadata.total_seconds) || 0;
+            var sc = parseInt(e.metadata.max_scroll_pct) || 0;
+            detail = ts + 's / ' + sc + '% scroll';
+          } else if (e.metadata.filename) detail = escHtml(e.metadata.filename);
           else if (e.metadata.url) detail = escHtml(e.metadata.url.split('/').pop());
           else if (e.metadata.id) detail = 'ID: ' + escHtml(e.metadata.id);
         }

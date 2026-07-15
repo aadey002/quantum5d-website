@@ -153,6 +153,20 @@ h1,h2,h3.big{font-family:'Cormorant Garamond',serif;letter-spacing:-.005em;line-
 .field input:focus,.field textarea:focus{outline:none;border-color:var(--purple-soft)}
 .field input::placeholder,.field textarea::placeholder{color:#8E88B0}
 
+/* lead capture modals */
+.lc-overlay{position:fixed;inset:0;background:rgba(11,8,40,.72);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px}
+.lc-overlay.open{display:flex}
+.lc-box{background:#fff;border-radius:16px;max-width:440px;width:100%;padding:32px 28px;position:relative;text-align:center;box-shadow:0 24px 48px rgba(11,8,51,.25)}
+.lc-box .lc-close{position:absolute;top:12px;right:14px;background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1}
+.lc-box h3{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.lc-box .lc-sub{color:var(--muted);font-size:14px;margin-bottom:20px;line-height:1.5}
+.lc-box input{width:100%;padding:11px 14px;border:2px solid var(--line);border-radius:8px;font-size:14px;font-family:'Inter',sans-serif;outline:none;margin-bottom:10px}
+.lc-box input:focus{border-color:var(--purple)}
+.lc-box .lc-btn{width:100%;padding:12px;background:var(--purple);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+.lc-box .lc-btn:hover{background:var(--navy)}
+.lc-box .lc-note{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);margin-top:10px}
+.lc-box .lc-skip{background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;margin-top:10px;text-decoration:underline}
+
 /* footer */
 footer{padding:42px 0;color:var(--muted);font-size:13px}
 .foot-in{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
@@ -542,6 +556,34 @@ function sendInquiry(){
 }
 function val(id){return (document.getElementById(id).value||'').trim();}
 </script>
+<!-- Exit-intent lead capture -->
+<div class="lc-overlay" id="lcExit">
+  <div class="lc-box">
+    <button class="lc-close" onclick="closeLc('lcExit')">&times;</button>
+    <h3>Before you go&mdash;</h3>
+    <p class="lc-sub">See how these tools could work for your pharmacy or covered entity. Drop your email and we'll send a brief overview.</p>
+    <input id="lc-exit-email" type="email" placeholder="you@org.com">
+    <input id="lc-exit-name" type="text" placeholder="Name (optional)">
+    <button class="lc-btn" onclick="submitLc('exit')">Send me the overview</button>
+    <div class="lc-note" id="lc-exit-note"></div>
+    <button class="lc-skip" onclick="closeLc('lcExit')">No thanks, just browsing</button>
+  </div>
+</div>
+
+<!-- Post-prototype CTA -->
+<div class="lc-overlay" id="lcProto">
+  <div class="lc-box">
+    <button class="lc-close" onclick="closeLc('lcProto')">&times;</button>
+    <h3>Interested in <span id="lcProtoName">this</span>?</h3>
+    <p class="lc-sub">We build production versions of these tools for FQHCs, pharmacies, and covered entities. Leave your email and we'll follow up.</p>
+    <input id="lc-proto-email" type="email" placeholder="you@org.com">
+    <input id="lc-proto-name" type="text" placeholder="Name (optional)">
+    <button class="lc-btn" onclick="submitLc('proto')">Yes, tell me more</button>
+    <div class="lc-note" id="lc-proto-note"></div>
+    <button class="lc-skip" onclick="closeLc('lcProto')">Just exploring for now</button>
+  </div>
+</div>
+
 <div id="protoOverlay" class="proto-ov"><div class="proto-bar"><span id="protoTitle"></span><button onclick="closeProto()">Close ✕</button></div><div class="proto-guide" id="protoGuide"></div><iframe id="protoFrame" title="prototype"></iframe></div>
 <script>
 var PROTOS={board:{title:'Board Intelligence',html:`<!DOCTYPE html>
@@ -2464,7 +2506,7 @@ const seed = [{
   id: "DTM-2027-0148",
   type: "Initial DTM Application",
   org: "Bayview Community Health — Pharmacy Services",
-  site: "4940 Eastern Ave, Baltimore, MD 21224",
+  site: "312 Harbor View Blvd, Baltimore, MD 21224",
   physician: "Karen Whitfield, MD",
   protocol: "Anticoagulation Management Protocol v3",
   submitted: "Jan 12, 2027",
@@ -2507,7 +2549,7 @@ const seed = [{
   id: "DTM-2027-0151",
   type: "Initial DTM Application",
   org: "Frederick Family Medicine Associates",
-  site: "121 Thomas Johnson Dr, Frederick, MD 21702",
+  site: "450 Maple Creek Rd, Frederick, MD 21702",
   physician: "Marcus Bell, DO",
   protocol: "Diabetes & Hypertension Co-Management Protocol",
   submitted: "Jan 21, 2027",
@@ -2547,7 +2589,7 @@ const seed = [{
   id: "DTM-2027-0139",
   type: "Protocol Amendment",
   org: "MedStar Health — Ambulatory Pharmacy",
-  site: "9000 Franklin Square Dr, Baltimore, MD 21237",
+  site: "7600 Ridgewood Crossing, Baltimore, MD 21237",
   physician: "Elaine Ford, MD",
   protocol: "Anticoagulation Management Protocol → v4 (proposed)",
   submitted: "Jan 06, 2027",
@@ -2580,7 +2622,7 @@ const seed = [{
   id: "DTM-2027-0142",
   type: "Initial DTM Application",
   org: "University of Outpatient Pharmacy",
-  site: "22 S Greene St, Baltimore, MD 21201",
+  site: "1800 Chesapeake Commons Dr, Baltimore, MD 21201",
   physician: "Sandra Pope, MD",
   protocol: "Comprehensive Medication Management Protocol",
   submitted: "Dec 28, 2026",
@@ -7475,7 +7517,7 @@ draw();
 var guideKey=null,guideStep=0;
 function launchProto(k){var p=PROTOS[k];if(!p)return;
 document.getElementById("protoTitle").textContent=p.title+" · Quantum 5D prototype";
-var f=document.getElementById("protoFrame");f.srcdoc=p.html;
+var f=document.getElementById("protoFrame");var patentBar='<div style="position:fixed;bottom:0;left:0;right:0;background:#0B0833;color:#938ABD;text-align:center;padding:6px 12px;font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:.08em;z-index:99999">Patent Pending &middot; &copy; ' + new Date().getFullYear() + ' Quantum 5D Consulting LLC</div>';f.srcdoc=p.html.replace('</body>',patentBar+'</body>');
 guideKey=k;guideStep=0;renderGuide();
 document.getElementById("protoOverlay").classList.add("open");document.body.style.overflow="hidden";if(typeof closeModal==="function")closeModal();}
 function renderGuide(){var gb=document.getElementById("protoGuide");var steps=(typeof GUIDES!=="undefined"&&GUIDES[guideKey])?GUIDES[guideKey]:[];if(!steps.length){gb.classList.remove("on");return;}var n=steps.length;var last=guideStep>=n-1;var backDis=guideStep<=0?" pg-dis":"";
@@ -7489,7 +7531,173 @@ document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeProto(
 <script>
 function trackQ5D(t,n,m){fetch("/api/track-event",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({event_type:t,event_name:n,site:"quantum5d.ai",metadata:m||{}})}).catch(function(){});}
 trackQ5D("page_view","homepage");
-var _origLP=window.launchProto;if(_origLP){window.launchProto=function(k){trackQ5D("proto_launch",k);_origLP(k);};}
+var _origLP=window.launchProto;if(_origLP){window.launchProto=function(k){var p=(typeof PROTOS!=="undefined"&&PROTOS[k])?PROTOS[k]:{};trackQ5D("proto_launch",k,{title:p.title||k});_origLP(k);};}
+
+/* --- Lead capture: exit-intent + post-prototype CTA --- */
+(function(){
+  var lcShown = JSON.parse(sessionStorage.getItem('q5d_lc_shown') || '{}');
+  var pageStart = Date.now();
+  var protoOpenAt = 0;
+  var lastProtoTitle = '';
+  var lastProtoKey = '';
+
+  window.closeLc = function(id) {
+    document.getElementById(id).classList.remove('open');
+    document.body.style.overflow = '';
+    lcShown[id] = true;
+    sessionStorage.setItem('q5d_lc_shown', JSON.stringify(lcShown));
+  };
+
+  window.submitLc = function(type) {
+    var prefix = 'lc-' + type;
+    var email = (document.getElementById(prefix + '-email').value || '').trim();
+    var name = (document.getElementById(prefix + '-name').value || '').trim();
+    var note = document.getElementById(prefix + '-note');
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      note.textContent = 'Please enter a valid email.';
+      note.style.color = '#D9534F';
+      return;
+    }
+
+    var source = type === 'exit' ? 'exit-intent' : 'proto-cta-' + lastProtoKey;
+    var msg = type === 'exit'
+      ? 'Exit-intent capture — visitor spent ' + Math.round((Date.now() - pageStart) / 1000) + 's on page'
+      : 'Post-prototype CTA — viewed ' + lastProtoTitle + ' prototype';
+
+    note.textContent = 'Sending...';
+    note.style.color = '';
+
+    fetch('/api/contact', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({name: name || 'Lead capture', organization: '', email: email, message: msg, source: source})
+    }).then(function(r) { return r.json(); }).then(function(d) {
+      note.style.color = '#2E9E6B';
+      note.textContent = 'Got it — we will be in touch!';
+      trackQ5D('lead_capture', source, {email_domain: email.split('@')[1]});
+      document.getElementById(prefix + '-email').value = '';
+      document.getElementById(prefix + '-name').value = '';
+      setTimeout(function() { closeLc(type === 'exit' ? 'lcExit' : 'lcProto'); }, 2000);
+    }).catch(function() {
+      note.textContent = 'Network error — please try again.';
+      note.style.color = '#D9534F';
+    });
+  };
+
+  // Exit-intent: fires once when mouse leaves viewport after 30s+
+  function onMouseLeave(e) {
+    if (e.clientY > 5) return;
+    if (lcShown.lcExit) return;
+    if (Date.now() - pageStart < 30000) return;
+    if (document.getElementById('protoOverlay').classList.contains('open')) return;
+    document.getElementById('lcExit').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    lcShown.lcExit = true;
+    sessionStorage.setItem('q5d_lc_shown', JSON.stringify(lcShown));
+    trackQ5D('lead_capture_shown', 'exit-intent');
+    document.removeEventListener('mouseleave', onMouseLeave);
+  }
+  document.addEventListener('mouseleave', onMouseLeave);
+
+  // Post-prototype CTA: fires when closing a proto after 10s+ inside it
+  var _origClose = window.closeProto;
+  window.closeProto = function() {
+    var timeInProto = protoOpenAt ? (Date.now() - protoOpenAt) / 1000 : 0;
+    if (_origClose) _origClose();
+    protoOpenAt = 0;
+    if (timeInProto >= 10 && !lcShown.lcProto && lastProtoTitle) {
+      document.getElementById('lcProtoName').textContent = lastProtoTitle;
+      setTimeout(function() {
+        document.getElementById('lcProto').classList.add('open');
+        document.body.style.overflow = 'hidden';
+        lcShown.lcProto = true;
+        sessionStorage.setItem('q5d_lc_shown', JSON.stringify(lcShown));
+        trackQ5D('lead_capture_shown', 'proto-cta-' + lastProtoKey);
+      }, 300);
+    }
+  };
+
+  // Track when proto opens
+  var _origLaunch2 = window.launchProto;
+  window.launchProto = function(k) {
+    protoOpenAt = Date.now();
+    var p = (typeof PROTOS !== 'undefined' && PROTOS[k]) ? PROTOS[k] : {};
+    lastProtoTitle = p.title || k;
+    lastProtoKey = k;
+    if (_origLaunch2) _origLaunch2(k);
+  };
+})();
+
+/* --- Engagement tracking: time on page, scroll depth, active time --- */
+(function(){
+  var _engStart = Date.now();
+  var _engActive = 0;
+  var _engLastTick = Date.now();
+  var _engIdle = false;
+  var _engMaxScroll = 0;
+  var _engSent = false;
+  var _engIdleTimeout = null;
+
+  function markActive(){
+    if(_engIdle){ _engLastTick = Date.now(); _engIdle = false; }
+    clearTimeout(_engIdleTimeout);
+    _engIdleTimeout = setTimeout(function(){
+      _engActive += Date.now() - _engLastTick;
+      _engIdle = true;
+    }, 15000);
+  }
+
+  function updateScroll(){
+    var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    var docHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+    var winHeight = window.innerHeight;
+    var pct = docHeight <= winHeight ? 100 : Math.round((scrollTop + winHeight) / docHeight * 100);
+    if(pct > _engMaxScroll) _engMaxScroll = pct;
+  }
+
+  document.addEventListener("mousemove", markActive);
+  document.addEventListener("keydown", markActive);
+  document.addEventListener("click", markActive);
+  document.addEventListener("touchstart", markActive);
+  window.addEventListener("scroll", function(){ markActive(); updateScroll(); });
+  markActive();
+  updateScroll();
+
+  function sendEngagement(){
+    if(_engSent) return;
+    _engSent = true;
+    if(!_engIdle) _engActive += Date.now() - _engLastTick;
+    var totalSec = Math.round((Date.now() - _engStart) / 1000);
+    var activeSec = Math.round(_engActive / 1000);
+    var payload = {
+      event_type: "page_engagement",
+      event_name: "homepage",
+      site: "quantum5d.ai",
+      metadata: {
+        total_seconds: totalSec,
+        active_seconds: activeSec,
+        max_scroll_pct: _engMaxScroll,
+        referrer: document.referrer || "direct",
+        screen: window.innerWidth + "x" + window.innerHeight
+      }
+    };
+    if(navigator.sendBeacon){
+      navigator.sendBeacon("/api/track-event", new Blob([JSON.stringify(payload)],{type:"application/json"}));
+    } else {
+      var x = new XMLHttpRequest();
+      x.open("POST","/api/track-event",false);
+      x.setRequestHeader("Content-Type","application/json");
+      x.send(JSON.stringify(payload));
+    }
+  }
+
+  document.addEventListener("visibilitychange", function(){
+    if(document.visibilityState === "hidden") sendEngagement();
+  });
+  window.addEventListener("pagehide", sendEngagement);
+  window.addEventListener("beforeunload", sendEngagement);
+})();
 </script>
 </body>
 </html>

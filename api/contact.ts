@@ -30,7 +30,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // Parse body
-  const { name, organization, email, message, _hp } = req.body || {}
+  const { name, organization, email, message, source: reqSource, _hp } = req.body || {}
 
   // Honeypot — if filled, silently accept (bot trap)
   if (_hp) return res.status(200).json({ success: true })
@@ -48,7 +48,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     organization: (organization || '').trim().slice(0, 200) || null,
     email: email.trim().toLowerCase().slice(0, 200),
     message: (message || '').trim().slice(0, 2000) || null,
-    source: 'quantum5d.ai',
+    source: (reqSource || 'quantum5d.ai').toString().slice(0, 100),
     status: 'new',
   }
 
@@ -81,7 +81,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       + 'Email: ' + lead.email + '\n'
       + 'Message:\n' + (lead.message || '—') + '\n\n'
       + 'Submitted: ' + timestamp + '\n'
-      + 'Source: quantum5d.ai'
+      + 'Source: ' + lead.source
 
     // Email to admin
     try {
