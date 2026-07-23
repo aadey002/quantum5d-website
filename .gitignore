@@ -2,6 +2,9 @@ node_modules/
 dist/
 .env
 *.backup
+*.backup.*
+*.bak
 *.original
+_archive/
 
 .vercel

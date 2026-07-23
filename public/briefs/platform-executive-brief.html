@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quantum5D.ai — Platform Executive Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#14112E;--muted:#5E5A78;--line:#E4E1EF;
+  --purple:#4B3F9E;--purple-deep:#3A3080;--purple-pale:#EEEDFB;
+  --card:#FFFFFF;--paper:#FCFBFE;
+}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  color:var(--ink);background:#fff;
+  line-height:1.6;font-size:14px;
+  max-width:800px;margin:0 auto;padding:48px 40px;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Header */
+.brief-header{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:24px;border-bottom:2px solid var(--purple);margin-bottom:32px}
+.brief-brand{font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:var(--purple-deep)}
+.brief-brand small{display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--muted);font-weight:400;margin-top:3px;text-transform:uppercase}
+.brief-meta{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.05em}
+.brief-meta div{margin-bottom:2px}
+
+/* Title */
+.brief-title{font-family:'Newsreader',Georgia,serif;font-size:32px;font-weight:600;line-height:1.1;color:var(--ink);margin-bottom:8px}
+.brief-subtitle{font-size:16px;color:var(--muted);margin-bottom:32px;max-width:60ch}
+
+/* Section */
+.section{margin-bottom:28px}
+.section-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--purple);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.section-label::before{content:"";width:20px;height:1.5px;background:var(--purple)}
+.section h2{font-family:'Newsreader',Georgia,serif;font-size:20px;font-weight:600;margin-bottom:8px;color:var(--ink)}
+.section p{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:10px}
+.section p strong{color:var(--ink);font-weight:600}
+
+/* Architecture */
+.arch-table{width:100%;border-collapse:collapse;margin:12px 0 16px;font-size:13px}
+.arch-table th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);padding:8px 12px;border-bottom:1.5px solid var(--purple);font-weight:500}
+.arch-table td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.arch-table td:first-child{font-weight:600;white-space:nowrap;width:180px}
+.arch-table td:last-child{color:var(--muted)}
+
+/* Application grid */
+.app-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 16px}
+.app-item{padding:10px 14px;border:1px solid var(--line);border-radius:8px;font-size:12px}
+.app-item strong{display:block;font-size:13px;color:var(--ink);margin-bottom:2px}
+.app-item span{color:var(--muted)}
+.app-item .maturity{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--purple);margin-top:4px;display:block}
+
+/* Stats row */
+.stats{display:flex;gap:16px;margin:16px 0;flex-wrap:wrap}
+.stat{flex:1;min-width:140px;padding:14px 16px;background:var(--purple-pale);border-radius:10px;text-align:center}
+.stat .num{font-family:'Newsreader',Georgia,serif;font-size:28px;font-weight:600;color:var(--purple-deep)}
+.stat .label{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* CTA */
+.cta{background:var(--purple-pale);border:1px solid #DAD6F2;border-radius:12px;padding:24px;margin-top:32px;text-align:center}
+.cta h3{font-family:'Newsreader',Georgia,serif;font-size:20px;color:var(--purple-deep);margin-bottom:6px}
+.cta p{font-size:13px;color:var(--muted);margin-bottom:12px}
+.cta a{display:inline-block;background:var(--purple);color:#fff;padding:10px 24px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px}
+
+/* Footer */
+.brief-footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.05em}
+
+/* Print */
+@media print{
+  body{padding:24px;font-size:12px;max-width:100%}
+  .cta a{color:var(--purple);background:none;border:1.5px solid var(--purple);padding:6px 16px}
+  .brief-header{border-bottom-width:1px}
+}
+</style>
+</head>
+<body>
+
+<div class="brief-header">
+  <div>
+    <div class="brief-brand">Quantum5D<small>.ai</small></div>
+  </div>
+  <div class="brief-meta">
+    <div>Executive Brief</div>
+    <div>Platform Overview</div>
+    <div>July 2026</div>
+    <div>CONFIDENTIAL</div>
+  </div>
+</div>
+
+<h1 class="brief-title">The AI Operating Platform for Federally Qualified Health Centers</h1>
+<p class="brief-subtitle">Quantum5D.ai unifies purpose-built applications, healthcare intelligence, and operational workflows into one secure platform designed exclusively for FQHCs.</p>
+
+<div class="stats">
+  <div class="stat"><div class="num">15</div><div class="label">Purpose-built applications</div></div>
+  <div class="stat"><div class="num">5</div><div class="label">FQHC operating domains</div></div>
+  <div class="stat"><div class="num">1</div><div class="label">Unified platform</div></div>
+</div>
+
+<div class="section">
+  <div class="section-label">The Challenge</div>
+  <p>Federally Qualified Health Centers operate within one of the most complex environments in American healthcare &mdash; balancing clinical quality, regulatory compliance, financial sustainability, pharmacy operations, governance, and patient access across multiple sites, payers, and regulatory bodies.</p>
+  <p>Their technology is typically fragmented: EHRs designed for hospitals, pharmacy systems that don&rsquo;t connect to eligibility data, compliance tracked in spreadsheets, governance preparation done manually, and executive decisions made without real-time operational intelligence.</p>
+</div>
+
+<div class="section">
+  <div class="section-label">The Platform</div>
+  <p><strong>Quantum5D.ai</strong> is an AI operating platform purpose-built for the FQHC environment. Every application shares a common foundation of healthcare knowledge, structured workflows, and human oversight &mdash; so intelligence compounds and governance is consistent across the organization.</p>
+
+  <table class="arch-table">
+    <tr><th>Layer</th><th>What it provides</th></tr>
+    <tr><td>Executive Intelligence</td><td>Dashboards, decision support, and role-based views designed for FQHC leaders</td></tr>
+    <tr><td>Applications</td><td>15 purpose-built applications across coverage, compliance, governance, pharmacy, and strategy</td></tr>
+    <tr><td>Knowledge Engine</td><td>HRSA requirements, CMS rules, 340B regulations, pharmacy standards, organizational policies</td></tr>
+    <tr><td>AI Agents</td><td>Risk scoring, document intelligence, recommendation logic &mdash; always governed by rules and human review</td></tr>
+    <tr><td>Policy Engine</td><td>Citations, explainability, human override controls, audit trails</td></tr>
+    <tr><td>Integration</td><td>Designed to support EHR, pharmacy, finance, and quality systems (planned)</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-label">Application Portfolio</div>
+  <div class="app-grid">
+    <div class="app-item"><strong>CoverageGuard IQ</strong><span>Medicaid coverage retention and recertification intelligence</span><div class="maturity">Pilot-Ready</div></div>
+    <div class="app-item"><strong>Board Governance IQ</strong><span>Board preparation, OSV compliance, accountability tracking</span><div class="maturity">Pilot-Ready</div></div>
+    <div class="app-item"><strong>Meeting Intelligence</strong><span>Executive decision queue, RACI tracking, agenda builder</span><div class="maturity">Pilot-Ready</div></div>
+    <div class="app-item"><strong>HRSA OSV Readiness</strong><span>19-area compliance heat map and gap detection</span><div class="maturity">Interactive Prototype</div></div>
+    <div class="app-item"><strong>Collaborative Practice Review</strong><span>Structured DTM application and review workflow</span><div class="maturity">Pilot-Ready</div></div>
+    <div class="app-item"><strong>Compliance Command</strong><span>Multi-site, multi-authority compliance management</span><div class="maturity">Interactive Prototype</div></div>
+    <div class="app-item"><strong>LoopProof</strong><span>Referral loop integrity and documentation assurance</span><div class="maturity">Interactive Prototype</div></div>
+    <div class="app-item"><strong>Technician Program Review</strong><span>AI-assisted regulatory review of training programs</span><div class="maturity">Pilot-Ready</div></div>
+    <div class="app-item"><strong>ServiceLine IQ</strong><span>Service-line analysis against peer benchmarks</span><div class="maturity">Interactive Prototype</div></div>
+    <div class="app-item"><strong>340B IRA Intelligence</strong><span>IRA margin compression and mitigation planning</span><div class="maturity">Interactive Prototype</div></div>
+    <div class="app-item"><strong>PatientFirst Budget Engine</strong><span>Patient-first budgeting with benchmark cascading</span><div class="maturity">Concept Demonstration</div></div>
+    <div class="app-item"><strong>Exec Compensation</strong><span>Peer benchmarking from public filing records</span><div class="maturity">Interactive Prototype</div></div>
+    <div class="app-item"><strong>Rx Abandonment Worklist</strong><span>Risk-scored pharmacy workflow prioritization</span><div class="maturity">Interactive Prototype</div></div>
+    <div class="app-item"><strong>TruReach</strong><span>Patient phone validation and contact integrity</span><div class="maturity">Interactive Prototype</div></div>
+    <div class="app-item"><strong>Sentinel</strong><span>Complaint triage, inspection targeting, sanction consistency</span><div class="maturity">Concept Demonstration</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Founder</div>
+  <p><strong>Dr. Adetoro Oriaifo, PharmD, MBA, CHCEF, FACHE, 340B ACE</strong></p>
+  <p>Quantum5D.ai was created from direct experience leading pharmacy operations, governance initiatives, regulatory compliance, digital transformation, and revenue optimization within Federally Qualified Health Centers. Every application reflects operational challenges experienced firsthand.</p>
+</div>
+
+<div class="section">
+  <div class="section-label">Founding Innovation Partner Program</div>
+  <p>Quantum5D.ai is selecting a limited group of forward-thinking FQHCs to co-design, validate, and pilot applications. Partners receive early access, direct product influence, preferred terms, and dedicated implementation support.</p>
+</div>
+
+<div class="cta">
+  <h3>Schedule an Executive Platform Briefing</h3>
+  <p>A focused 30-minute session covering your priorities, the most relevant applications, and potential pilot pathways.</p>
+  <a href="https://quantum5d.ai/#contact">Schedule a Briefing</a>
+</div>
+
+<div class="brief-footer">
+  <span>&copy; 2026 Quantum5D.ai &middot; Minority-, Pharmacist- &amp; Woman-Owned</span>
+  <span>quantum5d.ai</span>
+</div>
+
+</body>
+</html>
