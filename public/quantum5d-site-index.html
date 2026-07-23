@@ -1019,6 +1019,7 @@ div[style*="Built by an FQHC executive"]{background:var(--paper)!important;borde
     <span class="badge b-pilot" style="font-size:12px;padding:4px 14px">Pilot-ready</span>
     <div style="margin-top:16px">
       <a class="btn btn-primary" href="#innovation-partners" style="margin-right:12px">Discuss a CoverageGuard IQ pilot</a>
+      <a class="btn btn-ghost" href="/briefs/coverageguard-iq-executive-brief.html" target="_blank" style="border-color:rgba(255,255,255,.3);color:#fff">Download Executive Brief</a>
       <a class="btn btn-ghost" onclick="var t=TOOLS.find(function(x){return x.id==='coverage'});if(t)openModal(t);" style="cursor:pointer;border-color:rgba(255,255,255,.3);color:#fff">Launch interactive demo</a>
     </div>
   </div>
@@ -1229,6 +1230,10 @@ var MATURITY_CONFIG = {
   'in_development':         {label:'In Development',          cls:'b-dev',      order:6, desc:'Under active development.'}
 };
 
+
+var BRIEF_MAP = {
+  'coverage': '/briefs/coverageguard-iq-executive-brief.html'
+};
 var TOOLS=[
  {id:"coverage",name:"CoverageGuard IQ",cat:"Coverage & Patient Access",live:true,demo:null,link:true,
   maturity:"pilot_ready",
@@ -1409,6 +1414,9 @@ function openModal(t){
   html+='<button onclick="copyAppLink(\''+appUrl+'\')">Copy Link<span id="copyConf" class="share-copied"></span></button>';
   window._mailHref='mailto:?subject='+encodeURIComponent(shareTitle)+'&body='+encodeURIComponent(shareText+'\n\nExplore: '+appUrl);
   html+='<button onclick="window.location.href=window._mailHref">Email</button>';
+  if(BRIEF_MAP[t.id]){
+    html+='<a href="'+BRIEF_MAP[t.id]+'" target="_blank" style="text-decoration:none">Executive Brief</a>';
+  }
   var liHref='https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(appUrl);
   html+='<a href="'+liHref+'" target="_blank" rel="noopener">in LinkedIn</a>';
   var xHref='https://x.com/intent/tweet?text='+encodeURIComponent(shareTitle)+'&url='+encodeURIComponent(appUrl);
@@ -1538,6 +1546,10 @@ function sendColleagueShare(appId,appName){
 document.addEventListener('input',function(e){
   if(e.target&&(e.target.id==='cf-name'||e.target.id==='cf-org'))updateColleaguePreview();
 });
+
+function trackBriefDownload(appId){
+  if(typeof trackEvent==='function')trackEvent('executive_brief_download',{app:appId});
+}
 
 function copyAppLink(url){
   navigator.clipboard.writeText(url).then(function(){
