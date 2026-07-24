@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Partners — Quantum5D.ai</title>
+<meta name="description" content="Partner with Quantum5D.ai — co-design, pilot, and integrate AI applications for FQHCs and health systems. ICONMA featured partner. Apply to the Innovation Partner Program.">
+<link rel="canonical" href="https://quantum5d.ai/partners">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --purple:#5347A4;--purple-deep:#403592;--purple-soft:#938ABD;--charcoal:#3F3F3F;
+  --navy:#0B0833;--navy2:#171248;--ink:#1C1742;--muted:#6C6790;--soft:#4A4569;
+  --paper:#F6F5FB;--card:#FFFFFF;--line:#E6E3F2;
+  --purple-pale:#F0EEF8;
+}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:#fff;line-height:1.6;font-size:15px;-webkit-font-smoothing:antialiased}
+a{color:var(--purple);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+.btn{display:inline-flex;align-items:center;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;cursor:pointer;border:none;transition:background .15s,transform .15s}
+.btn-primary{background:var(--purple);color:#fff}
+.btn-primary:hover{background:var(--purple-deep);transform:translateY(-1px);text-decoration:none}
+
+/* Nav */
+.nav{position:sticky;top:0;z-index:50;background:rgba(252,251,254,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:72px}
+.brand{display:flex;align-items:center;gap:12px;color:var(--ink);text-decoration:none}
+.brand .wm{font-family:'Newsreader',Georgia,serif;font-weight:600;font-size:21px;letter-spacing:-.01em;color:var(--purple-deep)}
+.brand .wm small{display:block;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.22em;color:var(--muted);margin-top:4px;font-weight:400}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{color:var(--muted);font-size:14px;font-weight:500;border-bottom:1.5px solid transparent;transition:.15s;text-decoration:none}
+.nav-links a:hover{color:var(--ink);border-bottom-color:var(--purple)}
+.nav-links a.active{color:var(--ink);border-bottom-color:var(--purple)}
+.nav-links .btn{background:var(--purple);color:#fff;font-size:13.5px;font-weight:600;padding:10px 18px;border-radius:8px;border:none}
+.nav-links .btn:hover{background:var(--purple-deep);text-decoration:none}
+.nav-toggle{display:none}
+
+/* Sections */
+.sec{padding:74px 0}
+.sec-head{max-width:62ch}
+.sec-head h2{font-family:'Newsreader',Georgia,serif;font-size:38px;font-weight:600;line-height:1.1;margin-bottom:8px}
+.sec-head p{color:var(--soft);font-size:16px;margin-top:12px;line-height:1.65}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--purple-soft);margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:26px;height:1.5px;background:var(--purple);flex-shrink:0}
+
+/* Partner grid */
+.partner-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:34px}
+.partner{border:1px solid var(--line);border-radius:13px;padding:18px;background:#fff;transition:border-color .15s,transform .15s}
+.partner:hover{border-color:var(--purple-soft);transform:translateY(-2px)}
+.partner .pk{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--purple);margin-bottom:7px}
+.partner h4{font-family:'Newsreader',Georgia,serif;font-size:20px;font-weight:600;line-height:1.15;margin-bottom:6px;color:var(--ink)}
+.partner p{font-size:13px;color:var(--soft);line-height:1.5}
+.partner.featured{border-color:var(--purple-soft);background:linear-gradient(180deg,#F8F6FD,#fff);grid-column:1/-1}
+.partner h4 a{color:var(--purple);text-decoration:none}
+.partner h4 a:hover{text-decoration:underline}
+
+/* Info cards */
+.info-grid{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-top:28px}
+.info-card{background:#fff;border:1px solid #DAD6F2;border-radius:14px;padding:24px}
+.info-card h3{color:var(--ink);font-size:17px;margin:0 0 10px}
+.info-card ul{color:var(--muted);font-size:14px;line-height:1.8;padding-left:18px;margin:0}
+
+/* Form */
+.form-card{max-width:580px;margin:40px auto 0;background:#fff;border:1px solid #DAD6F2;border-radius:18px;padding:32px}
+.form-card h3{color:var(--ink);text-align:center;margin:0 0 6px}
+.form-card .sub{color:var(--muted);text-align:center;font-size:13px;margin:0 0 24px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{margin-bottom:13px}
+.field label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--purple-deep);display:block;margin-bottom:5px}
+.field input,.field textarea,.field select{width:100%;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:14px;font-family:'Inter',sans-serif;color:var(--ink);transition:border-color .15s}
+.field input::placeholder,.field textarea::placeholder{color:#9992B8}
+.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--purple-soft);box-shadow:0 0 0 3px rgba(83,71,164,.08)}
+.consent-row{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.consent-row input{width:auto;margin:0}
+.consent-row label{font-size:12px;color:var(--muted);cursor:pointer}
+
+/* Footer */
+footer{padding:42px 0;color:var(--muted);font-size:13px}
+.foot-in{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
+
+/* Responsive */
+@media(max-width:768px){
+  .nav-toggle{display:flex;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px}
+  .nav-toggle span{display:block;width:22px;height:2px;background:var(--ink);border-radius:2px;transition:all .2s}
+  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:var(--paper);padding:16px 24px;flex-direction:column;gap:8px;border-top:1px solid var(--line);box-shadow:0 8px 24px rgba(0,0,0,.08)}
+  .nav-links.nav-open{display:flex}
+  .nav-links a{display:block;padding:10px 0;font-size:15px}
+  .nav-links .btn{text-align:center;margin-top:8px}
+  .sec-head h2{font-size:28px}
+  .form-row{grid-template-columns:1fr}
+  .partner.featured{grid-column:auto}
+  .foot-in{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="wrap nav-in">
+  <a class="brand" href="/">
+    <div class="wm">Quantum5D<small>.ai</small></div>
+  </a>
+  <div class="nav-links">
+    <a href="/">Platform</a>
+    <a href="/applications">Applications</a>
+    <a href="/partners" class="active">Partners</a>
+    <a href="/services">Services</a>
+    <a href="/roadmap">Roadmap</a>
+    <a href="/security-and-trust">Security &amp; Trust</a>
+    <a class="btn btn-primary" href="/#contact">Schedule a Briefing</a>
+  </div>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('nav-open')" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</div></nav>
+
+<!-- HERO -->
+<section class="sec" style="padding-bottom:40px"><div class="wrap">
+  <div class="sec-head">
+    <p class="eyebrow">Partners &amp; collaborators</p>
+    <h2>Let's build this together</h2>
+    <p>The applications above are stronger inside the systems clinicians and boards already use. We are actively welcoming partners and collaborators who want to co-design, pilot, and integrate — turning prototypes into infrastructure.</p>
+  </div>
+</div></section>
+
+<!-- PARTNER GRID -->
+<section class="sec" style="padding-top:0"><div class="wrap">
+  <div class="partner-grid">
+    <div class="partner featured"><div class="pk">Featured partner</div><h4><a href="https://www.iconma.com/technology-services/data-analytics-ai" target="_blank" rel="noopener">ICONMA &#8594;</a></h4><p>Data, analytics, and AI engineering partner — bringing enterprise delivery capability to move these prototypes into production-grade, integrated systems.</p></div>
+    <div class="partner"><div class="pk">EMR / EHR vendors</div><h4>Embed intelligence in the record</h4><p>Surface coverage, compliance, and 340B insight where care is documented — integrations that make the chart do more.</p></div>
+    <div class="partner"><div class="pk">Pharmacy management systems</div><h4>Extend the pharmacy workflow</h4><p>Bring number validation, abandonment scoring, and 340B intelligence into dispensing and will-call — natively.</p></div>
+    <div class="partner"><div class="pk">State boards &amp; agencies</div><h4>Pilot AI-assist for oversight</h4><p>Faster, more consistent complaint triage, inspection targeting, and application review — with a human always deciding.</p></div>
+    <div class="partner"><div class="pk">Forward-thinking FQHCs &amp; CEs</div><h4>Co-design on real workflows</h4><p>Shape and pilot applications on your operations, from OSV readiness to service-line strategy and patient-first budgeting.</p></div>
+    <div class="partner"><div class="pk">340B TPAs &amp; contract-pharmacy networks</div><h4>Sharpen coverage &amp; IRA insight</h4><p>Layer duplicate-discount prevention, recertification, and IRA margin intelligence onto existing 340B operations.</p></div>
+    <div class="partner"><div class="pk">Health plans &amp; MCOs</div><h4>Keep members covered</h4><p>Partner on coverage recertification and retention so eligible members don't fall off at redetermination.</p></div>
+  </div>
+</div></section>
+
+<!-- INNOVATION PARTNER PROGRAM -->
+<section class="sec" style="background:var(--purple-pale)"><div class="wrap">
+  <div class="sec-head">
+    <p class="eyebrow" style="color:var(--purple-soft)">Founding Innovation Partner Program</p>
+    <h2 style="color:var(--ink)">Help shape the future operating platform for FQHCs</h2>
+  </div>
+  <div class="info-grid">
+    <div class="info-card">
+      <h3>Ideal partners</h3>
+      <ul>
+        <li>Multi-site FQHCs</li>
+        <li>Health centers with executive sponsorship</li>
+        <li>Organizations experiencing measurable operational or coverage challenges</li>
+        <li>FQHCs interested in AI-assisted workflows</li>
+        <li>Organizations willing to participate in structured evaluation</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h3>Partner participation</h3>
+      <ul>
+        <li>Define and validate priority use cases</li>
+        <li>Participate in workflow-discovery sessions</li>
+        <li>Review prototypes and pilot selected applications</li>
+        <li>Provide implementation feedback</li>
+        <li>Participate in outcome measurement</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h3>Partner benefits</h3>
+      <ul>
+        <li>Early access to selected applications</li>
+        <li>Direct influence over product development</li>
+        <li>Preferred founding-partner terms</li>
+        <li>Dedicated implementation support</li>
+        <li>Priority access to future modules</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- APPLICATION FORM -->
+  <div class="form-card">
+    <h3>Apply to become a founding innovation partner</h3>
+    <p class="sub">We review every application and respond within five business days.</p>
+    <div class="form-row"><div class="field"><label>Name</label><input id="ip-name" placeholder="Your full name"></div><div class="field"><label>Title</label><input id="ip-title" placeholder="Your role"></div></div>
+    <div class="form-row"><div class="field"><label>Organization</label><input id="ip-org" placeholder="Health center name"></div><div class="field"><label>Email</label><input id="ip-email" placeholder="you@org.com"></div></div>
+    <div class="form-row"><div class="field"><label>Number of sites</label><input id="ip-sites" placeholder="e.g. 5" type="number"></div><div class="field"><label>State</label><input id="ip-state" placeholder="e.g. State or territory"></div></div>
+    <div class="field"><label>Priority operational challenge</label><textarea id="ip-challenge" rows="2" placeholder="What operational, coverage, compliance, or financial challenge is most pressing?"></textarea></div>
+    <div class="field"><label>Area of interest</label><select id="ip-interest" aria-label="Area of interest"><option value="">Select an area</option><option value="coverage">Coverage &amp; Patient Access</option><option value="compliance">Compliance &amp; Regulatory Readiness</option><option value="governance">Governance &amp; Executive Intelligence</option><option value="pharmacy">Pharmacy &amp; Clinical Operations</option><option value="strategy">Strategy, Finance &amp; Sustainability</option><option value="multiple">Multiple areas</option></select></div>
+    <div class="field" style="display:none"><input id="ip-hp" placeholder="Leave blank" tabindex="-1" autocomplete="off"></div>
+    <div class="consent-row"><input type="checkbox" id="ip-consent"><label for="ip-consent">I consent to follow-up communication regarding the Innovation Partner Program.</label></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="submitPartnerApplication()">Submit application &#8594;</button>
+    <div id="ip-note" role="status" aria-live="polite" style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--purple-soft);text-align:center;margin-top:10px"></div>
+  </div>
+</div></section>
+
+<footer><div class="wrap foot-in">
+  <div>&copy; <span id="yr"></span> Quantum5D.ai &middot; Minority-, Pharmacist- &amp; Woman-Owned &middot; Nationwide</div>
+  <div><a href="/security-and-trust" style="color:inherit;margin-right:16px">Security &amp; Trust</a><a href="https://quantum5d.ai" style="color:inherit">quantum5d.ai</a></div>
+</div></footer>
+
+<script>
+document.getElementById('yr').textContent=new Date().getFullYear();
+
+function isValidEmail(email){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);}
+
+function submitPartnerApplication(){
+  var hp=document.getElementById('ip-hp');
+  if(hp&&hp.value){return;}
+  var consent=document.getElementById('ip-consent');
+  if(!consent||!consent.checked){
+    document.getElementById('ip-note').textContent='Please check the consent box to continue.';
+    return;
+  }
+  var fields={
+    name:document.getElementById('ip-name').value.trim(),
+    title:document.getElementById('ip-title').value.trim(),
+    organization:document.getElementById('ip-org').value.trim(),
+    email:document.getElementById('ip-email').value.trim(),
+    sites:document.getElementById('ip-sites').value.trim(),
+    state:document.getElementById('ip-state').value.trim(),
+    challenge:document.getElementById('ip-challenge').value.trim(),
+    interest:document.getElementById('ip-interest').value
+  };
+  if(!fields.name||!fields.email||!fields.organization){
+    document.getElementById('ip-note').textContent='Please fill in your name, organization, and email.';
+    return;
+  }
+  if(!isValidEmail(fields.email)){
+    document.getElementById('ip-note').textContent='Please enter a valid email address.';
+    return;
+  }
+  var ipBtn=document.querySelector('.form-card .btn');
+  if(ipBtn&&ipBtn.disabled)return;
+  if(ipBtn)ipBtn.disabled=true;
+  document.getElementById('ip-note').textContent='Submitting...';
+  var ipTimeout=setTimeout(function(){
+    document.getElementById('ip-note').textContent='Taking longer than expected. Please try again or email hello@quantum5d.ai.';
+    if(ipBtn)ipBtn.disabled=false;
+  },15000);
+  fetch('/api/contact',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      name:fields.name,
+      email:fields.email,
+      organization:fields.organization,
+      message:'INNOVATION PARTNER APPLICATION\nTitle: '+fields.title+'\nSites: '+fields.sites+'\nState: '+fields.state+'\nArea of interest: '+fields.interest+'\nPriority challenge: '+fields.challenge
+    })
+  }).then(function(r){return r.json();}).then(function(d){
+    clearTimeout(ipTimeout);
+    document.getElementById('ip-note').textContent='Application received. We will be in touch within five business days.';
+    document.getElementById('ip-note').style.color='#4ade80';
+  }).catch(function(){
+    clearTimeout(ipTimeout);
+    document.getElementById('ip-note').textContent='Something went wrong. Please email hello@quantum5d.ai directly.';
+  }).finally(function(){if(ipBtn)ipBtn.disabled=false;});
+}
+</script>
+</body>
+</html>

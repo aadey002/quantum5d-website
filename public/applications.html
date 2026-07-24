@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Applications — Quantum5D.ai</title>
+<meta name="description" content="15 purpose-built applications for FQHCs — coverage retention, compliance readiness, board governance, financial strategy, and pharmacy operations.">
+<meta name="keywords" content="FQHC applications, 340B, HRSA OSV, board governance, pharmacy operations, compliance, Medicaid, health center technology">
+<link rel="canonical" href="https://quantum5d.ai/applications">
+<meta property="og:title" content="Applications — Quantum5D.ai">
+<meta property="og:description" content="15 purpose-built applications for Federally Qualified Health Centers across coverage, compliance, governance, finance, and pharmacy operations.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://quantum5d.ai/applications">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --purple:#5347A4;--purple-deep:#403592;--purple-soft:#938ABD;--charcoal:#3F3F3F;
+  --navy:#0B0833;--navy2:#171248;--ink:#1C1742;--muted:#6C6790;--soft:#4A4569;
+  --paper:#F6F5FB;--card:#FFFFFF;--line:#E6E3F2;
+}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* Nav */
+.nav{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:100}
+.wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{text-decoration:none;color:var(--ink)}
+.wm{font-family:'Newsreader',Georgia,serif;font-size:22px;font-weight:600}
+.wm small{font-size:14px;color:var(--purple);font-weight:400}
+.nav-links{display:flex;align-items:center;gap:24px;font-size:14px}
+.nav-links a{color:var(--muted);text-decoration:none;font-weight:500;transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--ink)}
+.nav-links a.active{border-bottom:2px solid var(--purple);padding-bottom:2px}
+.btn{padding:8px 18px;border-radius:8px;font-weight:600;text-decoration:none;display:inline-block;font-size:14px;transition:background .2s}
+.btn-primary{background:var(--purple);color:#fff}
+.btn-primary:hover{background:var(--purple-deep)}
+.nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:6px}
+.nav-toggle span{display:block;width:22px;height:2px;background:var(--ink);margin:5px 0;border-radius:2px}
+
+/* Hero */
+.hero{text-align:center;padding:64px 24px 48px}
+.hero h1{font-family:'Newsreader',Georgia,serif;font-size:42px;font-weight:600;color:var(--ink);margin-bottom:12px;line-height:1.15}
+.hero p{font-size:17px;color:var(--muted);max-width:620px;margin:0 auto;line-height:1.6}
+.hero .count{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--purple);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
+
+/* Filters */
+.filters{padding:0 24px 32px;max-width:1140px;margin:0 auto}
+.filter-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.filter-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-right:8px;min-width:70px}
+.filter-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--line);background:#fff;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;font-family:'Inter',system-ui,sans-serif}
+.filter-btn:hover{border-color:var(--purple-soft);color:var(--ink)}
+.filter-btn.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+.role-select{padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:#fff;color:var(--muted);font-size:13px;font-family:'Inter',system-ui,sans-serif;cursor:pointer;appearance:auto}
+
+/* Category sections */
+.cat-section{max-width:1140px;margin:0 auto;padding:0 24px 40px}
+.cat-header{margin-bottom:20px}
+.cat-header h2{font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.cat-header p{font-size:14px;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+
+/* Card */
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;transition:box-shadow .2s,border-color .2s}
+.card:hover{box-shadow:0 4px 20px rgba(83,71,164,.08);border-color:var(--purple-soft)}
+.card-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.card h3{font-family:'Newsreader',Georgia,serif;font-size:18px;font-weight:600;color:var(--ink);line-height:1.3}
+.card .problem{font-size:13px;color:var(--soft);line-height:1.55;margin-bottom:14px;flex:1}
+.card-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.tag{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.05em;padding:3px 8px;border-radius:4px;background:var(--paper);color:var(--muted);border:1px solid var(--line)}
+.card-link{font-size:13px;font-weight:600;color:var(--purple);text-decoration:none;margin-top:auto}
+.card-link:hover{text-decoration:underline}
+
+/* Maturity badges */
+.badge{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.05em;padding:3px 10px;border-radius:12px;font-weight:500;white-space:nowrap;text-transform:uppercase}
+.b-active{background:#D1FAE5;color:#065F46}
+.b-pilot{background:#DBEAFE;color:#1E40AF}
+.b-proto{background:#FEF3C7;color:#92400E}
+.b-design{background:#EDE9FE;color:#5B21B6}
+.b-concept{background:#F1F5F9;color:#475569}
+.b-dev{background:#F3F4F6;color:#6B7280}
+
+/* Hidden state */
+.cat-section.hidden,.card.hidden{display:none}
+
+/* Footer */
+footer{background:var(--navy);color:rgba(255,255,255,.6);padding:32px 24px;font-size:13px;margin-top:40px}
+.foot-in{display:flex;justify-content:space-between;align-items:center;max-width:1140px;margin:0 auto;flex-wrap:wrap;gap:12px}
+
+/* Mobile */
+@media(max-width:768px){
+  .nav-links{display:none;position:absolute;top:64px;left:0;right:0;background:#fff;flex-direction:column;padding:16px 24px;border-bottom:1px solid var(--line);gap:12px;z-index:99}
+  .nav-links.nav-open{display:flex}
+  .nav-toggle{display:block}
+  .hero h1{font-size:30px}
+  .hero p{font-size:15px}
+  .cards{grid-template-columns:1fr}
+  .filter-row{gap:6px}
+  .filter-btn{font-size:12px;padding:5px 10px}
+  .foot-in{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="wrap nav-in">
+  <a class="brand" href="/">
+    <div class="wm">Quantum5D<small>.ai</small></div>
+  </a>
+  <div class="nav-links">
+    <a href="/">Platform</a>
+    <a href="/applications" class="active">Applications</a>
+    <a href="/partners">Partners</a>
+    <a href="/services">Services</a>
+    <a href="/roadmap">Roadmap</a>
+    <a href="/security-and-trust">Security &amp; Trust</a>
+    <a class="btn btn-primary" href="/#contact">Schedule a Briefing</a>
+  </div>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('nav-open')" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</div></nav>
+
+<section class="hero">
+  <div class="count">Quantum5D.ai Platform</div>
+  <h1>15 Purpose-Built Applications</h1>
+  <p>Each application addresses a specific operational challenge facing Federally Qualified Health Centers — from coverage retention and compliance readiness to board governance and pharmacy operations.</p>
+</section>
+
+<div class="filters" id="filters">
+  <div class="filter-row">
+    <span class="filter-label">Category</span>
+    <button class="filter-btn active" data-cat="all" onclick="filterCat(this)">All</button>
+  </div>
+  <div class="filter-row">
+    <span class="filter-label">Role</span>
+    <select class="role-select" id="roleSelect" onchange="filterRole(this.value)">
+      <option value="all">All Roles</option>
+    </select>
+  </div>
+</div>
+
+<div id="app-root"></div>
+
+<footer><div class="wrap foot-in">
+  <div>&copy; <span id="yr"></span> Quantum5D.ai &middot; Minority-, Pharmacist- &amp; Woman-Owned &middot; Nationwide</div>
+  <div><a href="/security-and-trust" style="color:inherit;margin-right:16px">Security &amp; Trust</a><a href="https://quantum5d.ai" style="color:inherit">quantum5d.ai</a></div>
+</div></footer>
+
+<script>
+document.getElementById('yr').textContent=new Date().getFullYear();
+
+var MATURITY_CONFIG = {
+  'in_active_use':          {label:'In Active Use',           cls:'b-active',   order:1, desc:'Used in an ongoing real-world operational workflow by actual users.'},
+  'pilot_ready':            {label:'Pilot-Ready',             cls:'b-pilot',    order:2, desc:'Core workflow ready for a controlled pilot subject to security review.'},
+  'interactive_prototype':  {label:'Interactive Prototype',   cls:'b-proto',    order:3, desc:'Demonstrates intended functionality using synthetic data.'},
+  'design_partner':         {label:'Design Partner Development', cls:'b-design', order:4, desc:'Being shaped with prospective users before controlled pilot.'},
+  'concept_demonstration':  {label:'Concept Demonstration',   cls:'b-concept',  order:5, desc:'Illustrates a proposed workflow or product direction.'},
+  'in_development':         {label:'In Development',          cls:'b-dev',      order:6, desc:'Under active development.'}
+};
+
+var TOOLS=[
+ {id:"coverage",name:"CoverageGuard IQ",cat:"Coverage & Patient Access",maturity:"pilot_ready",
+  problem:"Six-month Medicaid redeterminations push eligible patients off coverage.",
+  desc:"An FQHC-native coverage-intelligence platform that closes the whole Medicaid recertification loop.",
+  tags:["Medicaid","Recertification","Coverage intelligence"],
+  audience:["CEO","COO","CFO","VP Population Health","Revenue Cycle","Eligibility","Pharmacy Director"]},
+ {id:"osv",name:"HRSA OSV Readiness Assistant",cat:"Compliance & Regulatory Readiness",maturity:"interactive_prototype",
+  problem:"Operational site visits surface compliance gaps far too late.",
+  desc:"Scores overall HRSA OSV readiness across a 19-area compliance heat map.",
+  tags:["HRSA OSV","Compliance","Heat map"],
+  audience:["CEO","COO","Compliance Officer","VP Quality","Board Secretary"]},
+ {id:"dtm",name:"Collaborative Practice Review",cat:"Compliance & Regulatory Readiness",maturity:"pilot_ready",
+  problem:"Drug Therapy Management applications and reviews are paper-bound and slow.",
+  desc:"A DTM application and review workflow built for boards — structured submission, a reviewer queue, and status tracking.",
+  tags:["DTM","Regulatory","Workflow"],
+  audience:["CIO","Compliance Officer","Board Staff","Regulatory Affairs"]},
+ {id:"certiq",name:"Technician Program Review",cat:"Compliance & Regulatory Readiness",maturity:"pilot_ready",
+  problem:"Board reviewers hand-check training-program packets against state regulatory requirements.",
+  desc:"AI-assisted regulatory review that crosswalks a pharmacy-technician training program against requirements.",
+  tags:["Regulatory review","Requirements crosswalk","AI-assisted"],
+  audience:["CIO","Compliance Officer","Board Staff","Regulatory Affairs"]},
+ {id:"sentinel",name:"Sentinel",cat:"Compliance & Regulatory Readiness",maturity:"concept_demonstration",
+  problem:"Compliance teams triage complaints and target inspections by hand.",
+  desc:"An AI-assist reasoning layer for regulatory back-office work: complaint triage, inspection targeting, application checks.",
+  tags:["Regulatory","Risk triage","AI-assisted"],
+  audience:["Compliance Officer","Regulatory Affairs","Board Staff","CIO"]},
+ {id:"compliance",name:"Compliance Command",cat:"Compliance & Regulatory Readiness",maturity:"interactive_prototype",
+  problem:"Compliance obligations scattered across multiple regulatory bodies — tracked in spreadsheets.",
+  desc:"One command center for every compliance requirement across multiple sites and regulatory authorities.",
+  tags:["Compliance","Multi-entity","Audit-ready"],
+  audience:["CEO","COO","Compliance Officer","VP Quality","CIO"]},
+ {id:"loopproof",name:"LoopProof",cat:"Compliance & Regulatory Readiness",maturity:"interactive_prototype",
+  problem:"Referrals leave the building and never close — no report back, no proof for a site visit.",
+  desc:"A referral loop integrity engine for FQHCs — audits whether referral loops actually close.",
+  tags:["Closed-loop referrals","OSV readiness","Assurance"],
+  audience:["CMO","CQO","VP Quality","Risk Officer"]},
+ {id:"board",name:"Board Governance IQ",cat:"Governance & Executive Intelligence",maturity:"pilot_ready",
+  problem:"Board prep eats executive time; HRSA OSV gaps create risk.",
+  desc:"Turns a board packet into a 10-11 slide executive summary with built-in HRSA OSV compliance checker.",
+  tags:["Governance","OSV checker","Summarization"],
+  audience:["CEO","Board Chair","Board Secretary","COO"]},
+ {id:"meeting",name:"Meeting Intelligence",cat:"Governance & Executive Intelligence",maturity:"pilot_ready",
+  problem:"Decisions made in 1:1s and ELT meetings slip through the cracks.",
+  desc:"Decision queue, RACI tracking, strategic-plan progress, and automated agenda builder.",
+  tags:["RACI","Decision queue","Agendas"],
+  audience:["CEO","COO","CMO","CFO","CPO"]},
+ {id:"benchmark",name:"Exec Compensation Benchmarking",cat:"Governance & Executive Intelligence",maturity:"interactive_prototype",
+  problem:"Comp decisions made without defensible market data — a board and IRS risk.",
+  desc:"Benchmarks executive roles against peer compensation from public filing records.",
+  tags:["Governance","Comp benchmarking","Public filings"],
+  audience:["CEO","Board Chair","CFO","Compensation Committee"]},
+ {id:"serviceline",name:"ServiceLine IQ",cat:"Strategy, Finance & Sustainability",maturity:"interactive_prototype",
+  problem:"Service-line decisions made on gut feel, not peer benchmarks.",
+  desc:"An FQHC service-line analyzer — plots productivity against cost-per-visit, frames each as Kill/Fix/Invest/Grow/Keep.",
+  tags:["FQHC analytics","Industry benchmarks","Strategy"],
+  audience:["CEO","COO","CFO","VP Operations"]},
+ {id:"ira",name:"340B IRA Intelligence",cat:"Strategy, Finance & Sustainability",maturity:"interactive_prototype",
+  problem:"IRA drug-price negotiation quietly compresses 340B margin.",
+  desc:"A 340B x IRA intelligence platform: maps Maximum Fair Price timelines against claims, quantifies margin compression.",
+  tags:["340B","IRA / MFP","Margin analytics"],
+  audience:["CFO","CPO","340B Director","Pharmacy Director"]},
+ {id:"budget",name:"PatientFirst Budget Engine",cat:"Strategy, Finance & Sustainability",maturity:"concept_demonstration",
+  problem:"FQHC budgets built backward from last year instead of from patients you plan to serve.",
+  desc:"A patient-first budgeting model: set a target, service mix, and staffing — it cascades to total budget.",
+  tags:["FQHC finance","Budgeting","Industry benchmarks"],
+  audience:["CEO","CFO","COO","VP Finance"]},
+ {id:"abandon",name:"Rx Abandonment Worklist",cat:"Pharmacy & Clinical Operations",maturity:"interactive_prototype",
+  problem:"Pharmacy staff chase the wrong will-call scripts and miss the ones that matter.",
+  desc:"Scores prescriptions by abandonment risk x clinical criticality, routes the right action and channel.",
+  tags:["Pharmacy ops","Risk scoring","Worklist"],
+  audience:["CPO","Pharmacy Director","Pharmacy Manager"]},
+ {id:"trureach",name:"TruReach",cat:"Pharmacy & Clinical Operations",maturity:"interactive_prototype",
+  problem:"No-shows pile up when appointment reminders never reach the patient.",
+  desc:"Validates patient phone numbers — green for valid/textable, blue for landline, red for invalid.",
+  tags:["No-show reduction","Validation","Patient outreach"],
+  audience:["COO","CIO","Pharmacy Director","Population Health"]}
+];
+
+var CATS=[
+ {key:"Coverage & Patient Access",blurb:"Coverage retention, recertification workflow, eligibility reconciliation, and patient continuity."},
+ {key:"Compliance & Regulatory Readiness",blurb:"Site-visit readiness, regulatory review, compliance management, and referral integrity."},
+ {key:"Governance & Executive Intelligence",blurb:"Board preparation, executive decision support, accountability tracking, and compensation governance."},
+ {key:"Strategy, Finance & Sustainability",blurb:"Service-line analysis, revenue intelligence, budgeting, and 340B margin strategy."},
+ {key:"Pharmacy & Clinical Operations",blurb:"Pharmacy workflow optimization, patient reachability, and clinical operations."}
+];
+
+/* Build category filter buttons */
+(function(){
+  var row = document.querySelector('.filter-row');
+  for(var i=0;i<CATS.length;i++){
+    var b = document.createElement('button');
+    b.className = 'filter-btn';
+    b.setAttribute('data-cat', CATS[i].key);
+    b.setAttribute('onclick', 'filterCat(this)');
+    b.textContent = CATS[i].key;
+    row.appendChild(b);
+  }
+})();
+
+/* Build role dropdown */
+(function(){
+  var sel = document.getElementById('roleSelect');
+  var roles = {};
+  for(var i=0;i<TOOLS.length;i++){
+    var aud = TOOLS[i].audience;
+    for(var j=0;j<aud.length;j++){
+      roles[aud[j]] = true;
+    }
+  }
+  var sorted = Object.keys(roles).sort();
+  for(var k=0;k<sorted.length;k++){
+    var opt = document.createElement('option');
+    opt.value = sorted[k];
+    opt.textContent = sorted[k];
+    sel.appendChild(opt);
+  }
+})();
+
+/* Render */
+function renderAll(){
+  var root = document.getElementById('app-root');
+  var html = '';
+  for(var c=0;c<CATS.length;c++){
+    var cat = CATS[c];
+    var catTools = [];
+    for(var t=0;t<TOOLS.length;t++){
+      if(TOOLS[t].cat === cat.key) catTools.push(TOOLS[t]);
+    }
+    html += '<section class="cat-section" data-cat="' + cat.key + '">';
+    html += '<div class="cat-header"><h2>' + cat.key + '</h2><p>' + cat.blurb + '</p></div>';
+    html += '<div class="cards">';
+    for(var i=0;i<catTools.length;i++){
+      var tool = catTools[i];
+      var m = MATURITY_CONFIG[tool.maturity];
+      var tagHtml = '';
+      for(var j=0;j<tool.tags.length;j++){
+        tagHtml += '<span class="tag">' + tool.tags[j] + '</span>';
+      }
+      var audAttr = tool.audience.join(',');
+      html += '<div class="card" data-audiences="' + audAttr + '">';
+      html += '<div class="card-top">';
+      html += '<span class="badge ' + m.cls + '">' + m.label + '</span>';
+      html += '</div>';
+      html += '<h3>' + tool.name + '</h3>';
+      html += '<p class="problem">' + tool.problem + '</p>';
+      html += '<div class="card-tags">' + tagHtml + '</div>';
+      html += '<a class="card-link" href="/applications/' + tool.id + '">View details &rarr;</a>';
+      html += '</div>';
+    }
+    html += '</div></section>';
+  }
+  root.innerHTML = html;
+}
+renderAll();
+
+/* Category filter */
+var activeCat = 'all';
+var activeRole = 'all';
+
+function filterCat(btn){
+  activeCat = btn.getAttribute('data-cat');
+  var btns = document.querySelectorAll('.filter-btn');
+  for(var i=0;i<btns.length;i++){
+    btns[i].className = 'filter-btn' + (btns[i].getAttribute('data-cat') === activeCat ? ' active' : '');
+  }
+  applyFilters();
+}
+
+function filterRole(val){
+  activeRole = val;
+  applyFilters();
+}
+
+function applyFilters(){
+  var sections = document.querySelectorAll('.cat-section');
+  for(var s=0;s<sections.length;s++){
+    var sec = sections[s];
+    var secCat = sec.getAttribute('data-cat');
+    var catMatch = (activeCat === 'all' || secCat === activeCat);
+    var cards = sec.querySelectorAll('.card');
+    var visibleCount = 0;
+    for(var c=0;c<cards.length;c++){
+      var card = cards[c];
+      var roleMatch = true;
+      if(activeRole !== 'all'){
+        var auds = card.getAttribute('data-audiences').split(',');
+        roleMatch = false;
+        for(var a=0;a<auds.length;a++){
+          if(auds[a] === activeRole){roleMatch = true;break;}
+        }
+      }
+      if(catMatch && roleMatch){
+        card.className = 'card';
+        visibleCount++;
+      } else {
+        card.className = 'card hidden';
+      }
+    }
+    sec.className = (catMatch && visibleCount > 0) ? 'cat-section' : 'cat-section hidden';
+  }
+}
+</script>
+</body>
+</html>
