@@ -129,5 +129,55 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   }
 
+    // --- 3. Auto-reply with free resources for exit-intent / prototype captures ---
+    if (resendKey && (lead.source === 'exit-intent' || lead.source === 'lcProto' || lead.source === 'lcExit')) {
+      try {
+        const firstName = lead.name.split(' ')[0]
+        const resourceHtml = '<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px">'
+          + '<div style="background:linear-gradient(135deg,#581c87,#7c3aed);padding:30px;border-radius:12px 12px 0 0;text-align:center">'
+          + '<h1 style="color:#fff;margin:0;font-size:24px">Your Quantum5D Platform Overview</h1>'
+          + '<p style="color:#e9d5ff;margin:10px 0 0">The AI Operating System for FQHCs</p>'
+          + '</div>'
+          + '<div style="background:#fff;border:1px solid #e5e7eb;border-top:none;padding:30px;border-radius:0 0 12px 12px">'
+          + '<p style="color:#374151;font-size:16px">Hi ' + firstName + ',</p>'
+          + '<p style="color:#374151;font-size:16px">Thanks for exploring Quantum5D. Here are some resources to get you started:</p>'
+          + '<div style="margin:20px 0">'
+          + '<div style="background:#f3e8ff;padding:16px;border-radius:8px;margin-bottom:12px">'
+          + '<a href="https://quantum5d.ai/briefs/platform-executive-brief.html" style="color:#7c3aed;font-weight:bold;font-size:16px;text-decoration:none">Platform Executive Brief</a>'
+          + '<p style="color:#6b21a8;margin:4px 0 0;font-size:14px">Full overview of all 15 FQHC applications</p>'
+          + '</div>'
+          + '<div style="background:#f3e8ff;padding:16px;border-radius:8px;margin-bottom:12px">'
+          + '<a href="https://quantum5d.ai/briefs/coverageguard-iq-executive-brief.html" style="color:#7c3aed;font-weight:bold;font-size:16px;text-decoration:none">CoverageGuard IQ Brief</a>'
+          + '<p style="color:#6b21a8;margin:4px 0 0;font-size:14px">Our flagship application for retroactive eligibility compliance</p>'
+          + '</div>'
+          + '<div style="background:#f3e8ff;padding:16px;border-radius:8px;margin-bottom:12px">'
+          + '<a href="https://quantum5dconsulting.com/resources/340B-Program-Compliance-Checklist.pdf" style="color:#7c3aed;font-weight:bold;font-size:16px;text-decoration:none">340B Compliance Checklist (PDF)</a>'
+          + '<p style="color:#6b21a8;margin:4px 0 0;font-size:14px">HRSA audit preparation and compliance gap analysis</p>'
+          + '</div>'
+          + '</div>'
+          + '<p style="color:#374151;font-size:16px">Ready to see how these applications work for your organization? <a href="https://quantum5d.ai/#contact" style="color:#7c3aed;font-weight:bold">Schedule an Executive Briefing</a></p>'
+          + '<hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0">'
+          + '<p style="color:#9ca3af;font-size:12px;text-align:center">Quantum5D.ai | The AI Operating System for FQHCs</p>'
+          + '</div></body></html>'
+
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + resendKey,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: 'Quantum 5D <alerts@quantum5dconsulting.com>',
+            to: [lead.email],
+            subject: 'Your Quantum5D Platform Overview',
+            html: resourceHtml,
+          }),
+        })
+      } catch (e) {
+        console.error('Auto-reply error:', e)
+      }
+    }
+  }
+
   return res.status(200).json({ success: true })
 }
