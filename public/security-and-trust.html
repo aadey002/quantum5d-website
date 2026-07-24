@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security &amp; Trust — Quantum5D.ai</title>
+<meta name="description" content="How Quantum5D.ai approaches data security, privacy, responsible AI, and governance for Federally Qualified Health Centers.">
+<link rel="canonical" href="https://quantum5d.ai/security-and-trust">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#14112E;--muted:#5E5A78;--line:#E4E1EF;
+  --purple:#4B3F9E;--purple-deep:#3A3080;--purple-pale:#EEEDFB;
+  --card:#FFFFFF;--paper:#FCFBFE;
+  --green:#0D9488;--green-pale:#E6F7F5;
+}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  color:var(--ink);background:#fff;
+  line-height:1.6;font-size:14px;
+  max-width:800px;margin:0 auto;padding:48px 40px;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Header */
+.brief-header{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:24px;border-bottom:2px solid var(--purple);margin-bottom:32px}
+.brief-brand{font-family:'Newsreader',Georgia,serif;font-size:24px;font-weight:600;color:var(--purple-deep)}
+.brief-brand small{display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--muted);font-weight:400;margin-top:3px;text-transform:uppercase}
+.brief-meta{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.05em}
+.brief-meta div{margin-bottom:2px}
+
+/* Title */
+.brief-title{font-family:'Newsreader',Georgia,serif;font-size:32px;font-weight:600;line-height:1.1;color:var(--ink);margin-bottom:8px}
+.brief-subtitle{font-size:16px;color:var(--muted);margin-bottom:32px;max-width:60ch}
+
+/* Section */
+.section{margin-bottom:28px}
+.section-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--purple);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.section-label::before{content:"";width:20px;height:1.5px;background:var(--purple)}
+.section h2{font-family:'Newsreader',Georgia,serif;font-size:20px;font-weight:600;margin-bottom:8px;color:var(--ink)}
+.section p{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:10px}
+.section p strong{color:var(--ink);font-weight:600}
+
+/* Principle cards */
+.principles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.principle{padding:16px;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+.principle-icon{font-size:20px;margin-bottom:6px}
+.principle h3{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.principle p{font-size:12px;color:var(--muted);line-height:1.55;margin:0}
+
+/* Commitment list */
+.commitments{list-style:none;padding:0;margin:12px 0 16px}
+.commitments li{padding:10px 14px;border-left:3px solid var(--purple);margin-bottom:8px;background:var(--paper);border-radius:0 8px 8px 0;font-size:13px;color:var(--muted)}
+.commitments li strong{color:var(--ink);display:block;margin-bottom:2px;font-size:14px}
+
+/* Status table */
+.status-table{width:100%;border-collapse:collapse;margin:12px 0 16px;font-size:13px}
+.status-table th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);padding:8px 12px;border-bottom:1.5px solid var(--purple);font-weight:500}
+.status-table td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.status-table td:first-child{font-weight:600;white-space:nowrap;width:200px}
+.status-table td:last-child{color:var(--muted)}
+.status-badge{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:4px;display:inline-block}
+.s-active{background:var(--green-pale);color:var(--green)}
+.s-building{background:var(--purple-pale);color:var(--purple)}
+.s-planned{background:#F3F3F3;color:#888}
+
+/* Divider */
+.divider{border:none;border-top:1px solid var(--line);margin:32px 0}
+
+/* CTA */
+.cta{background:var(--purple-pale);border:1px solid #DAD6F2;border-radius:12px;padding:24px;margin-top:32px;text-align:center}
+.cta h3{font-family:'Newsreader',Georgia,serif;font-size:20px;color:var(--purple-deep);margin-bottom:6px}
+.cta p{font-size:13px;color:var(--muted);margin-bottom:12px}
+.cta a{display:inline-block;background:var(--purple);color:#fff;padding:10px 24px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px}
+
+/* Footer */
+.brief-footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.05em}
+
+/* Print */
+@media print{
+  body{padding:24px;font-size:12px;max-width:100%}
+  .cta a{color:var(--purple);background:none;border:1.5px solid var(--purple);padding:6px 16px}
+  .brief-header{border-bottom-width:1px}
+}
+@media(max-width:600px){
+  body{padding:24px 20px}
+  .principles{grid-template-columns:1fr}
+  .brief-header{flex-direction:column;gap:12px}
+  .brief-meta{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<div class="brief-header">
+  <div>
+    <div class="brief-brand">Quantum5D<small>.ai</small></div>
+  </div>
+  <div class="brief-meta">
+    <div>Security &amp; Trust</div>
+    <div>July 2026</div>
+  </div>
+</div>
+
+<h1 class="brief-title">Our Commitment to Security, Privacy, and Responsible AI</h1>
+<p class="brief-subtitle">Quantum5D.ai is building its security, privacy, and governance program to support controlled FQHC pilots. This page describes our current practices and the standards we are working toward.</p>
+
+<!-- ── Responsible AI ── -->
+<div class="section">
+  <div class="section-label">Responsible AI</div>
+  <h2>AI That Supports Decisions, Never Replaces Them</h2>
+  <p>These principles govern how AI features are designed and will be enforced as they move into production. Current interactive prototypes are demonstrations built on synthetic data.</p>
+  <p>Every AI-powered feature in Quantum5D.ai is designed to augment clinician and executive judgment &mdash; not replace it. Our applications surface recommendations, flag risks, and provide analysis, but <strong>every consequential action requires human review and approval</strong>.</p>
+
+  <div class="principles">
+    <div class="principle">
+      <div class="principle-icon">&#128065;</div>
+      <h3>Transparency</h3>
+      <p>When AI generates a recommendation, the reasoning and source data are visible. No black-box outputs.</p>
+    </div>
+    <div class="principle">
+      <div class="principle-icon">&#9995;</div>
+      <h3>Human Override</h3>
+      <p>Users can override, adjust, or dismiss any AI-generated recommendation at any time.</p>
+    </div>
+    <div class="principle">
+      <div class="principle-icon">&#128220;</div>
+      <h3>Citation</h3>
+      <p>Regulatory references, policy citations, and data sources are linked directly to outputs.</p>
+    </div>
+    <div class="principle">
+      <div class="principle-icon">&#128202;</div>
+      <h3>Audit Trail</h3>
+      <p>Actions, overrides, and AI-generated outputs are logged for accountability and review.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── Data Practices ── -->
+<div class="section">
+  <div class="section-label">Data Practices</div>
+  <h2>Your Data Stays Yours</h2>
+  <p>Quantum5D.ai does not sell, share, or use customer data to train AI models. Each organization's data is logically isolated and accessible only to authorized users within that organization.</p>
+
+  <ul class="commitments">
+    <li>
+      <strong>No cross-customer data sharing</strong>
+      Organizational data is logically separated. One customer's data is never visible to another.
+    </li>
+    <li>
+      <strong>No model training on customer data</strong>
+      Customer inputs, documents, and outputs are never used to train or fine-tune AI models.
+    </li>
+    <li>
+      <strong>Data minimization</strong>
+      We collect and retain only the data necessary to deliver the service. Prototype demonstrations use synthetic data exclusively.
+    </li>
+    <li>
+      <strong>Deletion on request</strong>
+      Contact and inquiry data may be deleted on request at any time. Data retention and deletion procedures for pilot engagements are defined in the pilot agreement, scoped to the data each pilot actually holds.
+    </li>
+  </ul>
+</div>
+
+<!-- ── Security ── -->
+<div class="section">
+  <div class="section-label">Security</div>
+  <h2>Infrastructure and Access Controls</h2>
+  <p>Quantum5D.ai is hosted on modern cloud infrastructure with encryption, access controls, and monitoring appropriate for an early-stage health technology platform.</p>
+
+  <table class="status-table">
+    <thead>
+    <tr><th scope="col">Capability</th><th scope="col">Status</th></tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>Encryption in transit (TLS)</td>
+      <td><span class="status-badge s-active">Active</span> &mdash; All connections encrypted via HTTPS/TLS</td>
+    </tr>
+    <tr>
+      <td>Encryption at rest</td>
+      <td><span class="status-badge s-active">Active</span> &mdash; Database and storage encrypted at rest by the hosting infrastructure</td>
+    </tr>
+    <tr>
+      <td>Authentication</td>
+      <td><span class="status-badge s-building">Building</span> &mdash; Password-protected administrative access. Authentication for customer platform access is in development. Public prototypes use synthetic data and require no authentication by design.</td>
+    </tr>
+    <tr>
+      <td>Access control</td>
+      <td><span class="status-badge s-building">Building</span> &mdash; Database-level access policies are in place for data ingestion. Role-based access control for customer-facing applications is in development.</td>
+    </tr>
+    <tr>
+      <td>Audit logging</td>
+      <td><span class="status-badge s-building">Building</span> &mdash; Structured logging for user actions and data access</td>
+    </tr>
+    <tr>
+      <td>Vulnerability management</td>
+      <td><span class="status-badge s-building">Building</span> &mdash; Dependency scanning and update cadence being formalized</td>
+    </tr>
+    <tr>
+      <td>Penetration testing</td>
+      <td><span class="status-badge s-planned">Planned</span> &mdash; Third-party assessment planned prior to production pilots</td>
+    </tr>
+    <tr>
+      <td>Third-party certification</td>
+      <td><span class="status-badge s-planned">Planned</span> &mdash; Assurance and certification pathways will be evaluated as customer requirements and production scope mature.</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<hr class="divider">
+
+<!-- ── Privacy ── -->
+<div class="section">
+  <div class="section-label">Privacy</div>
+  <h2>Privacy by Design</h2>
+  <p>Privacy considerations are embedded into product development from the start, not added as an afterthought.</p>
+
+  <ul class="commitments">
+    <li>
+      <strong>No PHI in demonstrations</strong>
+      All interactive prototypes and showcase demonstrations use synthetic data. No protected health information is used in any public-facing content.
+    </li>
+    <li>
+      <strong>Access limited by role</strong>
+      Database-level access policies control data ingestion. Role-based access for customer-facing applications is being built to ensure users see only the data relevant to their role and organizational scope.
+    </li>
+    <li>
+      <strong>HIPAA alignment in progress</strong>
+      Quantum5D.ai is designing its technical and administrative controls to align with HIPAA requirements as the platform moves toward production pilots. Pilots involving protected health information require a Business Associate Agreement. One will be executed before any such pilot begins.
+    </li>
+  </ul>
+</div>
+
+<!-- ── Product Governance ── -->
+<div class="section">
+  <div class="section-label">Product Governance</div>
+  <h2>How We Build and Ship</h2>
+  <p>Quantum5D.ai follows a structured development process designed to maintain quality, prevent regressions, and ensure that changes are reviewed before reaching users.</p>
+
+  <ul class="commitments">
+    <li>
+      <strong>Change management</strong>
+      All code changes go through version control with documented history. Deployments are deliberate, not automatic.
+    </li>
+    <li>
+      <strong>Pre-deploy verification</strong>
+      Syntax validation, feature marker checks, and browser testing are required before every production deployment.
+    </li>
+    <li>
+      <strong>Rollback capability</strong>
+      Every deployment is backed by a timestamped backup. Backups are stored outside the public web root. Rollbacks can be executed within minutes.
+    </li>
+    <li>
+      <strong>Health monitoring</strong>
+      Automated health checks verify platform availability, content integrity, and infrastructure status every six hours.
+    </li>
+  </ul>
+</div>
+
+<!-- ── Trust Resources ── -->
+<div class="section">
+  <div class="section-label">Trust Resources</div>
+  <h2>Questions? We Are an Open Book.</h2>
+  <p>Quantum5D.ai is a minority-, pharmacist-, and woman-owned company founded by a pharmacy executive with FQHC operating experience. We understand that trust is earned through transparency, not marketing. If you have questions about our security practices, data handling, or AI governance, we welcome the conversation.</p>
+</div>
+
+<div class="cta">
+  <h3>Have Security or Privacy Questions?</h3>
+  <p>We are happy to discuss our practices in detail, provide documentation, or schedule a technical review with your team.</p>
+  <a href="https://quantum5d.ai/#contact">Contact Us</a>
+</div>
+
+<div class="brief-footer">
+  <span>&copy; 2026 Quantum5D.ai &middot; Minority-, Pharmacist- &amp; Woman-Owned</span>
+  <span>quantum5d.ai</span>
+</div>
+
+</body>
+</html>

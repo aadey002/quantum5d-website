@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CoverageGuard IQ — Demo</title>
+<style>
+  :root{
+    --ink:#14392A; --panel:#173B2B; --panel2:#1F4A36; --line:#2A4D3B;
+    --canvas:#F3F5F2; --surface:#FFFFFF; --surface2:#F7F8F4;
+    --border:#E3E6DF; --borderHi:#D0D5CB;
+    --text:#16241C; --textMid:#586A5E; --textLo:#8A958B; --textInv:#EAF2EC; --textInvLo:#A7C0B2;
+    --accent:#1F8A53; --accentD:#15663D; --gold:#C8A02E; --amber:#D4A017;
+    --green:#34A56A; --orange:#CC7A22; --red:#C8472E;
+    --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --shadow:0 1px 2px rgba(16,23,38,.04);
+    --shadowUp:0 6px 20px rgba(16,40,28,.12);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:var(--sans);background:var(--canvas);color:var(--text);
+    -webkit-font-smoothing:antialiased;line-height:1.45}
+  .mono{font-family:var(--mono)}
+  button{font-family:inherit}
+  a{color:inherit}
+
+  /* ---------- App bar ---------- */
+  .bar{background:var(--ink);color:var(--textInv);position:sticky;top:0;z-index:30}
+  .bar-in{max-width:1160px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:18px;height:60px}
+  .brand{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+  .glyph{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+    background:linear-gradient(150deg,var(--accent),var(--accentD));box-shadow:inset 0 0 0 1px #ffffff22}
+  .glyph svg{width:17px;height:17px}
+  .brand b{font-size:15px;letter-spacing:-.2px;font-weight:800}
+  .brand span{display:block;font-size:10.5px;color:var(--textInvLo);letter-spacing:.3px;margin-top:-1px}
+  .tabs{display:flex;gap:4px;margin-left:6px}
+  .tab{background:transparent;border:none;color:var(--textInvLo);font-size:12.5px;font-weight:700;
+    padding:8px 12px;border-radius:9px;cursor:pointer;transition:background .15s,color .15s}
+  .tab:hover{color:#fff}
+  .tab[aria-selected="true"]{background:var(--panel2);color:#fff}
+  .bar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .chip-demo{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;
+    color:var(--textInv);background:#ffffff14;border:1px solid #ffffff22;border-radius:999px;padding:4px 10px}
+  .chip-demo .dot{width:6px;height:6px;border-radius:99px;background:var(--gold)}
+
+  /* ---------- Layout ---------- */
+  .wrap{max-width:1160px;margin:0 auto;padding:22px 20px 60px}
+  .eyebrow{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--textLo)}
+  .lede{margin:2px 0 18px;font-size:13.5px;color:var(--textMid);max-width:70ch}
+
+  /* KPI strip */
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:22px}
+  .kpi{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:13px 14px;box-shadow:var(--shadow)}
+  .kpi .lab{font-size:11px;font-weight:700;color:var(--textLo);display:flex;align-items:center;gap:6px}
+  .kpi .val{font-size:23px;font-weight:800;letter-spacing:-.5px;margin-top:4px}
+  .kpi .foot{font-size:10.5px;color:var(--textMid);margin-top:1px}
+  .kpi .val.tint{color:var(--accentD)}
+
+  .view{display:none}
+  .view.active{display:block}
+
+  /* ---------- Coverage Intelligence ---------- */
+  .grid-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .case{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:15px 16px;
+    box-shadow:var(--shadow);cursor:pointer;transition:box-shadow .18s,transform .18s,border-color .18s}
+  .case:hover{box-shadow:var(--shadowUp);transform:translateY(-2px);border-color:var(--borderHi)}
+  .case:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .case-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .who{font-size:14px;font-weight:800;letter-spacing:-.2px}
+  .who small{display:block;font-size:10.5px;color:var(--textLo);font-weight:600;letter-spacing:.3px;margin-top:1px}
+  .route{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--accentD);background:#1F8A5316;border:1px solid #1F8A5333;border-radius:999px;padding:3px 9px;white-space:nowrap}
+
+  .signals{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+  .sig{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;
+    padding:4px 9px;border-radius:8px;border:1px solid var(--border);background:var(--surface2)}
+  .sig .k{color:var(--textLo);font-weight:800;font-size:10px;letter-spacing:.04em;text-transform:uppercase}
+  .sig .d{width:7px;height:7px;border-radius:99px}
+  .ok{--s:var(--green)} .bad{--s:var(--red)} .warn{--s:var(--orange)} .due{--s:var(--amber)} .neu{--s:var(--textLo)}
+  .sig .d{background:var(--s)}
+
+  .arrow{display:flex;align-items:center;gap:8px;color:var(--textLo);font-size:11px;font-weight:700;margin:2px 0 10px}
+  .arrow .rule{height:1px;background:var(--border);flex:1}
+
+  .verdict{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;
+    background:linear-gradient(180deg,#1F8A530E,var(--surface));border:1px solid #1F8A5326;border-radius:12px;padding:12px 13px}
+  .cov{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--accentD);
+    background:#fff;border:1px solid #1F8A5333;border-radius:6px;padding:2px 7px;display:inline-block}
+  .state{font-size:13.5px;font-weight:800;margin-top:7px;letter-spacing:-.2px}
+  .nba{font-size:12px;color:var(--textMid);margin-top:3px}
+  .conf{flex:0 0 92px;text-align:right}
+  .conf .num{font-size:26px;font-weight:800;letter-spacing:-1px;font-family:var(--mono);line-height:1}
+  .conf .cl{font-size:9.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--textLo)}
+  .meter{height:5px;border-radius:99px;background:var(--border);margin-top:6px;overflow:hidden}
+  .meter i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--green));
+    width:0;transition:width .9s cubic-bezier(.2,.7,.2,1)}
+
+  .evidence{display:none;margin-top:12px;border-top:1px dashed var(--border);padding-top:11px}
+  .case.open .evidence{display:block}
+  .ev-row{display:flex;gap:10px;font-size:11.5px;padding:5px 0;border-bottom:1px solid var(--surface2)}
+  .ev-row:last-child{border-bottom:none}
+  .ev-src{flex:0 0 128px;color:var(--textMid);font-weight:700}
+  .ev-val{color:var(--text)}
+  .ev-when{margin-left:auto;color:var(--textLo);font-family:var(--mono);font-size:10.5px;white-space:nowrap}
+  .expand-hint{font-size:10.5px;color:var(--textLo);font-weight:700;margin-top:10px;display:flex;align-items:center;gap:5px}
+  .case.open .expand-hint .txt::after{content:"Hide evidence"}
+  .case:not(.open) .expand-hint .txt::after{content:"Show source evidence"}
+
+  /* ---------- Recert board ---------- */
+  .stagebar{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px}
+  .stagestat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 11px;position:relative}
+  .stagestat .n{font-size:20px;font-weight:800;letter-spacing:-.5px}
+  .stagestat .l{font-size:10.5px;font-weight:700;color:var(--textMid);margin-top:1px}
+  .stagestat::before{content:"";position:absolute;left:0;top:11px;bottom:11px;width:3px;border-radius:99px;background:var(--sc,var(--border))}
+  .stagestat .l{padding-left:6px} .stagestat .n{padding-left:6px}
+
+  .board{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+  .col h4{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--textMid);
+    margin:0 0 9px;display:flex;align-items:center;gap:6px}
+  .col h4 .cdot{width:8px;height:8px;border-radius:99px;background:var(--sc)}
+  .col h4 .cnt{margin-left:auto;font-family:var(--mono);color:var(--textLo);font-weight:700}
+  .rc{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:10px;margin-bottom:9px;
+    cursor:pointer;box-shadow:var(--shadow);transition:box-shadow .16s,transform .16s,border-color .16s}
+  .rc:hover{box-shadow:var(--shadowUp);transform:translateY(-1px);border-color:var(--borderHi)}
+  .rc:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .rc .nm{font-size:12.5px;font-weight:800;letter-spacing:-.2px}
+  .rc .mr{font-size:10px;color:var(--textLo);font-family:var(--mono);margin-top:1px}
+  .rc-meta{display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap}
+  .tierdot{width:7px;height:7px;border-radius:99px}
+  .high{background:var(--red)} .med{background:var(--amber)} .low{background:var(--green)}
+  .rc .prog{font-size:10px;color:var(--textMid);font-weight:700}
+  .rc .days{margin-left:auto;font-size:10px;font-weight:800;font-family:var(--mono);color:var(--orange)}
+  .pbar{height:4px;border-radius:99px;background:var(--border);margin-top:7px;overflow:hidden}
+  .pbar i{display:block;height:100%;background:var(--accent);border-radius:99px}
+
+  /* Drawer */
+  .scrim{position:fixed;inset:0;background:rgba(16,32,24,.42);opacity:0;pointer-events:none;transition:opacity .2s;z-index:40}
+  .scrim.on{opacity:1;pointer-events:auto}
+  .drawer{position:fixed;top:0;right:0;height:100%;width:420px;max-width:92vw;background:var(--surface);
+    box-shadow:-12px 0 40px rgba(16,40,28,.18);transform:translateX(100%);transition:transform .24s cubic-bezier(.2,.7,.2,1);
+    z-index:41;display:flex;flex-direction:column}
+  .drawer.on{transform:translateX(0)}
+  .dr-head{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+  .dr-head .nm{font-size:16px;font-weight:800;letter-spacing:-.3px}
+  .dr-head .sub{font-size:11px;color:var(--textLo);font-family:var(--mono);margin-top:2px}
+  .xbtn{background:var(--canvas);border:1px solid var(--border);border-radius:8px;width:30px;height:30px;
+    display:grid;place-items:center;cursor:pointer;color:var(--textMid);flex:0 0 auto}
+  .dr-body{padding:16px 18px;overflow:auto}
+  .stage-pill{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:800;
+    border-radius:999px;padding:5px 11px;color:#fff}
+  .sec-t{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--textLo);margin:18px 0 8px}
+  .doc{display:flex;align-items:center;gap:9px;font-size:12px;padding:7px 0;border-bottom:1px solid var(--surface2)}
+  .doc:last-child{border-bottom:none}
+  .doc .ic{width:16px;height:16px;flex:0 0 auto}
+  .doc .nm{color:var(--text)}
+  .doc .st{margin-left:auto;font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+  .st.received{color:var(--green)} .st.pending{color:var(--textLo)}
+  .kv{display:flex;justify-content:space-between;gap:12px;font-size:12px;padding:6px 0;border-bottom:1px solid var(--surface2)}
+  .kv:last-child{border-bottom:none}
+  .kv .k{color:var(--textMid);font-weight:600} .kv .v{font-weight:700;text-align:right}
+  .kv .v.mono{font-family:var(--mono);font-weight:700}
+  .pill-out{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;border-radius:999px;padding:3px 10px}
+  .loop{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 13px;margin-top:6px}
+  .loop-t{font-size:11.5px;font-weight:800;margin-bottom:8px}
+  .loopsteps{display:flex;flex-wrap:wrap;gap:6px}
+  .lstep{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:7px;background:#fff;border:1px solid var(--border);color:var(--textMid)}
+  .lstep.done{background:#1F8A5314;border-color:#1F8A5333;color:var(--accentD)}
+  .lstep.cur{background:var(--gold);border-color:var(--gold);color:#3a2f00}
+
+  .foot{margin-top:28px;padding-top:16px;border-top:1px solid var(--border);
+    font-size:11px;color:var(--textLo);display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .foot b{color:var(--textMid)}
+
+  @media (max-width:920px){
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    .grid-cards{grid-template-columns:1fr}
+    .stagebar{grid-template-columns:repeat(3,1fr)}
+    .board{grid-template-columns:1fr;gap:18px}
+    .tabs .tab{padding:8px 9px}
+    .brand span{display:none}
+  }
+  @media (max-width:560px){
+    .bar-in{gap:10px;padding:0 12px}
+    .wrap{padding:16px 12px 50px}
+    .kpis{grid-template-columns:1fr 1fr}
+    .stagebar{grid-template-columns:1fr 1fr}
+    .chip-demo{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important;animation:none!important}
+  }
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="bar-in">
+    <div class="brand">
+      <span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="#EAF2EC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-3 8.3-7 9.5C8 18.3 5 14.4 5 11V6l7-3z"/><path d="M9.2 12l2 2 3.6-3.8"/></svg></span>
+      <div><b>CoverageGuard IQ</b><span>FQHC Medicaid coverage intelligence</span></div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Views">
+      <button class="tab" role="tab" aria-selected="true" data-view="intel">Coverage Intelligence</button>
+      <button class="tab" role="tab" aria-selected="false" data-view="recert">Recertification Workflow</button>
+    </nav>
+    <div class="bar-right">
+      <span class="chip-demo"><span class="dot"></span> Demo · synthetic data</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- KPI strip -->
+  <div class="kpis" id="kpis"></div>
+
+  <!-- ============ COVERAGE INTELLIGENCE ============ -->
+  <section class="view active" id="view-intel" role="tabpanel">
+    <div class="eyebrow">Signal reconciliation</div>
+    <p class="lede">Every patient's coverage is asserted by several systems at once — and they disagree, on different clocks. CoverageGuard reconciles the conflict into one confidence-scored state with a conflict code and a next best action. Select a card to see the source evidence.</p>
+    <div class="grid-cards" id="intel-cards"></div>
+  </section>
+
+  <!-- ============ RECERTIFICATION WORKFLOW ============ -->
+  <section class="view" id="view-recert" role="tabpanel">
+    <div class="eyebrow">One platform, whole loop</div>
+    <p class="lede">The moat: CoverageGuard runs the entire recertification lifecycle in one place — track, outreach, gather and validate documents, submit on the patient's behalf as authorized representative, and follow the case to a final determination. Select a case to open it.</p>
+    <div class="stagebar" id="stagebar"></div>
+    <div class="board" id="board"></div>
+  </section>
+
+  <footer class="foot">
+    <span><b>Human-by-exception</b> — the system surfaces evidence-backed candidates; staff confirm, and the State determines eligibility.</span>
+    <span>Synthetic data · not for clinical use.</span>
+  </footer>
+</main>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true" aria-label="Case detail"></aside>
+
+<script>
+(function(){
+  "use strict";
+  var C={green:"#34A56A",red:"#C8472E",orange:"#CC7A22",amber:"#D4A017",accent:"#1F8A53"};
+
+  /* ---------- KPIs ---------- */
+  var KPIS=[
+    {lab:"Panel monitored",val:"12,480",foot:"Medicaid + MCO lives"},
+    {lab:"Renewals due · 60 days",val:"1,934",foot:"six-month cycle"},
+    {lab:"Coverage conflicts open",val:"228",foot:"routed to queues"},
+    {lab:"Recerts in flight",val:"146",foot:"tracked to decision",tint:true},
+    {lab:"Revenue protected · QTD",val:"$1.24M",foot:"renewed + rebilled",tint:true}
+  ];
+  document.getElementById("kpis").innerHTML=KPIS.map(function(k){
+    return '<div class="kpi"><div class="lab">'+k.lab+'</div><div class="val'+(k.tint?" tint":"")+'">'+k.val+'</div><div class="foot">'+k.foot+'</div></div>';
+  }).join("");
+
+  /* ---------- Coverage Intelligence data ---------- */
+  var CASES=[
+    {who:"Maria A.",mrn:"MRN 48-0219",route:"Eligibility",cov:"COV-005",state:"Inactive — High Confidence",
+     conf:88,nba:"Renewal intake + pharmacy rescue",
+     sigs:[["EHR","active","ok"],["271","inactive","bad"],["Pharmacy","reject · loss","bad"]],
+     ev:[["EHR / eCW","Medicaid active (payer on file)","stale"],["271 eligibility","Inactive — no active benefit","today"],["Pharmacy","NCPDP reject · loss class","yesterday"]]},
+    {who:"James O.",mrn:"MRN 51-7734",route:"Eligibility",cov:"COV-002",state:"Active — Verification Needed",
+     conf:84,nba:"Update registration; check rebilling",
+     sigs:[["EHR","self-pay","warn"],["271","active","ok"]],
+     ev:[["EHR / eCW","Self-pay (no payer on file)","this week"],["271 eligibility","Active — MCO plan returned","today"]]},
+    {who:"Aisha K.",mrn:"MRN 44-9051",route:"Care / MCO",cov:"COV-003",state:"MCO Attribution Changed",
+     conf:80,nba:"Route to MCO / roster review",
+     sigs:[["271","active","ok"],["MCO 834","roster dropped","warn"]],
+     ev:[["271 eligibility","Active — Medicaid","today"],["MCO 834 roster","Member no longer attributed","this month"]]},
+    {who:"Robert D.",mrn:"MRN 39-2210",route:"Pharmacy",cov:"COV-004",state:"Pharmacy Access Risk Only",
+     conf:76,nba:"Pharmacy payer-profile review",
+     sigs:[["State Medicaid","active","ok"],["Pharmacy","reject · access","warn"]],
+     ev:[["State Medicaid","Active","this week"],["Pharmacy","NCPDP reject · access/COB class","today"]]},
+    {who:"Lucia M.",mrn:"MRN 50-6620",route:"Intake",cov:"COV-009",state:"Active Today — Renewal Due",
+     conf:88,nba:"Start renewal intake now; verify hours/income",
+     sigs:[["HIE","redet · this month","due"],["271","active","ok"]],
+     ev:[["HIE redetermination","Redetermination due this month","today"],["271 eligibility","Active — Medicaid","today"]]},
+    {who:"Darnell W.",mrn:"MRN 47-3388",route:"Revenue Cycle",cov:"COV-007",state:"Rebilling Opportunity",
+     conf:82,nba:"Create rebilling task",
+     sigs:[["RCM denial","eligibility","bad"],["271","active on DOS","ok"]],
+     ev:[["RCM / billing","Denied — eligibility","last week"],["271 eligibility","Active on date of service","verified"]]}
+  ];
+  function sigHtml(s){return '<span class="sig '+s[2]+'"><span class="d"></span><span class="k">'+s[0]+'</span>'+s[1]+'</span>';}
+  document.getElementById("intel-cards").innerHTML=CASES.map(function(c,i){
+    return '<div class="case" tabindex="0" data-i="'+i+'">'
+      +'<div class="case-top"><div class="who">'+c.who+'<small>'+c.mrn+'</small></div><span class="route">'+c.route+'</span></div>'
+      +'<div class="signals">'+c.sigs.map(sigHtml).join("")+'</div>'
+      +'<div class="arrow"><span class="rule"></span>reconciled<span class="rule"></span></div>'
+      +'<div class="verdict"><div><span class="cov">'+c.cov+'</span><div class="state">'+c.state+'</div><div class="nba">'+c.nba+'</div></div>'
+      +'<div class="conf"><div class="num" style="color:'+confColor(c.conf)+'">'+c.conf+'</div><div class="cl">Confidence</div><div class="meter"><i data-w="'+c.conf+'"></i></div></div></div>'
+      +'<div class="evidence">'+c.ev.map(function(e){return '<div class="ev-row"><span class="ev-src">'+e[0]+'</span><span class="ev-val">'+e[1]+'</span><span class="ev-when">'+e[2]+'</span></div>';}).join("")+'</div>'
+      +'<div class="expand-hint"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg><span class="txt"></span></div>'
+      +'</div>';
+  }).join("");
+  function confColor(n){return n>=85?C.accent:n>=70?"#2E6B45":C.orange;}
+
+  var intel=document.getElementById("intel-cards");
+  intel.addEventListener("click",function(e){var c=e.target.closest(".case");if(c)c.classList.toggle("open");});
+  intel.addEventListener("keydown",function(e){if((e.key==="Enter"||e.key===" ")&&e.target.classList.contains("case")){e.preventDefault();e.target.classList.toggle("open");}});
+
+  /* ---------- Recert board data ---------- */
+  var STAGES=[
+    {key:"flagged",label:"Flagged",sc:"#D4A017"},
+    {key:"gathering",label:"Gathering docs",sc:"#7A6FCF"},
+    {key:"complete",label:"Docs complete",sc:"#1F8A53"},
+    {key:"ready",label:"Ready to submit",sc:"#34A56A"},
+    {key:"submitted",label:"Submitted",sc:"#C8A02E"},
+    {key:"recertified",label:"Recertified",sc:"#15663D"}
+  ];
+  var DOCS=[["income","Proof of income"],["id","Photo ID"],["residency","Proof of residency"],["household","Household verification"],["status","Citizenship / status"]];
+  var CASESR=[
+    {nm:"Maria Alvarez",mrn:"MRN 48-0219",stage:"gathering",tier:"high",days:21,recv:2,path:"W-2 income",auth:"granted"},
+    {nm:"Priya N.",mrn:"MRN 52-1180",stage:"flagged",tier:"high",days:14,recv:0,path:"self-employed",auth:"requested"},
+    {nm:"Carlos R.",mrn:"MRN 41-9902",stage:"flagged",tier:"med",days:33,recv:0,path:"W-2 income",auth:"requested"},
+    {nm:"Tanya B.",mrn:"MRN 46-3320",stage:"gathering",tier:"med",days:26,recv:3,path:"zero income",auth:"granted"},
+    {nm:"Wei L.",mrn:"MRN 55-7741",stage:"complete",tier:"low",days:40,recv:5,path:"W-2 income",auth:"granted"},
+    {nm:"Fatima S.",mrn:"MRN 43-8890",stage:"ready",tier:"high",days:9,recv:5,path:"caregiver exempt",auth:"granted"},
+    {nm:"Andre P.",mrn:"MRN 49-2205",stage:"submitted",tier:"med",days:5,recv:5,path:"W-2 income",auth:"granted",channel:"MHC online portal",track:"MHC-742019"},
+    {nm:"Rosa M.",mrn:"MRN 40-1176",stage:"submitted",tier:"high",days:3,recv:5,path:"medically frail exempt",auth:"granted",channel:"LDSS (in person)",track:"MHC-708844"},
+    {nm:"Kevin T.",mrn:"MRN 54-6613",stage:"recertified",tier:"low",days:0,recv:5,path:"W-2 income",auth:"granted",channel:"MHC online portal",track:"MHC-690231",outcome:"approved"},
+    {nm:"Grace O.",mrn:"MRN 42-5529",stage:"recertified",tier:"med",days:0,recv:5,path:"W-2 income",auth:"granted",channel:"MHC phone",track:"MHC-681007",outcome:"pending"}
+  ];
+  var OUT={approved:{l:"Approved",c:C.green},pending:{l:"Pending clarification",c:C.amber},denied:{l:"Denied — needs correction",c:C.orange}};
+
+  var counts={};STAGES.forEach(function(s){counts[s.key]=CASESR.filter(function(c){return c.stage===s.key;}).length;});
+  document.getElementById("stagebar").innerHTML=STAGES.map(function(s){
+    return '<div class="stagestat" style="--sc:'+s.sc+'"><div class="n">'+counts[s.key]+'</div><div class="l">'+s.label+'</div></div>';
+  }).join("");
+  document.getElementById("board").innerHTML=STAGES.map(function(s){
+    var cards=CASESR.filter(function(c){return c.stage===s.key;});
+    return '<div class="col" style="--sc:'+s.sc+'"><h4><span class="cdot"></span>'+s.label+'<span class="cnt">'+cards.length+'</span></h4>'
+      +cards.map(function(c){var idx=CASESR.indexOf(c);var pct=Math.round(c.recv/DOCS.length*100);
+        return '<div class="rc" tabindex="0" data-r="'+idx+'"><div class="nm">'+c.nm+'</div><div class="mr">'+c.mrn+'</div>'
+        +'<div class="rc-meta"><span class="tierdot '+c.tier+'"></span><span class="prog">'+c.recv+'/'+DOCS.length+' docs</span>'
+        +(c.stage==="recertified"?'<span class="days" style="color:'+OUT[c.outcome].c+'">'+OUT[c.outcome].l.split(" ")[0]+'</span>':(c.days?'<span class="days">'+c.days+'d</span>':''))+'</div>'
+        +'<div class="pbar"><i style="width:'+pct+'%"></i></div></div>';
+      }).join("")
+      +'</div>';
+  }).join("");
+
+  /* ---------- Drawer ---------- */
+  var scrim=document.getElementById("scrim"),drawer=document.getElementById("drawer");
+  function stageOf(k){for(var i=0;i<STAGES.length;i++)if(STAGES[i].key===k)return {i:i,s:STAGES[i]};}
+  function openCase(idx){
+    var c=CASESR[idx],st=stageOf(c.stage),done=st.i;
+    var loop=STAGES.map(function(s,i){var cls=i<done?"done":i===done?"cur":"";return '<span class="lstep '+cls+'">'+s.label+'</span>';}).join("");
+    var docsHtml=DOCS.map(function(d,i){var got=i<c.recv;
+      return '<div class="doc"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="'+(got?C.green:"#B9C2B8")+'" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">'
+        +(got?'<path d="M20 6L9 17l-5-5"/>':'<circle cx="12" cy="12" r="9"/>')+'</svg><span class="nm">'+d[1]+'</span><span class="st '+(got?"received":"pending")+'">'+(got?"received":"pending")+'</span></div>';
+    }).join("");
+    var authTxt=c.auth==="granted"?"Health center — authorized rep (e-consent)":"Requested — awaiting patient consent";
+    var submitBlock="";
+    if(c.channel){submitBlock='<div class="sec-t">Submission</div>'
+      +'<div class="kv"><span class="k">Channel</span><span class="v">'+c.channel+'</span></div>'
+      +'<div class="kv"><span class="k">Tracking #</span><span class="v mono">'+c.track+'</span></div>'
+      +'<div class="kv"><span class="k">Filed by</span><span class="v">Health center (auth rep)</span></div>';
+      if(c.outcome){var o=OUT[c.outcome];submitBlock+='<div class="kv"><span class="k">Determination</span><span class="v"><span class="pill-out" style="color:'+o.c+';background:'+o.c+'18;border:1px solid '+o.c+'44">'+o.l+'</span></span></div>';}
+    }
+    drawer.innerHTML='<div class="dr-head"><div><div class="nm">'+c.nm+'</div><div class="sub">'+c.mrn+' · '+c.path+'</div>'
+      +'<div style="margin-top:9px"><span class="stage-pill" style="background:'+st.s.sc+'">'+st.s.label+'</span></div></div>'
+      +'<button class="xbtn" id="xclose" aria-label="Close">✕</button></div>'
+      +'<div class="dr-body">'
+      +'<div class="loop"><div class="loop-t">Recertification lifecycle</div><div class="loopsteps">'+loop+'</div></div>'
+      +'<div class="sec-t">Documents · '+c.path+' pathway</div>'+docsHtml
+      +'<div class="sec-t">Authorized representative</div><div class="kv"><span class="k">Status</span><span class="v">'+authTxt+'</span></div>'
+      +'<div class="kv"><span class="k">Scope</span><span class="v" style="font-weight:600;color:var(--textMid)">Submit · receive notices · report H.R.1 hours</span></div>'
+      +submitBlock
+      +'</div>';
+    scrim.classList.add("on");drawer.classList.add("on");drawer.setAttribute("aria-hidden","false");
+    document.getElementById("xclose").addEventListener("click",closeDrawer);
+    drawer.querySelector(".dr-body").scrollTop=0;
+  }
+  function closeDrawer(){scrim.classList.remove("on");drawer.classList.remove("on");drawer.setAttribute("aria-hidden","true");}
+  scrim.addEventListener("click",closeDrawer);
+  document.addEventListener("keydown",function(e){if(e.key==="Escape")closeDrawer();});
+  var board=document.getElementById("board");
+  board.addEventListener("click",function(e){var r=e.target.closest(".rc");if(r)openCase(+r.dataset.r);});
+  board.addEventListener("keydown",function(e){if((e.key==="Enter"||e.key===" ")&&e.target.classList.contains("rc")){e.preventDefault();openCase(+e.target.dataset.r);}});
+
+  /* ---------- Tabs ---------- */
+  var tabs=document.querySelectorAll(".tab");
+  tabs.forEach(function(t){t.addEventListener("click",function(){
+    tabs.forEach(function(x){x.setAttribute("aria-selected","false");});
+    t.setAttribute("aria-selected","true");
+    document.querySelectorAll(".view").forEach(function(v){v.classList.remove("active");});
+    document.getElementById("view-"+t.dataset.view).classList.add("active");
+    if(t.dataset.view==="intel")animateMeters();
+  });});
+
+  /* ---------- Meter animation ---------- */
+  function animateMeters(){requestAnimationFrame(function(){setTimeout(function(){
+    document.querySelectorAll(".meter i").forEach(function(m){m.style.width=m.dataset.w+"%";});
+  },60);});}
+  animateMeters();
+})();
+</script>
+</body>
+</html>
