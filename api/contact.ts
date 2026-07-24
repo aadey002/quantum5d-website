@@ -127,10 +127,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         console.error('SMS gateway error:', e)
       }
     }
-  }
 
     // --- 3. Auto-reply with free resources for exit-intent / prototype captures ---
-    if (resendKey && (lead.source === 'exit-intent' || lead.source === 'lcProto' || lead.source === 'lcExit')) {
+    if (lead.source === 'exit-intent' || lead.source === 'lcProto' || lead.source === 'lcExit') {
       try {
         const firstName = lead.name.split(' ')[0]
         const resourceHtml = '<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px">'
