@@ -25,7 +25,8 @@
     { "source": "/partners", "destination": "/partners.html" },
     { "source": "/services", "destination": "/services.html" },
     { "source": "/roadmap", "destination": "/roadmap.html" },
+    { "source": "/about", "destination": "/about.html" },
     { "source": "/", "destination": "/quantum5d-site-index.html" },
-    { "source": "/((?!api|assets|images|resources|prototypes|briefs|robots.txt|sitemap.xml|logo.png|quantum5d-site-index.html|admin.html|security-and-trust.html|applications.html|application.html|partners.html|services.html|roadmap.html).*)", "destination": "/quantum5d-site-index.html" }
+    { "source": "/((?!api|assets|images|resources|prototypes|briefs|robots.txt|sitemap.xml|logo.png|quantum5d-site-index.html|admin.html|security-and-trust.html|applications.html|application.html|partners.html|services.html|roadmap.html|about.html).*)", "destination": "/quantum5d-site-index.html" }
   ]
 }

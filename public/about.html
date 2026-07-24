@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Quantum5D.ai</title>
+<meta name="description" content="Quantum5D.ai was created by Dr. Adetoro Oriaifo, PharmD, MBA, CHCEF, FACHE, 340B ACE — built from years of FQHC executive leadership. Minority-, Pharmacist- and Woman-Owned.">
+<link rel="canonical" href="https://quantum5d.ai/about">
+<meta property="og:title" content="About — Quantum5D.ai">
+<meta property="og:description" content="Quantum5D.ai was created by Dr. Adetoro Oriaifo, PharmD, MBA, CHCEF, FACHE, 340B ACE — built from years of FQHC executive leadership. Minority-, Pharmacist- and Woman-Owned.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://quantum5d.ai/about">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --purple:#5347A4;--purple-deep:#403592;--purple-soft:#938ABD;--charcoal:#3F3F3F;
+  --navy:#0B0833;--navy2:#171248;--ink:#1C1742;--muted:#6C6790;--soft:#4A4569;
+  --paper:#F6F5FB;--card:#FFFFFF;--line:#E6E3F2;
+}
+body{font-family:'Inter',ui-sans-serif,system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+.wrap-narrow{max-width:780px;margin:0 auto;padding:0 24px}
+
+/* Nav */
+.nav{position:sticky;top:0;z-index:100;background:rgba(246,245,251,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:14px 0}
+.nav-in{display:flex;align-items:center;justify-content:space-between}
+.brand{text-decoration:none;display:flex;align-items:center;gap:10px}
+.wm{font-family:'Newsreader',serif;font-size:20px;font-weight:600;color:var(--ink)}
+.wm small{font-weight:400;color:var(--purple-soft)}
+.nav-links{display:flex;align-items:center;gap:20px;font-size:14px}
+.nav-links a{color:var(--soft);text-decoration:none;transition:color .15s}
+.nav-links a:hover,.nav-links a.active{color:var(--purple)}
+.nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:4px}
+.nav-toggle span{display:block;width:22px;height:2px;background:var(--ink);margin:5px 0;border-radius:2px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:10px;font-size:14px;font-weight:500;text-decoration:none;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--purple);color:#fff!important}
+.btn-primary:hover{background:var(--purple-deep)}
+.btn-outline{background:transparent;color:var(--purple);border:1.5px solid var(--purple)}
+.btn-outline:hover{background:var(--purple);color:#fff}
+
+/* Shared */
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--purple);margin-bottom:14px}
+h1,h2,h3{font-family:'Newsreader',Georgia,serif;font-weight:600;color:var(--ink);line-height:1.2}
+
+/* Section 1: Founder */
+.founder{padding:64px 24px 48px}
+.founder-grid{display:grid;grid-template-columns:280px 1fr;gap:48px;max-width:1080px;margin:0 auto}
+.founder-side{text-align:center}
+.founder-seal{width:200px;height:200px;border-radius:50%;margin:0 auto 20px;overflow:hidden;border:3px solid var(--line);box-shadow:0 4px 20px rgba(83,71,164,.12)}
+.founder-seal img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.founder-subtitle{font-size:15px;color:var(--muted);margin-top:4px}
+.founder-role{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--purple);margin-top:8px}
+.founder-bio h1{font-size:36px;margin-bottom:6px}
+.founder-bio p{font-size:16px;color:var(--muted);line-height:1.7;margin-top:16px}
+
+/* Section 2: Story */
+.story{padding:48px 0 56px}
+.story h2{font-size:28px;margin-bottom:20px}
+.story p{font-size:16px;color:var(--muted);line-height:1.7;margin-top:16px}
+
+/* Section 3: Values */
+.values{padding:48px 0 56px}
+.values h2{font-size:28px;text-align:center;margin-bottom:28px}
+.values-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1080px;margin:0 auto}
+.value-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px;transition:box-shadow .2s,border-color .2s}
+.value-card:hover{box-shadow:0 4px 20px rgba(83,71,164,.08);border-color:var(--purple-soft)}
+.value-card h3{font-size:18px;margin-bottom:10px;line-height:1.3}
+.value-card p{font-size:14px;color:var(--muted);line-height:1.65}
+
+/* Section 4: Credentials */
+.credentials{padding:48px 0 56px}
+.credentials h2{font-size:28px;margin-bottom:24px}
+.cred-list{list-style:none;padding:0}
+.cred-list li{padding:14px 0;border-bottom:1px solid var(--line);font-size:15px;color:var(--ink);display:flex;align-items:baseline;gap:12px}
+.cred-list li:last-child{border-bottom:none}
+.cred-label{font-weight:600;min-width:0}
+.cred-detail{color:var(--muted)}
+
+/* Section 5: CTA */
+.cta-section{text-align:center;padding:56px 0 16px}
+.cta-section h2{font-size:26px;margin-bottom:20px}
+.cta-buttons{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* Footer */
+footer{padding:32px 0;border-top:1px solid var(--line);margin-top:60px}
+.foot-in{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted)}
+
+@media(max-width:768px){
+  .nav-links{display:none;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:var(--paper);padding:20px;border-bottom:1px solid var(--line)}
+  .nav-links.nav-open{display:flex}
+  .nav-toggle{display:block}
+  .founder-grid{grid-template-columns:1fr;text-align:center}
+  .founder-bio{text-align:left}
+  .founder-bio h1{font-size:28px}
+  .values-grid{grid-template-columns:1fr}
+  .foot-in{flex-direction:column;gap:8px;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="wrap nav-in">
+  <a class="brand" href="/">
+    <div class="wm">Quantum5D<small>.ai</small></div>
+  </a>
+  <div class="nav-links">
+    <a href="/">Platform</a>
+    <a href="/applications">Applications</a>
+    <a href="/partners">Partners</a>
+    <a href="/services">Services</a>
+    <a href="/roadmap">Roadmap</a>
+    <a href="/security-and-trust">Security &amp; Trust</a>
+    <a class="btn btn-primary" href="/#contact">Schedule a Briefing</a>
+  </div>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('nav-open')" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</div></nav>
+
+<!-- Section 1: Founder Profile -->
+<section class="founder">
+  <div class="founder-grid">
+    <div class="founder-side">
+      <div class="founder-seal"><img src="/images/dr-oriaifo.jpeg" alt="Dr. Adetoro Oriaifo" width="200" height="200"></div>
+      <div class="founder-subtitle">PharmD, MBA, CHCEF, FACHE, 340B ACE</div>
+      <div class="founder-role">Founder &amp; CEO &middot; Quantum5D.ai</div>
+    </div>
+    <div class="founder-bio">
+      <div class="eyebrow">Built by an FQHC Executive</div>
+      <h1>Dr. Adetoro Oriaifo</h1>
+      <p>Quantum5D.ai was created by Dr. Adetoro Oriaifo after years leading pharmacy operations, governance initiatives, regulatory compliance, digital transformation, and revenue optimization within Federally Qualified Health Centers. Every application reflects operational challenges experienced firsthand — not hypothetical use cases.</p>
+      <p>Expertise spans 340B program management, specialty pharmacy, FQHC operations, payer partnerships, Medicaid strategy, governance, and AI-enabled workflow design — serving organizations nationwide.</p>
+      <p>Dr. Oriaifo holds a Doctor of Pharmacy from the University of Maryland School of Pharmacy and an MBA with a focus on healthcare administration. She is a Fellow of the American College of Healthcare Executives (FACHE), a 340B ACE (Apexus Certified Expert), and a Certified Health Center Executive in Finance (CHCEF).</p>
+    </div>
+  </div>
+</section>
+
+<!-- Section 2: The Platform Story -->
+<section class="story">
+  <div class="wrap-narrow">
+    <h2>Why Quantum5D.ai exists</h2>
+    <p>Health centers run on spreadsheets, disconnected systems, and institutional memory. When the person who &ldquo;knows how it works&rdquo; leaves, the process breaks. When HRSA arrives for an OSV, the scramble begins. When Medicaid redeterminations accelerate, eligible patients fall off coverage because no one is watching.</p>
+    <p>Quantum5D.ai exists to change that. It is a purpose-built AI operating platform for Federally Qualified Health Centers — one platform, 15 applications, designed exclusively for the operational realities of safety-net healthcare.</p>
+    <p>Every application was built from a real operational challenge. No hypothetical use cases. No generic AI. Every workflow reflects how health centers actually operate — and every consequential action requires human review and approval.</p>
+  </div>
+</section>
+
+<!-- Section 3: Company Values -->
+<section class="values">
+  <div class="wrap">
+    <h2>What we stand for</h2>
+    <div class="values-grid">
+      <div class="value-card">
+        <h3>Built from practice, not theory</h3>
+        <p>Every application started as a real problem inside an FQHC. The workflows, the edge cases, the compliance requirements — all drawn from direct experience.</p>
+      </div>
+      <div class="value-card">
+        <h3>Human oversight, always</h3>
+        <p>AI surfaces evidence, scores risk, and recommends — but a human always decides. No black boxes, no autonomous actions on patient data.</p>
+      </div>
+      <div class="value-card">
+        <h3>Minority-, Pharmacist- &amp; Woman-Owned</h3>
+        <p>Quantum5D.ai is a certified minority-, pharmacist-, and woman-owned business serving health centers nationwide.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section 4: Credentials & Affiliations -->
+<section class="credentials">
+  <div class="wrap-narrow">
+    <h2>Credentials &amp; Affiliations</h2>
+    <ul class="cred-list">
+      <li><span class="cred-label">Doctor of Pharmacy (PharmD)</span><span class="cred-detail">— University of Maryland School of Pharmacy</span></li>
+      <li><span class="cred-label">Master of Business Administration (MBA)</span><span class="cred-detail">— Healthcare Administration</span></li>
+      <li><span class="cred-label">Fellow, American College of Healthcare Executives (FACHE)</span></li>
+      <li><span class="cred-label">340B Apexus Certified Expert (340B ACE)</span></li>
+      <li><span class="cred-label">Certified Health Center Executive in Finance (CHCEF)</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- Section 5: CTA -->
+<section class="cta-section">
+  <div class="wrap-narrow">
+    <h2>Ready to see how Quantum5D.ai can support your health center?</h2>
+    <div class="cta-buttons">
+      <a class="btn btn-primary" href="/#contact">Schedule a Briefing &rarr;</a>
+      <a class="btn btn-outline" href="/applications">Explore Applications &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap foot-in">
+  <div>&copy; <span id="yr"></span> Quantum5D.ai &middot; Minority-, Pharmacist- &amp; Woman-Owned &middot; Nationwide</div>
+  <div><a href="/applications" style="color:inherit;margin-right:16px">Applications</a><a href="/partners" style="color:inherit;margin-right:16px">Partners</a><a href="/services" style="color:inherit;margin-right:16px">Services</a><a href="/roadmap" style="color:inherit;margin-right:16px">Roadmap</a><a href="/security-and-trust" style="color:inherit;margin-right:16px">Security &amp; Trust</a><a href="https://quantum5d.ai" style="color:inherit">quantum5d.ai</a></div>
+</div></footer>
+<script>document.getElementById('yr').textContent=new Date().getFullYear();</script>
+
+</body>
+</html>
