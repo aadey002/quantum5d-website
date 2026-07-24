@@ -92,7 +92,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'Quantum 5D <alerts@achestudysmart.com>',
+          from: 'Quantum 5D <alerts@quantum5dconsulting.com>',
           to: [adminEmail],
           subject: subject,
           text: body,
@@ -117,7 +117,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            from: 'Quantum 5D <alerts@achestudysmart.com>',
+            from: 'Quantum 5D <alerts@quantum5dconsulting.com>',
             to: [smsGateway],
             subject: '',
             text: smsText,
