@@ -1,7 +1,8 @@
 {
   "framework": null,
-  "buildCommand": "",
+  "buildCommand": "node build-blog.cjs",
   "outputDirectory": "public",
+  "cleanUrls": true,
   "redirects": [
     {
       "source": "/(.*)",
@@ -18,15 +19,16 @@
   ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/security-and-trust", "destination": "/security-and-trust.html" },
-    { "source": "/applications/:slug", "destination": "/application.html" },
-    { "source": "/applications", "destination": "/applications.html" },
-    { "source": "/partners", "destination": "/partners.html" },
-    { "source": "/services", "destination": "/services.html" },
-    { "source": "/roadmap", "destination": "/roadmap.html" },
-    { "source": "/about", "destination": "/about.html" },
-    { "source": "/", "destination": "/quantum5d-site-index.html" },
-    { "source": "/((?!api|assets|images|resources|prototypes|briefs|robots.txt|sitemap.xml|logo.png|quantum5d-site-index.html|admin.html|security-and-trust.html|applications.html|application.html|partners.html|services.html|roadmap.html|about.html).*)", "destination": "/quantum5d-site-index.html" }
+    { "source": "/admin", "destination": "/admin" },
+    { "source": "/security-and-trust", "destination": "/security-and-trust" },
+    { "source": "/applications/:slug", "destination": "/application" },
+    { "source": "/applications", "destination": "/applications" },
+    { "source": "/partners", "destination": "/partners" },
+    { "source": "/services", "destination": "/services" },
+    { "source": "/roadmap", "destination": "/roadmap" },
+    { "source": "/about", "destination": "/about" },
+    { "source": "/blog/:slug", "destination": "/api/blog-fallback" },
+    { "source": "/", "destination": "/quantum5d-site-index" },
+    { "source": "/((?!api|assets|images|resources|prototypes|briefs|blog|robots.txt|sitemap.xml|logo.png|quantum5d-site-index|admin|security-and-trust|applications|application|partners|services|roadmap|about).*)", "destination": "/quantum5d-site-index" }
   ]
 }

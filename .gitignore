@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .env
+.env.*
 *.backup
 *.backup.*
 *.bak
@@ -8,3 +9,8 @@ dist/
 _archive/
 
 .vercel
+
+.env*.local
+
+# GCP service account keys
+q5d-analytics-*.json
