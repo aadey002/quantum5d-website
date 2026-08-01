@@ -1,8 +1,8 @@
 name: Blog Auto-Publisher
 
 on:
-  schedule:
-    - cron: '0 13 * * *'  # 9am ET (13:00 UTC) daily
+  # schedule:
+  #   - cron: '0 13 * * *'  # 9am ET (13:00 UTC) daily — DISABLED 2026-08-01, posts 18-22 are draft but belt+suspenders
   workflow_dispatch:
 
 jobs:
@@ -35,3 +35,24 @@ jobs:
 
           echo "Published posts: $RESULT"
           echo "Published null-date posts: $RESULT2"
+
+          # Check if any posts were actually published (non-empty array response)
+          if echo "$RESULT" | grep -q '"id"' || echo "$RESULT2" | grep -q '"id"'; then
+            echo "Posts were published — triggering site rebuild."
+            echo "POSTS_PUBLISHED=true" >> $GITHUB_ENV
+          else
+            echo "No posts published today."
+            echo "POSTS_PUBLISHED=false" >> $GITHUB_ENV
+          fi
+
+      - name: Trigger quantum5d.ai rebuild
+        if: env.POSTS_PUBLISHED == 'true'
+        env:
+          VERCEL_DEPLOY_HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$VERCEL_DEPLOY_HOOK_URL" ]; then
+            echo "WARNING: VERCEL_DEPLOY_HOOK_URL not set — skipping rebuild."
+            exit 0
+          fi
+          DEPLOY_RESULT=$(curl -s -X POST "$VERCEL_DEPLOY_HOOK_URL")
+          echo "Deploy hook response: $DEPLOY_RESULT"
