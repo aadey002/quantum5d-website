@@ -75,8 +75,8 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
 
 /* Maturity badges */
 .badge{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.05em;padding:3px 10px;border-radius:12px;font-weight:500;white-space:nowrap;text-transform:uppercase}
-.b-active{background:#D1FAE5;color:#065F46}
 .b-pilot{background:#DBEAFE;color:#1E40AF}
+.b-poc{background:#FFEDD5;color:#9A3412}
 .b-proto{background:#FEF3C7;color:#92400E}
 .b-design{background:#EDE9FE;color:#5B21B6}
 .b-concept{background:#F1F5F9;color:#475569}
@@ -153,8 +153,8 @@ footer{background:var(--navy);color:rgba(255,255,255,.6);padding:32px 24px;font-
 document.getElementById('yr').textContent=new Date().getFullYear();
 
 var MATURITY_CONFIG = {
-  'in_active_use':          {label:'In Active Use',           cls:'b-active',   order:1, desc:'Used in an ongoing real-world operational workflow by actual users.'},
-  'pilot_ready':            {label:'Pilot-Ready',             cls:'b-pilot',    order:2, desc:'Core workflow ready for a controlled pilot subject to security review.'},
+  'pilot_ready':            {label:'Pilot-Ready',             cls:'b-pilot',    order:1, desc:'Core workflow ready for a controlled pilot subject to security review.'},
+  'technical_poc':          {label:'Technical Proof of Concept', cls:'b-poc',   order:2, desc:'Tests whether a capability is technically feasible with real integrations.'},
   'interactive_prototype':  {label:'Interactive Prototype',   cls:'b-proto',    order:3, desc:'Demonstrates intended functionality using synthetic data.'},
   'design_partner':         {label:'Design Partner Development', cls:'b-design', order:4, desc:'Being shaped with prospective users before controlled pilot.'},
   'concept_demonstration':  {label:'Concept Demonstration',   cls:'b-concept',  order:5, desc:'Illustrates a proposed workflow or product direction.'},
@@ -162,7 +162,7 @@ var MATURITY_CONFIG = {
 };
 
 var TOOLS=[
- {id:"coverage",name:"CoverageGuard IQ",cat:"Coverage & Patient Access",maturity:"pilot_ready",
+ {id:"coverage",name:"CoverageGuard IQ",cat:"Coverage & Patient Access",maturity:"interactive_prototype",
   problem:"Six-month Medicaid redeterminations push eligible patients off coverage.",
   desc:"An FQHC-native coverage-intelligence platform that closes the whole Medicaid recertification loop.",
   tags:["Medicaid","Recertification","Coverage intelligence"],
@@ -172,12 +172,12 @@ var TOOLS=[
   desc:"Scores overall HRSA OSV readiness across a 19-area compliance heat map.",
   tags:["HRSA OSV","Compliance","Heat map"],
   audience:["CEO","COO","Compliance Officer","VP Quality","Board Secretary"]},
- {id:"dtm",name:"Collaborative Practice Review",cat:"Compliance & Regulatory Readiness",maturity:"pilot_ready",
+ {id:"dtm",name:"Collaborative Practice Review",cat:"Compliance & Regulatory Readiness",maturity:"interactive_prototype",
   problem:"Drug Therapy Management applications and reviews are paper-bound and slow.",
   desc:"A DTM application and review workflow built for boards — structured submission, a reviewer queue, and status tracking.",
   tags:["DTM","Regulatory","Workflow"],
   audience:["CIO","Compliance Officer","Board Staff","Regulatory Affairs"]},
- {id:"certiq",name:"Technician Program Review",cat:"Compliance & Regulatory Readiness",maturity:"pilot_ready",
+ {id:"certiq",name:"Technician Program Review",cat:"Compliance & Regulatory Readiness",maturity:"interactive_prototype",
   problem:"Board reviewers hand-check training-program packets against state regulatory requirements.",
   desc:"AI-assisted regulatory review that crosswalks a pharmacy-technician training program against requirements.",
   tags:["Regulatory review","Requirements crosswalk","AI-assisted"],
@@ -202,7 +202,7 @@ var TOOLS=[
   desc:"Turns a board packet into a 10-11 slide executive summary with built-in HRSA OSV compliance checker.",
   tags:["Governance","OSV checker","Summarization"],
   audience:["CEO","Board Chair","Board Secretary","COO"]},
- {id:"meeting",name:"Meeting Intelligence",cat:"Governance & Executive Intelligence",maturity:"pilot_ready",
+ {id:"meeting",name:"Meeting Intelligence",cat:"Governance & Executive Intelligence",maturity:"interactive_prototype",
   problem:"Decisions made in 1:1s and ELT meetings slip through the cracks.",
   desc:"Decision queue, RACI tracking, strategic-plan progress, and automated agenda builder.",
   tags:["RACI","Decision queue","Agendas"],
@@ -232,7 +232,7 @@ var TOOLS=[
   desc:"Scores prescriptions by abandonment risk x clinical criticality, routes the right action and channel.",
   tags:["Pharmacy ops","Risk scoring","Worklist"],
   audience:["CPO","Pharmacy Director","Pharmacy Manager"]},
- {id:"trureach",name:"TruReach",cat:"Pharmacy & Clinical Operations",maturity:"interactive_prototype",
+ {id:"trureach",name:"TruReach",cat:"Pharmacy & Clinical Operations",maturity:"technical_poc",
   problem:"No-shows pile up when appointment reminders never reach the patient.",
   desc:"Validates patient phone numbers — green for valid/textable, blue for landline, red for invalid.",
   tags:["No-show reduction","Validation","Patient outreach"],

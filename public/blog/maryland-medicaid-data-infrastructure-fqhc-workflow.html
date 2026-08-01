@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maryland Has the Data Infrastructure. Your FQHC Needs the Workflow That Uses It. — Quantum5D.ai</title>
+<meta name="description" content="CRISP, MDH Medicaid Check-In, CEND alerts, MCO partnerships — what each state tool does and the workflow gap FQHCs need to close.">
+<link rel="canonical" href="https://quantum5d.ai/blog/maryland-medicaid-data-infrastructure-fqhc-workflow">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Maryland Has the Data Infrastructure. Your FQHC Needs the Workflow That Uses It.">
+<meta property="og:description" content="CRISP, MDH Medicaid Check-In, CEND alerts, MCO partnerships — what each state tool does and the workflow gap FQHCs need to close.">
+<meta property="og:url" content="https://quantum5d.ai/blog/maryland-medicaid-data-infrastructure-fqhc-workflow">
+<meta property="og:site_name" content="Quantum5D.ai">
+<meta property="og:image" content="https://quantum5d.ai/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Maryland Has the Data Infrastructure. Your FQHC Needs the Workflow That Uses It.","description":"CRISP, MDH Medicaid Check-In, CEND alerts, MCO partnerships — what each state tool does and the workflow gap FQHCs need to close.","author":{"@type":"Person","name":"Dr. Adetoro Oriaifo, PharmD, MBA, 340B ACE, CHCEF, FACHE"},"publisher":{"@type":"Organization","name":"Quantum 5D Consulting","logo":{"@type":"ImageObject","url":"https://quantum5d.ai/logo.png"}},"datePublished":"2026-07-31","mainEntityOfPage":{"@type":"WebPage","@id":"https://quantum5d.ai/blog/maryland-medicaid-data-infrastructure-fqhc-workflow"}}</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+a{text-decoration:none;color:inherit}
+:root{
+  --ink:#14112E;--muted:#5E5A78;--line:#E4E1EF;
+  --purple:#5347A4;--purple-deep:#403592;--purple-soft:#938ABD;
+  --paper:#F6F5FB;--card:#FFFFFF;
+}
+body{font-family:"Inter",system-ui,sans-serif;color:var(--ink);background:#fff;
+  line-height:1.6;font-size:15px;-webkit-font-smoothing:antialiased}
+
+/* Nav */
+.wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+.nav{position:sticky;top:0;z-index:50;background:rgba(252,251,254,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:66px}
+.brand{display:flex;align-items:center;gap:10px;color:var(--ink)}
+.brand .wm{font-family:"Newsreader",Georgia,serif;font-weight:600;font-size:20px;letter-spacing:-.01em;color:var(--purple-deep)}
+.brand .wm small{display:block;font-family:"IBM Plex Mono",monospace;font-size:8.5px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-top:3px;font-weight:400}
+.nav-links{display:flex;align-items:center;gap:24px}
+.nav-links a{color:var(--muted);font-size:14px;font-weight:500;border-bottom:1.5px solid transparent;transition:.15s}
+.nav-links a:hover,.nav-links a.nav-active{color:var(--ink);border-bottom-color:var(--purple)}
+.nav-toggle{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px}
+.nav-toggle span{display:block;width:22px;height:2px;background:var(--ink);border-radius:2px}
+@media(max-width:768px){
+  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:rgba(252,251,254,.98);padding:16px 24px;flex-direction:column;gap:8px;border-top:1px solid var(--line)}
+  .nav-links.nav-open{display:flex}
+  .nav-links a{display:block;padding:10px 0;font-size:15px}
+  .nav-toggle{display:flex}
+}
+
+/* Footer */
+.blog-footer{margin-top:64px;padding:32px 0;border-top:1px solid var(--line);text-align:center}
+.footer-brand{font-family:"Newsreader",Georgia,serif;font-weight:600;font-size:18px;color:var(--purple-deep);margin-bottom:4px}
+.footer-brand small{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+.footer-text{font-size:13px;color:var(--muted);margin-bottom:12px}
+.footer-links{font-size:13px}
+.footer-links a{color:var(--purple);font-weight:500}
+.footer-links a:hover{text-decoration:underline}
+
+/* Post */
+.post-wrap{max-width:780px;padding-top:32px;padding-bottom:48px}
+.back-link{display:inline-block;font-size:13px;color:var(--purple);font-weight:500;margin-bottom:24px}
+.back-link:hover{text-decoration:underline}
+.post-header{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--line)}
+.post-category{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--purple);margin-bottom:12px}
+.post-title{font-family:"Newsreader",Georgia,serif;font-size:34px;font-weight:600;line-height:1.2;color:var(--ink);margin-bottom:12px}
+@media(max-width:600px){.post-title{font-size:26px}}
+.post-meta{font-size:13px;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap}
+
+.post-body{font-size:16px;line-height:1.75;color:var(--ink)}
+.post-body h1,.post-body h2,.post-body h3{font-family:"Newsreader",Georgia,serif;font-weight:600;margin:28px 0 12px;color:var(--ink)}
+.post-body h1{font-size:28px}.post-body h2{font-size:22px}.post-body h3{font-size:18px}
+.post-body p{margin-bottom:16px}
+.post-body ul,.post-body ol{margin:0 0 16px 24px}
+.post-body li{margin-bottom:6px}
+.post-body blockquote{border-left:3px solid var(--purple);padding:12px 20px;margin:20px 0;background:var(--paper);border-radius:0 8px 8px 0;font-style:italic;color:var(--muted)}
+.post-body strong{font-weight:600}
+.post-body a{color:var(--purple);text-decoration:underline}
+.post-body table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px}
+.post-body th,.post-body td{padding:10px 14px;border:1px solid var(--line);text-align:left}
+.post-body th{background:var(--paper);font-weight:600;font-size:13px}
+.post-body code{font-family:"IBM Plex Mono",monospace;font-size:14px;background:var(--paper);padding:2px 6px;border-radius:4px}
+.post-body pre{background:var(--paper);padding:16px;border-radius:8px;overflow-x:auto;margin:16px 0}
+.post-body pre code{background:none;padding:0}
+
+.post-tags{margin-top:32px;padding-top:20px;border-top:1px solid var(--line);display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:11px;padding:3px 9px;border-radius:20px;background:var(--paper);color:var(--muted);border:1px solid var(--line)}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="wrap nav-in"><a class="brand" href="/"><img src="/logo.png" alt="" width="34" height="31" style="border-radius:4px"><div class="wm">Quantum5D<small>.ai</small></div></a><div class="nav-links"><a href="/#platform">Platform</a><a href="/#applications">Applications</a><a href="/blog" class="nav-active">Blog</a><a href="/#about">About</a><a href="/security-and-trust">Security &amp; Trust</a></div><button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('nav-open')" aria-label="Menu"><span></span><span></span><span></span></button></div></nav>
+<main class="wrap post-wrap">
+<a href="/blog" class="back-link">&larr; All posts</a>
+<article class="post-article">
+<header class="post-header">
+<div class="post-category">coverage</div>
+<h1 class="post-title">Maryland Has the Data Infrastructure. Your FQHC Needs the Workflow That Uses It.</h1>
+<div class="post-meta"><span>Dr. Adetoro Oriaifo, PharmD, MBA, 340B ACE, CHCEF, FACHE</span><span>July 31, 2026</span></div>
+</header>
+<div class="post-body">
+<h1>Maryland Has the Data Infrastructure. Your FQHC Needs the Workflow That Uses It.</h1>
+<div class="meta">Dr. Oriaifo · August 2026 ·
+<span class="tag">Medicaid</span><span class="tag">FQHC</span><span class="tag">CRISP</span><span class="tag">Maryland</span><span class="tag">Coverage</span><span class="tag">Redetermination</span>
+</div>
+
+<p>Maryland has done something most states have not: it built a health information infrastructure that gives providers real-time visibility into their patient population. Between CRISP, Maryland Health Connection, and the Department of Health's Medicaid Check-In campaign, the state has assembled a set of tools that — if you actually use them — can tell you which of your patients are about to lose Medicaid coverage before it happens.</p>
+
+<p>The problem is that most FQHCs are not using them. Or they are receiving the data and nobody is acting on it.</p>
+
+<p>This post walks through what the state is offering, what each tool actually does, where the gaps are, and what it would take to close them.</p>
+
+<h2>Tool 1: CRISP Redetermination Files</h2>
+
+<p><a href="https://www.crisphealth.org/medicaid-redetermination/">CRISP</a> — the Chesapeake Regional Information System for Our Patients — is Maryland's regional health information exchange. Every Maryland hospital has been connected since 2011. The system aggregates clinical records, hospital discharge data, Medicare claims, and real-time utilization data across the state.</p>
+
+<p>For Medicaid redetermination, CRISP partners with Maryland Medicaid to deliver monthly files listing patients whose redetermination deadline falls within 90 days. The files include patient contact information so outreach teams can reach patients before the deadline.</p>
+
+<p><strong>What it gives you:</strong> A monthly early-warning list. Ninety days of lead time to reach patients before they lose coverage.</p>
+
+<p><strong>What it does not give you:</strong> A workflow. The file arrives as data. Somebody has to triage it, assign outreach responsibility, track contact attempts, and follow up on outcomes. CRISP tells you who is at risk. It does not tell you who on your team is going to call them, in what order, or what to do if they do not answer.</p>
+
+<h2>Tool 2: CRISP Event Notifications (CEND)</h2>
+
+<p>Beyond the redetermination files, CRISP's event notification system — CEND — delivers real-time alerts when patients have encounters across the Maryland healthcare system. Admissions, discharges, and transfers generate notifications that can be routed to care coordination teams.</p>
+
+<p><strong>What it gives you:</strong> Visibility into when your patients are showing up at other facilities. If a patient hits the ED at another hospital, your team can know about it the same day.</p>
+
+<p><strong>What it does not give you:</strong> Coverage-specific alerts. CEND tracks clinical events, not eligibility status changes. You will know when a patient was admitted somewhere. You will not know that their Medicaid coverage lapsed last Tuesday.</p>
+
+<h2>Tool 3: Maryland Health Connection — Medicaid Check-In</h2>
+
+<p>The <a href="https://health.maryland.gov/mmcp/Pages/workrequirements.aspx">Maryland Department of Health</a> has launched the <strong>Medicaid Check-In campaign</strong> to prepare members for the community engagement requirements taking effect in January 2027. The campaign directs members to <a href="https://www.marylandhealthconnection.gov/checkin/">MarylandHealthConnection.gov/Checkin</a> for information about what is changing and what they need to do.</p>
+
+<p>For providers, MDH has released a toolkit with educational materials — flyers for waiting rooms, content for patient portals, and appointment reminder language. The <a href="https://health.maryland.gov/mmcp/Pages/workrequirements-providers.aspx">provider guidance page</a> positions you as a "trusted messenger" and recommends posting materials in check-in and check-out areas.</p>
+
+<p><strong>What it gives you:</strong> Ready-made patient education materials. A consistent message to use when patients ask what is changing.</p>
+
+<p><strong>What it does not give you:</strong> Any way to know whether a specific patient read the flyer, understood the requirements, or completed their renewal. The campaign is awareness. It is not follow-through.</p>
+
+<h2>Tool 4: MCO Partnerships</h2>
+
+<p>Maryland's nine HealthChoice managed care organizations are implementing their own compliance tracking and member outreach for the community engagement requirements. Some MCOs will notify members directly. Some will share data with providers.</p>
+
+<p><strong>What it gives you:</strong> A partner with its own interest in keeping members enrolled.</p>
+
+<p><strong>What it does not give you:</strong> Consistency. Each MCO has its own notification timeline, its own data format, and its own definition of "provider outreach." If your patients are spread across four MCOs, you are managing four different information streams with no common view.</p>
+
+<h2>Where the Gap Is</h2>
+
+<p>Every tool the state offers solves part of the problem:</p>
+
+<table>
+<tr><th>Tool</th><th>What It Does</th><th>What It Does Not Do</th></tr>
+<tr><td>CRISP Redetermination Files</td><td>90-day early warning list with contact info</td><td>Triage, prioritize, assign, track outreach</td></tr>
+<tr><td>CRISP CEND Notifications</td><td>Real-time clinical event alerts</td><td>Coverage-specific status monitoring</td></tr>
+<tr><td>MDH Medicaid Check-In</td><td>Patient education materials and campaign</td><td>Individual patient follow-through tracking</td></tr>
+<tr><td>MCO Outreach</td><td>Member notifications (varies by plan)</td><td>Unified cross-payer view for providers</td></tr>
+</table>
+
+<p>The data exists. The awareness campaign exists. The MCO partnerships exist. What does not exist is the operational layer that connects them — the workflow that takes a name from the CRISP file, checks whether that patient is on a specialty medication, determines whether they qualify for a work requirement exemption, assigns the outreach to a specific team member, tracks whether the call was made, and reports whether the patient completed redetermination or fell off.</p>
+
+<p>That is not a technology problem. It is a workflow design problem. And it is the difference between having data and actually preventing coverage loss.</p>
+
+<h2>What the Ideal Workflow Looks Like</h2>
+
+<p>If you were designing this from scratch, the redetermination workflow would look something like this:</p>
+
+<ol>
+<li><strong>Ingest.</strong> Pull the CRISP redetermination file monthly. Merge it with your patient panel data so you have clinical context alongside the eligibility deadline.</li>
+<li><strong>Score.</strong> Not every patient carries the same risk. A patient on metformin with two visits a year is a different priority than a patient on adalimumab with twelve visits a year and $40,000 in annual 340B savings at stake. Score by financial exposure and clinical complexity.</li>
+<li><strong>Exempt.</strong> Screen against the OBBBA exemption categories — disability, pregnancy, caregiving, serious health conditions. Patients who qualify for exemptions should be flagged and assisted with documentation, not just left in the general outreach queue.</li>
+<li><strong>Assign.</strong> Route each patient to a specific team member with a specific deadline. Not "the eligibility team should look at this." A name, a date, a contact method.</li>
+<li><strong>Outreach.</strong> Contact the patient. Explain what is needed. Assist with paperwork if possible. Respect language preferences and communication opt-outs.</li>
+<li><strong>Track.</strong> Log every contact attempt, every outcome. Did the patient complete redetermination? Did they lose coverage? Was the loss procedural or substantive? This is how you measure whether the workflow is working.</li>
+<li><strong>Reconcile.</strong> After the redetermination deadline passes, check coverage status. If the patient retained coverage, close the loop. If they lost it, trigger secondary outreach and — where applicable — retroactive eligibility assistance.</li>
+</ol>
+
+<p>No single tool the state offers does all of this. CRISP gives you step one. The MDH campaign supports step five. The MCOs contribute fragments. But the scoring, exemption screening, assignment, tracking, and reconciliation — that is your workflow to build.</p>
+
+<h2>The Cost of Not Building It</h2>
+
+<p>If 320,000 Maryland Medicaid members are affected by the community engagement requirements and even 10 percent lose coverage for procedural reasons, that is 32,000 people. Your share of that — proportional to your panel — is patients who were eligible, who could have been helped, and who slipped through because nobody owned the workflow.</p>
+
+<p>Each one takes their reimbursement with them. Each one takes their 340B eligibility. And each one is a person who may not come back once they believe they are uninsured.</p>
+
+<p>The state built the data infrastructure. The question is whether your organization builds the workflow that turns that data into retained coverage.</p>
+
+<div class="refs">
+<h2>References</h2>
+<ol>
+<li>CRISP Health. "About CRISP." <a href="https://www.crisphealth.org/about/">crisphealth.org</a></li>
+<li>CRISP Health. "Medicaid Redetermination Resources." <a href="https://www.crisphealth.org/medicaid-redetermination/">crisphealth.org</a></li>
+<li>CRISP Health. "Services and Tools." <a href="https://www.crisphealth.org/services/">crisphealth.org</a></li>
+<li>Maryland Department of Health. "New Requirements for Medicaid." <a href="https://health.maryland.gov/mmcp/Pages/workrequirements.aspx">health.maryland.gov</a></li>
+<li>Maryland Department of Health. "What Providers Should Know." <a href="https://health.maryland.gov/mmcp/Pages/workrequirements-providers.aspx">health.maryland.gov</a></li>
+<li>Maryland Department of Health. "HealthChoice Managed Care." <a href="https://health.maryland.gov/mmcp/healthchoice/Pages/Home.aspx">health.maryland.gov</a></li>
+<li>One Big Beautiful Bill Act (OBBBA), H.R. 1, 119th Congress, Section 71119. <a href="https://www.congress.gov/bill/119th-congress/house-bill/1/text/eh">congress.gov</a></li>
+<li>HRSA. "340B Drug Pricing Program." <a href="https://www.hrsa.gov/opa">hrsa.gov</a></li>
+</ol>
+</div>
+</div>
+<div class="post-tags"><span class="tag">Medicaid</span><span class="tag">FQHC</span><span class="tag">CRISP</span><span class="tag">Maryland</span><span class="tag">Coverage</span><span class="tag">Redetermination</span></div></article>
+</main>
+<footer class="blog-footer"><div class="wrap"><p class="footer-brand">Quantum5D<small>.ai</small></p><p class="footer-text">AI-assisted operational intelligence for Federally Qualified Health Centers.</p><p class="footer-links"><a href="/">Home</a> &middot; <a href="/blog">Blog</a> &middot; <a href="/security-and-trust">Security &amp; Trust</a> &middot; <a href="https://quantum5dconsulting.com" rel="noopener">Consulting</a></p></div></footer>
+</body>
+</html>

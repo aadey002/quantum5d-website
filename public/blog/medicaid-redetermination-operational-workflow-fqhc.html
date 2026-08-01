@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medicaid Redetermination Is Not a Payer Problem � It Is an Operational Workflow You Need to Own — Quantum5D.ai</title>
+<meta name="description" content="How Maryland FQHCs can use CRISP redetermination files and state resources to prevent Medicaid coverage loss.">
+<link rel="canonical" href="https://quantum5d.ai/blog/medicaid-redetermination-operational-workflow-fqhc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Medicaid Redetermination Is Not a Payer Problem � It Is an Operational Workflow You Need to Own">
+<meta property="og:description" content="How Maryland FQHCs can use CRISP redetermination files and state resources to prevent Medicaid coverage loss.">
+<meta property="og:url" content="https://quantum5d.ai/blog/medicaid-redetermination-operational-workflow-fqhc">
+<meta property="og:site_name" content="Quantum5D.ai">
+<meta property="og:image" content="https://quantum5d.ai/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Medicaid Redetermination Is Not a Payer Problem � It Is an Operational Workflow You Need to Own","description":"How Maryland FQHCs can use CRISP redetermination files and state resources to prevent Medicaid coverage loss.","author":{"@type":"Person","name":"Dr. Adetoro Oriaifo, PharmD, MBA, 340B ACE, CHCEF, FACHE"},"publisher":{"@type":"Organization","name":"Quantum 5D Consulting","logo":{"@type":"ImageObject","url":"https://quantum5d.ai/logo.png"}},"datePublished":"2026-07-31","mainEntityOfPage":{"@type":"WebPage","@id":"https://quantum5d.ai/blog/medicaid-redetermination-operational-workflow-fqhc"}}</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+a{text-decoration:none;color:inherit}
+:root{
+  --ink:#14112E;--muted:#5E5A78;--line:#E4E1EF;
+  --purple:#5347A4;--purple-deep:#403592;--purple-soft:#938ABD;
+  --paper:#F6F5FB;--card:#FFFFFF;
+}
+body{font-family:"Inter",system-ui,sans-serif;color:var(--ink);background:#fff;
+  line-height:1.6;font-size:15px;-webkit-font-smoothing:antialiased}
+
+/* Nav */
+.wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+.nav{position:sticky;top:0;z-index:50;background:rgba(252,251,254,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:66px}
+.brand{display:flex;align-items:center;gap:10px;color:var(--ink)}
+.brand .wm{font-family:"Newsreader",Georgia,serif;font-weight:600;font-size:20px;letter-spacing:-.01em;color:var(--purple-deep)}
+.brand .wm small{display:block;font-family:"IBM Plex Mono",monospace;font-size:8.5px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-top:3px;font-weight:400}
+.nav-links{display:flex;align-items:center;gap:24px}
+.nav-links a{color:var(--muted);font-size:14px;font-weight:500;border-bottom:1.5px solid transparent;transition:.15s}
+.nav-links a:hover,.nav-links a.nav-active{color:var(--ink);border-bottom-color:var(--purple)}
+.nav-toggle{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px}
+.nav-toggle span{display:block;width:22px;height:2px;background:var(--ink);border-radius:2px}
+@media(max-width:768px){
+  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:rgba(252,251,254,.98);padding:16px 24px;flex-direction:column;gap:8px;border-top:1px solid var(--line)}
+  .nav-links.nav-open{display:flex}
+  .nav-links a{display:block;padding:10px 0;font-size:15px}
+  .nav-toggle{display:flex}
+}
+
+/* Footer */
+.blog-footer{margin-top:64px;padding:32px 0;border-top:1px solid var(--line);text-align:center}
+.footer-brand{font-family:"Newsreader",Georgia,serif;font-weight:600;font-size:18px;color:var(--purple-deep);margin-bottom:4px}
+.footer-brand small{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+.footer-text{font-size:13px;color:var(--muted);margin-bottom:12px}
+.footer-links{font-size:13px}
+.footer-links a{color:var(--purple);font-weight:500}
+.footer-links a:hover{text-decoration:underline}
+
+/* Post */
+.post-wrap{max-width:780px;padding-top:32px;padding-bottom:48px}
+.back-link{display:inline-block;font-size:13px;color:var(--purple);font-weight:500;margin-bottom:24px}
+.back-link:hover{text-decoration:underline}
+.post-header{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--line)}
+.post-category{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--purple);margin-bottom:12px}
+.post-title{font-family:"Newsreader",Georgia,serif;font-size:34px;font-weight:600;line-height:1.2;color:var(--ink);margin-bottom:12px}
+@media(max-width:600px){.post-title{font-size:26px}}
+.post-meta{font-size:13px;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap}
+
+.post-body{font-size:16px;line-height:1.75;color:var(--ink)}
+.post-body h1,.post-body h2,.post-body h3{font-family:"Newsreader",Georgia,serif;font-weight:600;margin:28px 0 12px;color:var(--ink)}
+.post-body h1{font-size:28px}.post-body h2{font-size:22px}.post-body h3{font-size:18px}
+.post-body p{margin-bottom:16px}
+.post-body ul,.post-body ol{margin:0 0 16px 24px}
+.post-body li{margin-bottom:6px}
+.post-body blockquote{border-left:3px solid var(--purple);padding:12px 20px;margin:20px 0;background:var(--paper);border-radius:0 8px 8px 0;font-style:italic;color:var(--muted)}
+.post-body strong{font-weight:600}
+.post-body a{color:var(--purple);text-decoration:underline}
+.post-body table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px}
+.post-body th,.post-body td{padding:10px 14px;border:1px solid var(--line);text-align:left}
+.post-body th{background:var(--paper);font-weight:600;font-size:13px}
+.post-body code{font-family:"IBM Plex Mono",monospace;font-size:14px;background:var(--paper);padding:2px 6px;border-radius:4px}
+.post-body pre{background:var(--paper);padding:16px;border-radius:8px;overflow-x:auto;margin:16px 0}
+.post-body pre code{background:none;padding:0}
+
+.post-tags{margin-top:32px;padding-top:20px;border-top:1px solid var(--line);display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:11px;padding:3px 9px;border-radius:20px;background:var(--paper);color:var(--muted);border:1px solid var(--line)}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="wrap nav-in"><a class="brand" href="/"><img src="/logo.png" alt="" width="34" height="31" style="border-radius:4px"><div class="wm">Quantum5D<small>.ai</small></div></a><div class="nav-links"><a href="/#platform">Platform</a><a href="/#applications">Applications</a><a href="/blog" class="nav-active">Blog</a><a href="/#about">About</a><a href="/security-and-trust">Security &amp; Trust</a></div><button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('nav-open')" aria-label="Menu"><span></span><span></span><span></span></button></div></nav>
+<main class="wrap post-wrap">
+<a href="/blog" class="back-link">&larr; All posts</a>
+<article class="post-article">
+<header class="post-header">
+<div class="post-category">coverage</div>
+<h1 class="post-title">Medicaid Redetermination Is Not a Payer Problem � It Is an Operational Workflow You Need to Own</h1>
+<div class="post-meta"><span>Dr. Adetoro Oriaifo, PharmD, MBA, 340B ACE, CHCEF, FACHE</span><span>July 31, 2026</span></div>
+</header>
+<div class="post-body">
+<h1>Medicaid Redetermination Is Not a Payer Problem — It Is an Operational Workflow You Need to Own</h1>
+<div class="meta">Dr. Oriaifo · July 31, 2026 ·
+<span class="tag">Medicaid</span><span class="tag">FQHC</span><span class="tag">Redetermination</span><span class="tag">CRISP</span><span class="tag">340B</span><span class="tag">Maryland</span>
+</div>
+
+<p>Every FQHC in Maryland has patients who are about to lose Medicaid coverage. Not because they are ineligible — because nobody told them their redetermination deadline is 60 days away.</p>
+
+<p>Redetermination is not new. What is new is the scale. During the COVID-19 public health emergency, Medicaid maintained enrollment for nearly all beneficiaries without requiring renewals. That pause is over. States are now cycling through their entire Medicaid population, and for some patients this is the first redetermination they have ever completed.</p>
+
+<p>On top of that, <a href="https://www.congress.gov/bill/119th-congress/house-bill/1/text/eh">Section 71119 of the One Big Beautiful Bill Act</a> introduces Medicaid community engagement requirements beginning January 2027. Under the new law, up to <strong>320,000 Maryland Medicaid members</strong> will need to demonstrate at least 80 hours per month of qualifying activity — employment, volunteering, job training, or education — to maintain coverage. Affected members will also shift from annual to <strong>six-month renewal cycles</strong>, requiring income verification and activity documentation twice a year.</p>
+
+<p>The <a href="https://health.maryland.gov/mmcp/Pages/workrequirements.aspx">Maryland Department of Health</a> has launched a statewide <strong>"Medicaid Check-In" campaign</strong> to help members understand the changes. But the operational burden of managing this at scale falls on the organizations that see these patients — and that means FQHCs.</p>
+
+<h2>Who Is Exempt</h2>
+
+<p>Not everyone is affected. The following groups are exempt from the community engagement requirements:</p>
+
+<ul>
+<li>Children under 19</li>
+<li>Adults 65 and older</li>
+<li>Pregnant individuals</li>
+<li>People with disabilities</li>
+<li>Caregivers of young children</li>
+<li>Those managing serious health conditions</li>
+</ul>
+
+<p>Your eligibility and care coordination teams need to be able to identify exempt patients proactively — not wait for them to lose coverage and appeal.</p>
+
+<h2>The Operational Gap</h2>
+
+<p>Most FQHCs learn about a coverage lapse the same way: a claim gets denied. By then, the visit has already happened. The 340B pricing is lost. The patient may not come back.</p>
+
+<p>The gap is not eligibility knowledge. It is detection speed. How many days elapse between a patient's coverage lapsing and your team finding out?</p>
+
+<p>If the answer is "when the claim bounces," you are operating reactively. Every day of delay costs you a billable encounter, a 340B-eligible prescription, and — in many cases — a patient who now thinks they are uninsured.</p>
+
+<h2>CRISP: A Resource Maryland FQHCs Should Be Using</h2>
+
+<p><a href="https://www.crisphealth.org/medicaid-redetermination/">CRISP</a> (Chesapeake Regional Information System for Our Patients) partners with Maryland Medicaid to provide healthcare delivery sites with <strong>monthly lists of patients approaching their redetermination deadline within 90 days</strong>.</p>
+
+<p>The file includes patient contact information so your outreach team can act before the deadline passes — not after.</p>
+
+<p>To access the file, your organization must be a CRISP participant (a HIPAA-covered entity with a signed participation agreement) with active CEND panels containing currently enrolled Medicaid patients. If you are an FQHC in Maryland and you are not receiving this file, contact your CRISP outreach representative or reach them at <strong>877-952-7477</strong>.</p>
+
+<p>CRISP provides:</p>
+<ul>
+<li>A <strong>Medicaid Redetermination Overview</strong> (updated January 2025)</li>
+<li>A <strong>File User Guide</strong> explaining how to interpret and act on the data</li>
+<li>An <strong>FAQ</strong> covering eligibility and access requirements</li>
+</ul>
+
+<p>These resources are available at <a href="https://www.crisphealth.org/medicaid-redetermination/">crisphealth.org/medicaid-redetermination</a>.</p>
+
+<h2>What Providers Should Be Doing Now</h2>
+
+<p>The <a href="https://health.maryland.gov/mmcp/Pages/workrequirements-providers.aspx">Maryland Department of Health guidance for providers</a> is clear: you are a <strong>trusted messenger</strong>. Patients will ask you about eligibility, renewal timelines, and what the work requirements mean for them. Be ready.</p>
+
+<p>Practical steps:</p>
+
+<ol>
+<li><strong>Assign ownership.</strong> Someone on your team — eligibility, care coordination, or population health — needs to own the redetermination outreach workflow. If nobody owns it, nobody does it.</li>
+<li><strong>Get the CRISP file.</strong> If you are not receiving monthly redetermination data from CRISP, request access today. This is the earliest warning system available to Maryland providers.</li>
+<li><strong>Stratify by risk.</strong> Not every patient on the list carries the same financial exposure. Patients on specialty medications, patients with high visit frequency, and patients whose coverage lapse would trigger 340B pricing loss should be prioritized.</li>
+<li><strong>Outreach before the deadline.</strong> A phone call or text 60 days before redetermination is worth more than a retroactive eligibility appeal. Use the contact information in the CRISP file to reach patients directly.</li>
+<li><strong>Post educational materials.</strong> Download the MDH toolkit and post flyers in waiting rooms and check-in areas. Include information in patient portal messages and appointment reminders. Direct patients to <a href="https://www.marylandhealthconnection.gov/checkin/">MarylandHealthConnection.gov/Checkin</a>.</li>
+<li><strong>Document every outreach attempt.</strong> Whether the patient responds or not, document it. This creates an audit trail and supports future retroactive eligibility claims.</li>
+<li><strong>Identify exempt patients now.</strong> Screen your Medicaid panel for patients who qualify for exemptions — disability, pregnancy, caregiving, serious health conditions. Flag them before the system flags them for noncompliance.</li>
+<li><strong>Track outcomes.</strong> Did the patient complete redetermination? Did they lose coverage? Was it procedural (missed paperwork) or substantive (income change)? This data tells you whether your outreach workflow is working.</li>
+</ol>
+
+<h2>The 340B Connection</h2>
+
+<p>Every patient who falls off Medicaid without your knowledge takes their 340B eligibility with them. If you are dispensing medications at 340B pricing to a patient who is no longer covered, you have a compliance problem. If you are not dispensing at 340B pricing because you did not know they were still covered, you have a revenue problem.</p>
+
+<p>Coverage verification and 340B program integrity are the same workflow. Treat them that way.</p>
+
+<div class="callout">
+<strong>Timeline:</strong> Community engagement requirements take effect January 2027. Six-month renewal cycles follow. The FQHCs that build a redetermination outreach workflow now will be the ones prepared for that wave. The ones that wait will be scrambling in Q4.
+</div>
+
+<div class="resource-box">
+<h3>Related Quantum 5D Resources</h3>
+<ul>
+<li><a href="https://quantum5d.ai/briefs/coverageguard-iq-executive-brief.html">CoverageGuard IQ Executive Brief</a> <span class="desc">— AI-assisted coverage recertification intelligence for FQHCs</span></li>
+<li><a href="https://quantum5d.ai/applications/coverage">CoverageGuard IQ Prototype →</a> <span class="desc">— Interactive demonstration of coverage monitoring</span></li>
+<li><a href="https://quantum5dconsulting.com/resources/340B-Program-Compliance-Checklist.pdf">340B Program Compliance Checklist (PDF)</a> <span class="desc">— Includes eligibility verification controls</span></li>
+</ul>
+</div>
+
+<div class="refs">
+<h2>References</h2>
+<ol>
+<li>Maryland Department of Health. "New Requirements for Medicaid." <a href="https://health.maryland.gov/mmcp/Pages/workrequirements.aspx">health.maryland.gov</a></li>
+<li>Maryland Department of Health. "What Providers Should Know." <a href="https://health.maryland.gov/mmcp/Pages/workrequirements-providers.aspx">health.maryland.gov</a></li>
+<li>Maryland Health Connection. "Medicaid Check-In." <a href="https://www.marylandhealthconnection.gov/checkin/">marylandhealthconnection.gov</a></li>
+<li>CRISP Health. "Medicaid Redetermination Resources." <a href="https://www.crisphealth.org/medicaid-redetermination/">crisphealth.org</a></li>
+<li>One Big Beautiful Bill Act (OBBBA), H.R. 1, 119th Congress, Section 71119. <a href="https://www.congress.gov/bill/119th-congress/house-bill/1/text/eh">congress.gov</a></li>
+<li>Kaiser Family Foundation. "A Closer Look at the Work Requirement Provisions in the 2025 Federal Budget Reconciliation Law." <a href="https://www.kff.org/medicaid/a-closer-look-at-the-work-requirement-provisions-in-the-2025-federal-budget-reconciliation-law/">KFF</a></li>
+<li>HRSA. "340B Drug Pricing Program." <a href="https://www.hrsa.gov/opa">hrsa.gov</a></li>
+</ol>
+</div>
+</div>
+<div class="post-tags"><span class="tag">Medicaid</span><span class="tag">FQHC</span><span class="tag">Redetermination</span><span class="tag">CRISP</span><span class="tag">340B</span><span class="tag">Maryland</span></div></article>
+</main>
+<footer class="blog-footer"><div class="wrap"><p class="footer-brand">Quantum5D<small>.ai</small></p><p class="footer-text">AI-assisted operational intelligence for Federally Qualified Health Centers.</p><p class="footer-links"><a href="/">Home</a> &middot; <a href="/blog">Blog</a> &middot; <a href="/security-and-trust">Security &amp; Trust</a> &middot; <a href="https://quantum5dconsulting.com" rel="noopener">Consulting</a></p></div></footer>
+</body>
+</html>
