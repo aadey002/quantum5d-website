@@ -651,13 +651,18 @@ tr:hover{background:#f9f8fd}
       var downloads = r[1].length;
       var leads = r[2].length;
 
-      var stages = [
-        { label: 'Page Sessions', count: sessions, color: '#5347A4' },
-        { label: 'Resource Downloads', count: downloads, color: '#6366f1' },
-        { label: 'Lead Captures', count: leads, color: '#2d9a5c' }
-      ];
       var max = Math.max(sessions, 1);
+      var dlRate = sessions > 0 ? (downloads / sessions * 100) : 0;
+      var leadRate = sessions > 0 ? (leads / sessions * 100) : 0;
+      var dlToLeadRate = downloads > 0 ? (leads / downloads * 100) : 0;
 
+      var stages = [
+        { label: 'Page Sessions', desc: 'Visitors who engaged with your site (scrolled, clicked, or spent time)', count: sessions, color: '#5347A4' },
+        { label: 'Resource Downloads', desc: 'Visitors who downloaded a free resource (checklist, calculator, guide)', count: downloads, color: '#6366f1' },
+        { label: 'Lead Captures', desc: 'Visitors who submitted their contact info (form, exit-intent, assessment)', count: leads, color: '#2d9a5c' }
+      ];
+
+      // Funnel bars
       var html = '<div style="display:flex;gap:16px;align-items:flex-end;margin-top:12px">';
       stages.forEach(function(s) {
         var heightPct = Math.max(Math.round((s.count / max) * 160), 24);
@@ -667,8 +672,61 @@ tr:hover{background:#f9f8fd}
         html += '<div style="height:' + heightPct + 'px;background:' + s.color + ';border-radius:6px 6px 0 0;margin:0 auto;width:80%;opacity:.85"></div>';
         html += '<div style="font-size:12px;font-weight:600;margin-top:8px;color:var(--charcoal)">' + escHtml(s.label) + '</div>';
         if (s.label !== 'Page Sessions') html += '<div style="font-size:11px;color:var(--soft-purple);font-family:IBM Plex Mono,monospace">' + convPct + '% of sessions</div>';
+        html += '<div style="font-size:11px;color:var(--charcoal);margin-top:4px;line-height:1.4;max-width:200px;margin-left:auto;margin-right:auto">' + s.desc + '</div>';
         html += '</div>';
       });
+      html += '</div>';
+
+      // Conversion rate summary
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">';
+      html += '<div style="text-align:center"><div style="font-size:11px;text-transform:uppercase;color:var(--soft-purple);font-family:IBM Plex Mono,monospace;margin-bottom:4px">Session &rarr; Download</div><div style="font-size:22px;font-weight:700;color:var(--navy);font-family:IBM Plex Mono,monospace">' + dlRate.toFixed(1) + '%</div></div>';
+      html += '<div style="text-align:center"><div style="font-size:11px;text-transform:uppercase;color:var(--soft-purple);font-family:IBM Plex Mono,monospace;margin-bottom:4px">Download &rarr; Lead</div><div style="font-size:22px;font-weight:700;color:var(--navy);font-family:IBM Plex Mono,monospace">' + dlToLeadRate.toFixed(1) + '%</div></div>';
+      html += '<div style="text-align:center"><div style="font-size:11px;text-transform:uppercase;color:var(--soft-purple);font-family:IBM Plex Mono,monospace;margin-bottom:4px">Session &rarr; Lead</div><div style="font-size:22px;font-weight:700;color:var(--navy);font-family:IBM Plex Mono,monospace">' + leadRate.toFixed(1) + '%</div></div>';
+      html += '</div>';
+
+      // Diagnostic + Recommendations
+      html += '<div style="margin-top:20px;padding:16px 20px;background:#f9f8fd;border-radius:10px;border:1px solid var(--border)">';
+      html += '<div style="font-family:Cormorant Garamond,serif;font-size:17px;font-weight:600;color:var(--navy);margin-bottom:10px">Funnel Diagnosis</div>';
+
+      // Traffic volume check
+      if (sessions < 50) {
+        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--danger);font-weight:700">&#9679;</span><div><strong>Low traffic volume (' + sessions + ' sessions).</strong> Not enough visitors to reliably diagnose conversion issues. <em>Fix:</em> Increase LinkedIn posting frequency, add blog CTAs linking to resources, share content in 340B/FQHC communities, and verify GA4 is tracking all pages.</div></div>';
+      } else {
+        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--success);font-weight:700">&#9679;</span><div><strong>Adequate traffic (' + sessions + ' sessions).</strong> Enough volume to read conversion patterns.</div></div>';
+      }
+
+      // Session → Download diagnosis
+      if (dlRate < 2) {
+        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--danger);font-weight:700">&#9679;</span><div><strong>Download rate is very low (' + dlRate.toFixed(1) + '%).</strong> Visitors are not grabbing your free resources. <em>Fix:</em> Add resource CTAs to blog posts and homepage hero. Make the exit-intent popup more prominent. Consider a sticky banner on the resources page. Test different lead magnets (ROI calculator, audit template).</div></div>';
+      } else if (dlRate < 5) {
+        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--warn);font-weight:700">&#9679;</span><div><strong>Download rate is below average (' + dlRate.toFixed(1) + '%).</strong> Some interest but room to grow. <em>Fix:</em> A/B test resource titles. Add inline download CTAs within blog content (not just sidebar). Highlight the most popular resource on the homepage.</div></div>';
+      } else {
+        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--success);font-weight:700">&#9679;</span><div><strong>Healthy download rate (' + dlRate.toFixed(1) + '%).</strong> Resources are resonating with visitors.</div></div>';
+      }
+
+      // Download → Lead diagnosis
+      if (downloads > 0 && dlToLeadRate < 10) {
+        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--danger);font-weight:700">&#9679;</span><div><strong>Download-to-lead conversion is weak (' + dlToLeadRate.toFixed(1) + '%).</strong> People take the free resources but do not reach out. <em>Fix:</em> Add a follow-up email sequence after downloads. Include a "Schedule a Free Assessment" CTA inside each PDF. Gate premium resources behind email capture. Add a post-download thank-you page with a consultation CTA.</div></div>';
+      } else if (downloads > 0 && dlToLeadRate < 25) {
+        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--warn);font-weight:700">&#9679;</span><div><strong>Download-to-lead rate is moderate (' + dlToLeadRate.toFixed(1) + '%).</strong> <em>Fix:</em> Strengthen the CTA inside resource PDFs. Add a drip email after resource download. Test adding a phone number field to the download form.</div></div>';
+      } else if (downloads > 0) {
+        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--success);font-weight:700">&#9679;</span><div><strong>Strong download-to-lead conversion (' + dlToLeadRate.toFixed(1) + '%).</strong> Resources are effectively driving inquiries.</div></div>';
+      }
+
+      // Overall session → lead diagnosis
+      if (leadRate < 1) {
+        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--danger);font-weight:700">&#9679;</span><div><strong>Overall lead capture rate is critically low (' + leadRate.toFixed(1) + '%).</strong> <em>Fix:</em> Ensure every page has a clear next step (contact form, assessment, or resource download). Reduce friction on the contact form (fewer required fields). Add social proof (client logos, testimonials) near CTAs. Consider adding a chatbot or click-to-call button.</div></div>';
+      } else if (leadRate < 3) {
+        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--warn);font-weight:700">&#9679;</span><div><strong>Lead capture rate is below B2B average (' + leadRate.toFixed(1) + '%).</strong> B2B consulting sites typically convert 2-5% of sessions. <em>Fix:</em> Add urgency (limited spots, seasonal deadlines). Test the free assessment page headline. Place testimonials directly above the contact form.</div></div>';
+      } else {
+        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--success);font-weight:700">&#9679;</span><div><strong>Lead capture rate is solid (' + leadRate.toFixed(1) + '%).</strong> At or above B2B consulting benchmark (2-5%). Focus on increasing traffic volume to scale lead flow.</div></div>';
+      }
+
+      // Zero-data edge case
+      if (sessions === 0) {
+        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--soft-purple);font-weight:700">&#9679;</span><div>No engagement sessions recorded in the last 30 days. This may mean the engagement tracker is not firing, or there has been no traffic. Check that the consulting site is loading the useEngagementTracker hook.</div></div>';
+      }
+
       html += '</div>';
 
       document.getElementById('dashFunnel').innerHTML = html;
