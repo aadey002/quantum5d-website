@@ -909,12 +909,19 @@ tr:hover{background:#f9f8fd}
     });
 
     // LinkedIn
-    sbFetch('linkedin_posts?select=*&order=scheduled_date.desc').then(function(data) {
-      var totLikes=0, totComments=0, totImpressions=0, totClicks=0, totShares=0, posted=0;
+    sbFetch('linkedin_posts?select=id,content,status,category,scheduled_date,posted_at,engagement_data&order=scheduled_date.desc').then(function(data) {
+      var totLikes=0, totComments=0, totImpressions=0, totClicks=0, totShares=0, posted=0, scheduled=0;
+
+      function parseEd(p) {
+        if (!p || !p.engagement_data) return {};
+        try { return typeof p.engagement_data === 'string' ? JSON.parse(p.engagement_data) : p.engagement_data; }
+        catch(e) { return {}; }
+      }
+
       data.forEach(function(p) {
         if (p.status === 'posted') posted++;
-        if (!p.engagement_data) return;
-        var ed = typeof p.engagement_data === 'string' ? JSON.parse(p.engagement_data) : p.engagement_data;
+        if (p.status === 'scheduled') scheduled++;
+        var ed = parseEd(p);
         totLikes += parseInt(ed.likes)||0; totComments += parseInt(ed.comments)||0;
         totImpressions += parseInt(ed.impressions)||0; totClicks += parseInt(ed.clicks)||0;
         totShares += parseInt(ed.shares)||0;
@@ -950,28 +957,35 @@ tr:hover{background:#f9f8fd}
         else { el.textContent = days + 'd'; el.style.color = 'var(--success)'; sub.textContent = 'Valid'; }
       }).catch(function(){});
 
-      // Sort by total engagement (highest first)
+      // Sort by total engagement (highest first) — posted first, then scheduled
       data.sort(function(a, b) {
-        var aEd = a.engagement_data ? (typeof a.engagement_data === 'string' ? JSON.parse(a.engagement_data) : a.engagement_data) : {};
-        var bEd = b.engagement_data ? (typeof b.engagement_data === 'string' ? JSON.parse(b.engagement_data) : b.engagement_data) : {};
+        var aEd = parseEd(a), bEd = parseEd(b);
         var aEng = (parseInt(aEd.likes)||0) + (parseInt(aEd.comments)||0) + (parseInt(aEd.shares)||0) + (parseInt(aEd.impressions)||0);
         var bEng = (parseInt(bEd.likes)||0) + (parseInt(bEd.comments)||0) + (parseInt(bEd.shares)||0) + (parseInt(bEd.impressions)||0);
+        // Posted posts with engagement first, then posted without, then scheduled, then rest
+        var aPosted = a.status === 'posted' ? 1 : 0;
+        var bPosted = b.status === 'posted' ? 1 : 0;
+        if (aPosted !== bPosted) return bPosted - aPosted;
         return bEng - aEng;
       });
 
-      // Post table (top 15, ranked by engagement)
+      // Filter out deleted posts for the table
+      var visiblePosts = data.filter(function(p) { return p.status !== 'deleted'; });
+
+      // Post table (top 20, ranked by engagement)
+      html += '<h3 style="font-family:Cormorant Garamond,serif;font-size:16px;margin:12px 0 8px">' + posted + ' posted, ' + scheduled + ' scheduled, ' + data.length + ' total</h3>';
       html += '<div class="table-wrap"><table><thead><tr><th>#</th><th>Content</th><th>Status</th><th>Date</th><th>Impr</th><th>Eng</th></tr></thead><tbody>';
-      data.slice(0, 15).forEach(function(p, i) {
-        var ed = p.engagement_data ? (typeof p.engagement_data === 'string' ? JSON.parse(p.engagement_data) : p.engagement_data) : {};
+      visiblePosts.slice(0, 20).forEach(function(p, i) {
+        var ed = parseEd(p);
         var imp = parseInt(ed.impressions)||0;
         var eng = (parseInt(ed.likes)||0) + (parseInt(ed.comments)||0) + (parseInt(ed.shares)||0);
-        html += '<tr><td class="mono" style="color:var(--soft-purple)">' + (i+1) + '</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escHtml(truncate(p.content, 50)) + '</td><td>' + statusBadge(p.status) + '</td><td class="mono" style="white-space:nowrap">' + fmtDate(p.posted_at || p.scheduled_date) + '</td><td class="mono">' + (imp ? imp.toLocaleString() : '--') + '</td><td class="mono" style="font-weight:700">' + (eng || '--') + '</td></tr>';
+        html += '<tr><td class="mono" style="color:var(--soft-purple)">' + (i+1) + '</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + escHtml(truncate(p.content, 200)) + '">' + escHtml(truncate(p.content, 50)) + '</td><td>' + statusBadge(p.status) + '</td><td class="mono" style="white-space:nowrap">' + fmtDate(p.posted_at || p.scheduled_date) + '</td><td class="mono">' + (imp ? imp.toLocaleString() : '--') + '</td><td class="mono" style="font-weight:700">' + (eng || '--') + '</td></tr>';
       });
       html += '</tbody></table></div>';
 
       document.getElementById('contentLinkedIn').innerHTML = html;
     }).catch(function(e) {
-      document.getElementById('contentLinkedIn').innerHTML = '<p style="color:var(--danger)">Error: ' + escHtml(e.message) + '</p>';
+      document.getElementById('contentLinkedIn').innerHTML = '<p style="padding:20px;color:var(--danger)">Error loading LinkedIn data: ' + escHtml(e.message) + '</p>';
     });
 
     // Resource downloads
