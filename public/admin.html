@@ -60,6 +60,10 @@ header .logout:hover{background:rgba(255,255,255,.1)}
 .kpi-card .kpi-trend.down{color:var(--danger)}
 .kpi-card .kpi-trend.flat{color:var(--soft-purple)}
 .kpi-card .kpi-sub{font-size:11px;color:var(--charcoal);margin-top:2px;opacity:.7}
+.kpi-card .kpi-bench{font-size:10px;margin-top:4px;padding:3px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace;display:inline-block}
+.kpi-card .kpi-bench.above{background:var(--green-bg);color:var(--success)}
+.kpi-card .kpi-bench.at{background:var(--yellow-bg);color:var(--warn)}
+.kpi-card .kpi-bench.below{background:var(--red-bg);color:var(--danger)}
 .kpi-card .sparkline{position:absolute;bottom:0;right:0;width:80px;height:32px;opacity:.3}
 
 /* Section */
@@ -478,6 +482,28 @@ tr:hover{background:#f9f8fd}
     return '<span class="kpi-trend flat">&#9644; 0%' + suffix + '</span>';
   }
 
+  // Benchmark indicator: shows where value stands vs B2B consulting benchmarks
+  // range: [low, high] — below low = below, between = at, above high = above
+  function benchHtml(value, low, high, label) {
+    if (value === null || value === undefined || isNaN(value)) return '';
+    var cls, arrow;
+    if (value >= high) { cls = 'above'; arrow = '&#9650;'; }
+    else if (value >= low) { cls = 'at'; arrow = '&#9644;'; }
+    else { cls = 'below'; arrow = '&#9660;'; }
+    return '<div class="kpi-bench ' + cls + '">' + arrow + ' ' + label + '</div>';
+  }
+
+  function setBench(elementId, value, low, high, label) {
+    var el = document.getElementById(elementId);
+    if (!el) return;
+    // Find or create bench element
+    var parent = el.closest('.kpi-card');
+    if (!parent) return;
+    var existing = parent.querySelector('.kpi-bench');
+    if (existing) existing.remove();
+    parent.insertAdjacentHTML('beforeend', benchHtml(value, low, high, label));
+  }
+
   function statusBadge(status) {
     if (!status) return '';
     var s = status.toLowerCase();
@@ -534,6 +560,7 @@ tr:hover{background:#f9f8fd}
       var cur = r[0].length, prev = r[1].length;
       document.getElementById('kLeads').textContent = cur;
       document.getElementById('kLeadsTrend').outerHTML = trendHtml(cur, prev, ' vs last wk');
+      setBench('kLeads', cur, 2, 5, 'B2B: 2-5/wk');
     }).catch(function(){ document.getElementById('kLeads').textContent = '0'; });
 
     // --- KPI: Blog views this week vs last week ---
@@ -544,12 +571,14 @@ tr:hover{background:#f9f8fd}
       var cur = r[0].length, prev = r[1].length;
       document.getElementById('kViews').textContent = cur;
       document.getElementById('kViewsTrend').outerHTML = trendHtml(cur, prev, ' vs last wk');
+      setBench('kViews', cur, 50, 200, 'B2B blog: 50-200/wk');
     }).catch(function(){ document.getElementById('kViews').textContent = '0'; });
 
     // --- KPI: Newsletter subscribers ---
     sbCount('newsletter_subscriptions').then(function(c) {
       document.getElementById('kSubs').textContent = c;
       document.getElementById('kSubsTrend').outerHTML = '<span class="kpi-trend flat">total</span>';
+      setBench('kSubs', c, 100, 500, 'Niche B2B: 100-500');
     }).catch(function(){ document.getElementById('kSubs').textContent = '0'; });
 
     // --- KPI: Resource downloads this week vs last ---
@@ -560,6 +589,7 @@ tr:hover{background:#f9f8fd}
       var cur = r[0].length, prev = r[1].length;
       document.getElementById('kDownloads').textContent = cur;
       document.getElementById('kDownloadsTrend').outerHTML = trendHtml(cur, prev, ' vs last wk');
+      setBench('kDownloads', cur, 3, 10, 'B2B: 3-10/wk');
     }).catch(function(){ document.getElementById('kDownloads').textContent = '0'; });
 
     // --- KPI: LinkedIn engagement rate ---
@@ -573,9 +603,11 @@ tr:hover{background:#f9f8fd}
         totEng += itemEng;
         totImp += parseInt(ed.impressions) || 0;
       });
-      var rate = totImp > 0 ? ((totEng / totImp) * 100).toFixed(1) + '%' : '--';
+      var rateNum = totImp > 0 ? (totEng / totImp) * 100 : 0;
+      var rate = totImp > 0 ? rateNum.toFixed(1) + '%' : '--';
       document.getElementById('kLinkedIn').textContent = rate;
       document.getElementById('kLinkedInTrend').outerHTML = '<span class="kpi-trend flat">' + totEng + ' engagements / ' + totImp.toLocaleString() + ' impr</span>';
+      setBench('kLinkedIn', rateNum, 2, 5, 'LinkedIn B2B: 2-5%');
     }).catch(function(){ document.getElementById('kLinkedIn').textContent = '--'; });
 
     // --- KPI: Avg engagement time (active seconds) this week ---
@@ -586,6 +618,7 @@ tr:hover{background:#f9f8fd}
       var avg = Math.round(totalActive / data.length);
       document.getElementById('kEngTime').textContent = fmtSec(avg);
       document.getElementById('kEngTimeTrend').outerHTML = '<span class="kpi-trend flat">' + data.length + ' sessions this wk</span>';
+      setBench('kEngTime', avg, 45, 90, 'B2B content: 45-90s');
     }).catch(function(){ document.getElementById('kEngTime').textContent = '--'; });
 
     // --- Lead Sources Donut ---
@@ -1205,12 +1238,25 @@ tr:hover{background:#f9f8fd}
       });
 
       var n = data.length;
+      var avgTimeSec = Math.round(totalTime/n);
+      var avgActiveSec = Math.round(totalActive/n);
+      var avgScrollPct = Math.round(totalScroll/n);
+      var bouncePct = Math.round(bounces/n*100);
+      var deepReadPct = Math.round(deepReads/n*100);
+
       document.getElementById('tSessions').textContent = n;
-      document.getElementById('tAvgTime').textContent = fmtSec(Math.round(totalTime/n));
-      document.getElementById('tAvgActive').textContent = fmtSec(Math.round(totalActive/n));
-      document.getElementById('tAvgScroll').textContent = Math.round(totalScroll/n) + '%';
-      document.getElementById('tBounce').textContent = Math.round(bounces/n*100) + '%';
-      document.getElementById('tDeepRead').textContent = Math.round(deepReads/n*100) + '%';
+      document.getElementById('tAvgTime').textContent = fmtSec(avgTimeSec);
+      document.getElementById('tAvgActive').textContent = fmtSec(avgActiveSec);
+      document.getElementById('tAvgScroll').textContent = avgScrollPct + '%';
+      document.getElementById('tBounce').textContent = bouncePct + '%';
+      document.getElementById('tDeepRead').textContent = deepReadPct + '%';
+
+      setBench('tSessions', n, 100, 500, 'Monthly: 100-500');
+      setBench('tAvgTime', avgTimeSec, 60, 180, 'B2B: 1-3 min');
+      setBench('tAvgActive', avgActiveSec, 30, 90, 'Active: 30-90s');
+      setBench('tAvgScroll', avgScrollPct, 50, 75, 'Good: 50-75%');
+      setBench('tBounce', 100 - bouncePct, 40, 70, 'B2B: 30-60% bounce');
+      setBench('tDeepRead', deepReadPct, 20, 35, 'Strong: 20-35%');
 
       // Time chart
       renderBarChart(document.getElementById('tTimeChart'), Object.entries(timeBuckets), 'var(--purple)');
