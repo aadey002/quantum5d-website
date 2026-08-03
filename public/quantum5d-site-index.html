@@ -894,7 +894,7 @@ document.addEventListener("click", function(e) {
       </div>
       <div style="background:linear-gradient(135deg,#1e1b4b,#312e81);color:#fff;border-radius:12px;padding:18px 20px;text-align:center">
         <div style="margin-bottom:6px;color:#A78BFA"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
-        <div style="font-weight:700;font-size:14px;margin-bottom:4px">Knowledge Engine</div>
+        <div style="font-weight:700;font-size:14px;margin-bottom:4px">Governance Knowledge Model</div>
         <div style="font-size:11px;color:#C4B5FD;line-height:1.4">HRSA, CMS, 340B, pharmacy regs, org policies</div>
       </div>
       <div style="background:linear-gradient(135deg,#1e1b4b,#312e81);color:#fff;border-radius:12px;padding:18px 20px;text-align:center">
@@ -939,7 +939,7 @@ document.addEventListener("click", function(e) {
       <div style="font-size:12.5px;color:var(--text-3)">Every recommendation governed by rules, evidence, and human oversight — the AI reasons, a human decides.</div>
     </div>
     <div style="background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 24px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--purple-soft);text-transform:uppercase;letter-spacing:.08em">Knowledge Layer</div><span class="badge b-design" style="font-size:9px;padding:1px 6px">Building</span></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--purple-soft);text-transform:uppercase;letter-spacing:.08em">Governance Knowledge Model</div><span class="badge b-concept" style="font-size:9px;padding:1px 6px">Concept</span></div>
       <div style="font-weight:600;font-size:14px;margin-bottom:4px">HRSA requirements · CMS rules · 340B · Pharmacy regulations · Quality standards</div>
       <div style="font-size:12.5px;color:var(--text-3)">One governance engine that every application reasons from — the compound advantage that gets harder to replicate over time.</div>
     </div>
@@ -1107,20 +1107,20 @@ document.addEventListener("click", function(e) {
     <div class="roadmap-phase">
       <div class="roadmap-q">Current</div>
       <h3 style="font-size:16px;margin:0 0 8px">15 Applications</h3>
-      <p style="font-size:13px;color:var(--text-3);margin:0">Interactive prototypes and pilot-ready applications across 5 FQHC domains. Platform architecture defined.</p>
+      <p style="font-size:13px;color:var(--text-3);margin:0">Interactive prototypes across 5 FQHC domains. Platform architecture defined.</p>
       <div style="margin-top:10px"><span class="badge b-active" style="font-size:10px;padding:2px 8px">Active</span></div>
     </div>
     <div class="roadmap-phase">
       <div class="roadmap-q">Next</div>
-      <h3 style="font-size:16px;margin:0 0 8px">Design Partner Pilots</h3>
-      <p style="font-size:13px;color:var(--text-3);margin:0">CoverageGuard IQ flagship pilot with founding innovation partners. Workflow validation and outcome measurement.</p>
-      <div style="margin-top:10px"><span class="badge b-pilot" style="font-size:10px;padding:2px 8px">Recruiting</span></div>
+      <h3 style="font-size:16px;margin:0 0 8px">Potential Controlled Evaluations</h3>
+      <p style="font-size:13px;color:var(--text-3);margin:0">Proposed workflow validation and outcome measurement with design partners.</p>
+      <div style="margin-top:10px"><span class="badge b-design" style="font-size:10px;padding:2px 8px">Proposed</span></div>
     </div>
     <div class="roadmap-phase">
-      <div class="roadmap-q">Building</div>
-      <h3 style="font-size:16px;margin:0 0 8px">Knowledge Engine</h3>
-      <p style="font-size:13px;color:var(--text-3);margin:0">Unified governance engine encoding HRSA, CMS, 340B, and pharmacy regulations so every application reasons from one source.</p>
-      <div style="margin-top:10px"><span class="badge b-design" style="font-size:10px;padding:2px 8px">In development</span></div>
+      <div class="roadmap-q">Concept</div>
+      <h3 style="font-size:16px;margin:0 0 8px">Governance Knowledge Model</h3>
+      <p style="font-size:13px;color:var(--text-3);margin:0">Proposed governance model encoding HRSA, CMS, 340B, and pharmacy regulations so every application reasons from one source.</p>
+      <div style="margin-top:10px"><span class="badge b-concept" style="font-size:10px;padding:2px 8px">Concept</span></div>
     </div>
     <div class="roadmap-phase">
       <div class="roadmap-q">Future</div>
@@ -1183,7 +1183,7 @@ var CONTACT_EMAIL="hello@quantum5d.ai"; // confirm / change
 var PLATFORM_CONFIG = {applicationCount: 15};
 
 var MATURITY_CONFIG = {
-  'pilot_ready':            {label:'Pilot-Ready',             shortLabel:'Pilot-Ready', cls:'b-pilot',    order:1, desc:'Core workflow ready for a controlled pilot subject to security review, implementation planning, and human oversight.'},
+  'pilot_ready':            {label:'Interactive Prototype',    shortLabel:'Prototype',   cls:'b-proto',    order:1, desc:'Demonstrates intended functionality using synthetic or demonstration data.'},
   'technical_poc':          {label:'Technical Proof of Concept', shortLabel:'Proof of Concept', cls:'b-poc', order:2, desc:'Tests whether a capability is technically feasible with real integrations.'},
   'interactive_prototype':  {label:'Interactive Prototype',   shortLabel:'Prototype',  cls:'b-proto',    order:3, desc:'Demonstrates intended functionality using synthetic or demonstration data.'},
   'design_partner':         {label:'Design Partner Development', shortLabel:'Design Partner', cls:'b-design', order:4, desc:'Being shaped with prospective users and partners before controlled pilot use.'},
@@ -1221,7 +1221,7 @@ var TOOLS=[
   tags:["Regulatory review","Requirements crosswalk","AI-assisted"],
   audience:["CIO","Compliance Officer","Board Staff","Regulatory Affairs","Regulatory Board Staff","Regulatory Board"]},
  {id:"sentinel",name:"Sentinel",cat:"Compliance & Regulatory Readiness",live:true,demo:null,link:true,
-  maturity:"concept_demonstration",
+  maturity:"interactive_prototype",
   problem:"Compliance and oversight teams triage complaints and target inspections by hand.",
   desc:"An AI-assist reasoning layer for regulatory back-office work: it triages complaints by risk with cited rules, targets inspections with a tunable model, runs automated application checks, and tests proposed sanctions against precedent \u2014 it recommends and cites its reasoning, but a human always decides.",
   tags:["Regulatory","Risk triage","AI-assisted"],
@@ -1239,7 +1239,7 @@ var TOOLS=[
   tags:["Closed-loop referrals","OSV readiness","Assurance"],
   audience:["CMO","CQO","VP Quality","Risk Officer","General Counsel"]},
  {id:"board",name:"Board Governance IQ",cat:"Governance & Executive Intelligence",live:true,demo:null,link:"board-intelligence-prototype.html",
-  maturity:"pilot_ready",
+  maturity:"interactive_prototype",
   problem:"Board prep eats executive time; HRSA OSV gaps create risk.",
   desc:"Turns a board packet into a 10\u201311 slide executive summary, runs a built-in HRSA OSV compliance checker that flags missing agenda/minutes items, maintains a governance calendar, and tracks action items with a full audit log.",
   tags:["Governance","OSV checker","Summarization"],
@@ -1269,7 +1269,7 @@ var TOOLS=[
   tags:["340B","IRA / MFP","Margin analytics"],
   audience:["CFO","CPO","340B Director","Pharmacy Director","Revenue Cycle"]},
  {id:"budget",name:"PatientFirst Budget Engine",cat:"Strategy, Finance & Sustainability",live:true,demo:null,link:true,
-  maturity:"concept_demonstration",
+  maturity:"interactive_prototype",
   problem:"FQHC budgets are built backward from last year instead of from the patients you plan to serve.",
   desc:"A patient-first budgeting model: set a patient-access target, service mix, staffing and payer assumptions, and it cascades live to required visits, provider and support FTEs, salaries, total operating budget, revenue by payer, and the resulting gap or surplus \u2014 grounded in industry benchmarks.",
   tags:["FQHC finance","Budgeting","Industry benchmarks"],
@@ -1281,7 +1281,7 @@ var TOOLS=[
   tags:["Pharmacy ops","Risk scoring","Worklist"],
   audience:["CPO","Pharmacy Director","Pharmacy Manager","Operations"]},
  {id:"trureach",name:"TruReach",cat:"Pharmacy & Clinical Operations",live:true,demo:"phone",
-  maturity:"technical_poc",
+  maturity:"interactive_prototype",
   problem:"No-shows and failed recalls pile up when appointment reminders never reach the patient.",
   desc:"Validates patient phone numbers in batch or in real time \u2014 green for valid and textable, blue for valid landline, red for invalid \u2014 so appointment reminders, recalls, and refill nudges actually land, cutting no-shows and wasted outreach. Embeds into pharmacy management systems, EMRs, schedulers, and any system that stores phone numbers.",
   tags:["No-show reduction","Validation","Patient outreach"],
@@ -4046,9 +4046,9 @@ function Sidebar({
     className: "flex items-center gap-2 text-gold"
   }, /*#__PURE__*/React.createElement("span", null, Ico.sparkle), /*#__PURE__*/React.createElement("span", {
     className: "text-xs font-bold uppercase tracking-wide"
-  }, "Pilot status")), /*#__PURE__*/React.createElement("p", {
+  }, "Prototype status")), /*#__PURE__*/React.createElement("p", {
     className: "mt-2 text-xs leading-relaxed text-slatey"
-  }, "Live pilot running against historical DTM packets. Electronic payment, scoring and deficiency tooling enabled.")));
+  }, "Interactive demonstration using illustrative DTM application data. Electronic payment, scoring and deficiency tooling enabled.")));
 }
 
 /* ================================================================== APPLICANT */
