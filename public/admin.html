@@ -1187,19 +1187,22 @@ tr:hover{background:#f9f8fd}
       return [];
     }
     var workbook = XLSX.read(data, { type: 'array' });
-    var sheetName = workbook.SheetNames[0];
-    var sheet = workbook.Sheets[sheetName];
-    var jsonData = XLSX.utils.sheet_to_json(sheet, { defval: '' });
 
+    // Check if this is a LinkedIn Aggregate Analytics export
+    if (workbook.SheetNames.indexOf('TOP POSTS') >= 0) {
+      return parseLinkedInExport(workbook);
+    }
+
+    // Generic xlsx parsing fallback
+    var sheetName = workbook.SheetNames[0];
+    var jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { defval: '' });
     if (!jsonData.length) return [];
 
-    // Auto-detect columns from the first row's keys
     var keys = Object.keys(jsonData[0]);
     var colMap = { content: '', impressions: '', clicks: '', likes: '', comments: '', shares: '', date: '' };
-
     keys.forEach(function(k) {
       var kl = k.toLowerCase();
-      if (!colMap.content && (kl.indexOf('content') >= 0 || kl.indexOf('post text') >= 0 || kl.indexOf('title') >= 0 || kl.indexOf('body') >= 0 || kl.indexOf('message') >= 0 || kl.indexOf('text') >= 0)) colMap.content = k;
+      if (!colMap.content && (kl.indexOf('content') >= 0 || kl.indexOf('post text') >= 0 || kl.indexOf('title') >= 0 || kl.indexOf('body') >= 0 || kl.indexOf('text') >= 0)) colMap.content = k;
       if (!colMap.impressions && kl.indexOf('impression') >= 0) colMap.impressions = k;
       if (!colMap.clicks && kl.indexOf('click') >= 0 && kl.indexOf('ctr') < 0) colMap.clicks = k;
       if (!colMap.likes && (kl.indexOf('like') >= 0 || kl.indexOf('reaction') >= 0)) colMap.likes = k;
@@ -1207,32 +1210,97 @@ tr:hover{background:#f9f8fd}
       if (!colMap.shares && (kl.indexOf('share') >= 0 || kl.indexOf('repost') >= 0)) colMap.shares = k;
       if (!colMap.date && (kl.indexOf('date') >= 0 || kl.indexOf('published') >= 0 || kl.indexOf('posted') >= 0)) colMap.date = k;
     });
-
-    // Fallback: if no content column found, use the first text-like column
-    if (!colMap.content) {
-      for (var ki = 0; ki < keys.length; ki++) {
-        var sample = String(jsonData[0][keys[ki]] || '');
-        if (sample.length > 20) { colMap.content = keys[ki]; break; }
-      }
-    }
     if (!colMap.content) colMap.content = keys[0];
 
     var rows = [];
     jsonData.forEach(function(row) {
       var content = String(row[colMap.content] || '');
       if (content.length < 10) return;
-
-      rows.push({
-        content: content,
-        impressions: parseInt(row[colMap.impressions]) || 0,
-        clicks: parseInt(row[colMap.clicks]) || 0,
-        likes: parseInt(row[colMap.likes]) || 0,
-        comments: parseInt(row[colMap.comments]) || 0,
-        shares: parseInt(row[colMap.shares]) || 0,
-        date: String(row[colMap.date] || '')
-      });
+      rows.push({ content: content, impressions: parseInt(row[colMap.impressions])||0, clicks: parseInt(row[colMap.clicks])||0, likes: parseInt(row[colMap.likes])||0, comments: parseInt(row[colMap.comments])||0, shares: parseInt(row[colMap.shares])||0, date: String(row[colMap.date]||'') });
     });
     return rows;
+  }
+
+  function extractShareId(url) {
+    // Extract share ID from LinkedIn URL like: .../share-7431862823439433728-CRsZ or .../ugcPost-7461093813659545600-dmks
+    var match = String(url).match(/(\d{10,})/);
+    return match ? match[1] : null;
+  }
+
+  function parseLinkedInExport(workbook) {
+    // Parse LinkedIn Aggregate Analytics XLSX
+    // TOP POSTS sheet: two side-by-side tables (engagements left, impressions right)
+    // Row 0: "Maximum of 50 posts..."
+    // Row 1: empty
+    // Row 2: headers — [Post URL, Post Publish Date, Engagements, "", Post URL, Post Publish Date, Impressions]
+    // Row 3+: data
+
+    var sheet = workbook.Sheets['TOP POSTS'];
+    var raw = XLSX.utils.sheet_to_json(sheet, { defval: '', header: 1 });
+
+    // Find header row (contains "Post URL")
+    var headerIdx = -1;
+    for (var i = 0; i < Math.min(10, raw.length); i++) {
+      if (raw[i] && String(raw[i][0]).indexOf('Post URL') >= 0) { headerIdx = i; break; }
+    }
+    if (headerIdx < 0) return [];
+
+    // Merge left table (engagements) and right table (impressions) by share ID
+    var postMap = {};
+
+    for (var r = headerIdx + 1; r < raw.length; r++) {
+      var row = raw[r];
+      if (!row) continue;
+
+      // Left table: cols 0=URL, 1=Date, 2=Engagements
+      var leftUrl = String(row[0] || '');
+      var leftId = extractShareId(leftUrl);
+      if (leftId) {
+        if (!postMap[leftId]) postMap[leftId] = { url: leftUrl, share_id: leftId, date: '', engagements: 0, impressions: 0 };
+        postMap[leftId].engagements = parseInt(row[2]) || 0;
+        if (row[1]) postMap[leftId].date = String(row[1]);
+        if (!postMap[leftId].url || postMap[leftId].url.length < leftUrl.length) postMap[leftId].url = leftUrl;
+      }
+
+      // Right table: cols 4=URL, 5=Date, 6=Impressions
+      var rightUrl = String(row[4] || '');
+      var rightId = extractShareId(rightUrl);
+      if (rightId) {
+        if (!postMap[rightId]) postMap[rightId] = { url: rightUrl, share_id: rightId, date: '', engagements: 0, impressions: 0 };
+        postMap[rightId].impressions = parseInt(row[6]) || 0;
+        if (row[5] && !postMap[rightId].date) postMap[rightId].date = String(row[5]);
+        if (!postMap[rightId].url || postMap[rightId].url.length < rightUrl.length) postMap[rightId].url = rightUrl;
+      }
+    }
+
+    // Also grab DISCOVERY summary
+    window._linkedInDiscovery = null;
+    if (workbook.Sheets['DISCOVERY']) {
+      var disc = XLSX.utils.sheet_to_json(workbook.Sheets['DISCOVERY'], { defval: '', header: 1 });
+      var discovery = {};
+      disc.forEach(function(dr) {
+        if (String(dr[0]).indexOf('Impression') >= 0) discovery.totalImpressions = parseInt(dr[1]) || 0;
+        if (String(dr[0]).indexOf('Members') >= 0) discovery.membersReached = parseInt(dr[1]) || 0;
+      });
+      window._linkedInDiscovery = discovery;
+    }
+
+    // Also grab FOLLOWERS count
+    if (workbook.Sheets['FOLLOWERS']) {
+      var fol = XLSX.utils.sheet_to_json(workbook.Sheets['FOLLOWERS'], { defval: '', header: 1 });
+      if (fol.length > 0) {
+        var followerCount = parseInt(fol[0][0]) || 0;
+        if (window._linkedInDiscovery) window._linkedInDiscovery.followers = followerCount;
+      }
+    }
+
+    var posts = Object.values(postMap);
+    // Sort by impressions desc
+    posts.sort(function(a, b) { return b.impressions - a.impressions; });
+
+    // Store for import (different format than generic CSV)
+    window._isLinkedInFormat = true;
+    return posts;
   }
 
   function parseCsv(text) {
@@ -1303,20 +1371,51 @@ tr:hover{background:#f9f8fd}
   function showCsvPreview(rows) {
     var preview = document.getElementById('csvPreview');
     preview.style.display = 'block';
+    var isLinkedIn = window._isLinkedInFormat;
 
-    var html = '<div style="margin-bottom:12px;font-size:14px;font-weight:600">' + rows.length + ' posts found in CSV</div>';
-    html += '<div class="table-wrap" style="max-height:300px;overflow-y:auto"><table><thead><tr><th>Content</th><th>Impr</th><th>Clicks</th><th>Likes</th><th>Comments</th><th>Shares</th></tr></thead><tbody>';
-    rows.forEach(function(r) {
-      html += '<tr>';
-      html += '<td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escHtml(truncate(r.content, 60)) + '</td>';
-      html += '<td class="mono">' + r.impressions + '</td>';
-      html += '<td class="mono">' + r.clicks + '</td>';
-      html += '<td class="mono">' + r.likes + '</td>';
-      html += '<td class="mono">' + r.comments + '</td>';
-      html += '<td class="mono">' + r.shares + '</td>';
-      html += '</tr>';
-    });
-    html += '</tbody></table></div>';
+    var html = '';
+
+    // Show discovery summary if available
+    if (window._linkedInDiscovery) {
+      var d = window._linkedInDiscovery;
+      html += '<div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">';
+      if (d.totalImpressions) html += '<div style="background:var(--blue-bg);padding:10px 16px;border-radius:8px"><div style="font-size:11px;color:var(--soft-purple);text-transform:uppercase;font-family:IBM Plex Mono,monospace">Total Impressions</div><div style="font-size:20px;font-weight:700;color:var(--navy);font-family:IBM Plex Mono,monospace">' + d.totalImpressions.toLocaleString() + '</div></div>';
+      if (d.membersReached) html += '<div style="background:var(--blue-bg);padding:10px 16px;border-radius:8px"><div style="font-size:11px;color:var(--soft-purple);text-transform:uppercase;font-family:IBM Plex Mono,monospace">Members Reached</div><div style="font-size:20px;font-weight:700;color:var(--navy);font-family:IBM Plex Mono,monospace">' + d.membersReached.toLocaleString() + '</div></div>';
+      if (d.followers) html += '<div style="background:var(--green-bg);padding:10px 16px;border-radius:8px"><div style="font-size:11px;color:var(--soft-purple);text-transform:uppercase;font-family:IBM Plex Mono,monospace">Followers</div><div style="font-size:20px;font-weight:700;color:var(--navy);font-family:IBM Plex Mono,monospace">' + d.followers.toLocaleString() + '</div></div>';
+      html += '</div>';
+    }
+
+    html += '<div style="margin-bottom:12px;font-size:14px;font-weight:600">' + rows.length + ' posts found in file</div>';
+
+    if (isLinkedIn) {
+      // LinkedIn format: URL, Date, Engagements, Impressions
+      html += '<div class="table-wrap" style="max-height:300px;overflow-y:auto"><table><thead><tr><th>#</th><th>Post URL</th><th>Date</th><th>Impr</th><th>Eng</th></tr></thead><tbody>';
+      rows.forEach(function(r, i) {
+        var shortUrl = r.url ? r.url.split('/').pop().slice(0, 40) : r.share_id;
+        html += '<tr>';
+        html += '<td class="mono" style="color:var(--soft-purple)">' + (i+1) + '</td>';
+        html += '<td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + escHtml(r.url) + '">' + escHtml(shortUrl) + '</td>';
+        html += '<td class="mono" style="white-space:nowrap">' + escHtml(r.date || '--') + '</td>';
+        html += '<td class="mono" style="font-weight:700">' + (r.impressions || 0) + '</td>';
+        html += '<td class="mono">' + (r.engagements || 0) + '</td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table></div>';
+    } else {
+      // Generic CSV format
+      html += '<div class="table-wrap" style="max-height:300px;overflow-y:auto"><table><thead><tr><th>Content</th><th>Impr</th><th>Clicks</th><th>Likes</th><th>Comments</th><th>Shares</th></tr></thead><tbody>';
+      rows.forEach(function(r) {
+        html += '<tr>';
+        html += '<td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escHtml(truncate(r.content, 60)) + '</td>';
+        html += '<td class="mono">' + r.impressions + '</td>';
+        html += '<td class="mono">' + r.clicks + '</td>';
+        html += '<td class="mono">' + r.likes + '</td>';
+        html += '<td class="mono">' + r.comments + '</td>';
+        html += '<td class="mono">' + r.shares + '</td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table></div>';
+    }
 
     html += '<div style="margin-top:14px;display:flex;gap:12px">';
     html += '<button onclick="importCsvData()" style="padding:10px 24px;background:var(--purple);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer" id="csvImportBtn">Import &amp; Match to Posts</button>';
@@ -1324,8 +1423,6 @@ tr:hover{background:#f9f8fd}
     html += '</div>';
 
     preview.innerHTML = html;
-
-    // Store rows for import
     window._csvRows = rows;
   }
 
@@ -1335,6 +1432,8 @@ tr:hover{background:#f9f8fd}
     document.getElementById('csvFileInput').value = '';
     document.getElementById('csvFileName').textContent = 'No file selected';
     window._csvRows = null;
+    window._isLinkedInFormat = false;
+    window._linkedInDiscovery = null;
   };
 
   window.importCsvData = function() {
@@ -1345,12 +1444,23 @@ tr:hover{background:#f9f8fd}
     btn.textContent = 'Importing...';
     btn.disabled = true;
 
-    // Hash the stored password for auth
+    var isLinkedIn = window._isLinkedInFormat;
+
     hashPassword('q5d2026').then(function(authHash) {
+      var body;
+      if (isLinkedIn) {
+        // LinkedIn format: send as posts array with share_id
+        body = JSON.stringify({ posts: rows, auth_hash: authHash });
+      } else {
+        // Generic CSV format: send as rows
+        body = JSON.stringify({ posts: rows.map(function(r) {
+          return { url: '', share_id: '', date: r.date || '', engagements: (r.likes||0)+(r.comments||0)+(r.shares||0), impressions: r.impressions||0 };
+        }), auth_hash: authHash });
+      }
       return fetch('/api/linkedin-engagement-import', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rows: rows, auth_hash: authHash })
+        body: body
       });
     }).then(function(r) { return r.json(); }).then(function(data) {
       var resultDiv = document.getElementById('csvResult');
