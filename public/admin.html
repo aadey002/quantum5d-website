@@ -264,6 +264,31 @@ tr:hover{background:#f9f8fd}
         </div>
       </div>
 
+      <!-- LinkedIn CSV Import -->
+      <div class="panel" style="margin-bottom:28px">
+        <h3>Import LinkedIn Analytics</h3>
+        <p style="font-size:13px;color:var(--charcoal);margin-bottom:12px">Upload a CSV exported from LinkedIn to backfill engagement data (impressions, clicks, likes, comments, shares).</p>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+          <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:var(--purple);color:#fff;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600">
+            <span>Choose CSV File</span>
+            <input type="file" id="csvFileInput" accept=".csv" style="display:none">
+          </label>
+          <span id="csvFileName" style="font-size:13px;color:var(--soft-purple)">No file selected</span>
+        </div>
+        <div id="csvPreview" style="margin-top:16px;display:none"></div>
+        <div id="csvResult" style="margin-top:16px;display:none"></div>
+        <details style="margin-top:16px">
+          <summary style="cursor:pointer;font-size:12px;color:var(--soft-purple)">How to export from LinkedIn</summary>
+          <div style="font-size:12px;color:var(--charcoal);margin-top:8px;line-height:1.6;padding:12px;background:#f9f8fd;border-radius:8px">
+            <strong>Option A — Post Analytics page:</strong><br>
+            LinkedIn profile &rarr; click "Show all analytics" on any post &rarr; scroll down &rarr; "Export" button (top right) &rarr; download CSV.<br><br>
+            <strong>Option B — Creator Analytics:</strong><br>
+            LinkedIn &rarr; Me &rarr; Analytics &rarr; Content &rarr; "Export" (top right).<br><br>
+            <strong>Expected columns:</strong> The CSV should contain columns for post content/title, impressions, clicks/reactions/comments. The importer auto-detects common LinkedIn CSV formats.
+          </div>
+        </details>
+      </div>
+
       <!-- Top content ranking -->
       <div class="section">
         <h2 class="section-title">Top Resource Downloads</h2>
@@ -1120,6 +1145,187 @@ tr:hover{background:#f9f8fd}
       document.getElementById('tTimeChart').innerHTML = '<p style="color:var(--danger)">Error: ' + escHtml(e.message) + '</p>';
     });
   }
+
+  // ============ CSV IMPORT ============
+  var csvFileInput = document.getElementById('csvFileInput');
+  if (csvFileInput) {
+    csvFileInput.addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      document.getElementById('csvFileName').textContent = file.name;
+      document.getElementById('csvResult').style.display = 'none';
+
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        var text = ev.target.result;
+        var parsed = parseCsv(text);
+        if (!parsed.length) {
+          document.getElementById('csvPreview').style.display = 'block';
+          document.getElementById('csvPreview').innerHTML = '<div class="alert alert-danger"><span class="alert-icon">&#9888;</span><div>Could not parse any rows from this CSV. Check the file format.</div></div>';
+          return;
+        }
+        showCsvPreview(parsed);
+      };
+      reader.readAsText(file);
+    });
+  }
+
+  function parseCsv(text) {
+    var lines = text.split('\n').map(function(l){ return l.trim(); }).filter(function(l){ return l.length > 0; });
+    if (lines.length < 2) return [];
+
+    // Parse header — handle quoted fields
+    var headers = parseCsvLine(lines[0]).map(function(h){ return h.toLowerCase().trim(); });
+
+    // Detect column mapping — LinkedIn CSV formats vary
+    var colMap = { content: -1, impressions: -1, clicks: -1, likes: -1, comments: -1, shares: -1, date: -1 };
+
+    headers.forEach(function(h, i) {
+      if (h.indexOf('content') >= 0 || h.indexOf('post text') >= 0 || h.indexOf('post title') >= 0 || h === 'title' || h === 'text' || h.indexOf('body') >= 0 || h.indexOf('message') >= 0) colMap.content = i;
+      if (h.indexOf('impression') >= 0) colMap.impressions = i;
+      if (h.indexOf('click') >= 0 && h.indexOf('ctr') < 0) colMap.clicks = i;
+      if (h.indexOf('like') >= 0 || h.indexOf('reaction') >= 0) colMap.likes = i;
+      if (h.indexOf('comment') >= 0) colMap.comments = i;
+      if (h.indexOf('share') >= 0 || h.indexOf('repost') >= 0) colMap.shares = i;
+      if (h.indexOf('date') >= 0 || h.indexOf('published') >= 0 || h.indexOf('posted') >= 0) colMap.date = i;
+    });
+
+    if (colMap.content < 0) {
+      // Try first column as content
+      colMap.content = 0;
+    }
+
+    var rows = [];
+    for (var i = 1; i < lines.length; i++) {
+      var cols = parseCsvLine(lines[i]);
+      if (cols.length <= colMap.content) continue;
+      var content = cols[colMap.content] || '';
+      if (!content || content.length < 10) continue;
+
+      rows.push({
+        content: content,
+        impressions: colMap.impressions >= 0 ? (parseInt(cols[colMap.impressions]) || 0) : 0,
+        clicks: colMap.clicks >= 0 ? (parseInt(cols[colMap.clicks]) || 0) : 0,
+        likes: colMap.likes >= 0 ? (parseInt(cols[colMap.likes]) || 0) : 0,
+        comments: colMap.comments >= 0 ? (parseInt(cols[colMap.comments]) || 0) : 0,
+        shares: colMap.shares >= 0 ? (parseInt(cols[colMap.shares]) || 0) : 0,
+        date: colMap.date >= 0 ? (cols[colMap.date] || '') : ''
+      });
+    }
+    return rows;
+  }
+
+  function parseCsvLine(line) {
+    var result = [];
+    var current = '';
+    var inQuotes = false;
+    for (var i = 0; i < line.length; i++) {
+      var ch = line[i];
+      if (ch === '"') {
+        if (inQuotes && line[i+1] === '"') { current += '"'; i++; }
+        else inQuotes = !inQuotes;
+      } else if (ch === ',' && !inQuotes) {
+        result.push(current.trim());
+        current = '';
+      } else {
+        current += ch;
+      }
+    }
+    result.push(current.trim());
+    return result;
+  }
+
+  function showCsvPreview(rows) {
+    var preview = document.getElementById('csvPreview');
+    preview.style.display = 'block';
+
+    var html = '<div style="margin-bottom:12px;font-size:14px;font-weight:600">' + rows.length + ' posts found in CSV</div>';
+    html += '<div class="table-wrap" style="max-height:300px;overflow-y:auto"><table><thead><tr><th>Content</th><th>Impr</th><th>Clicks</th><th>Likes</th><th>Comments</th><th>Shares</th></tr></thead><tbody>';
+    rows.forEach(function(r) {
+      html += '<tr>';
+      html += '<td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escHtml(truncate(r.content, 60)) + '</td>';
+      html += '<td class="mono">' + r.impressions + '</td>';
+      html += '<td class="mono">' + r.clicks + '</td>';
+      html += '<td class="mono">' + r.likes + '</td>';
+      html += '<td class="mono">' + r.comments + '</td>';
+      html += '<td class="mono">' + r.shares + '</td>';
+      html += '</tr>';
+    });
+    html += '</tbody></table></div>';
+
+    html += '<div style="margin-top:14px;display:flex;gap:12px">';
+    html += '<button onclick="importCsvData()" style="padding:10px 24px;background:var(--purple);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer" id="csvImportBtn">Import &amp; Match to Posts</button>';
+    html += '<button onclick="cancelCsvImport()" style="padding:10px 24px;background:var(--border);color:var(--charcoal);border:none;border-radius:8px;font-size:14px;cursor:pointer">Cancel</button>';
+    html += '</div>';
+
+    preview.innerHTML = html;
+
+    // Store rows for import
+    window._csvRows = rows;
+  }
+
+  window.cancelCsvImport = function() {
+    document.getElementById('csvPreview').style.display = 'none';
+    document.getElementById('csvResult').style.display = 'none';
+    document.getElementById('csvFileInput').value = '';
+    document.getElementById('csvFileName').textContent = 'No file selected';
+    window._csvRows = null;
+  };
+
+  window.importCsvData = function() {
+    var rows = window._csvRows;
+    if (!rows || !rows.length) return;
+
+    var btn = document.getElementById('csvImportBtn');
+    btn.textContent = 'Importing...';
+    btn.disabled = true;
+
+    // Hash the stored password for auth
+    hashPassword('q5d2026').then(function(authHash) {
+      return fetch('/api/linkedin-engagement-import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rows: rows, auth_hash: authHash })
+      });
+    }).then(function(r) { return r.json(); }).then(function(data) {
+      var resultDiv = document.getElementById('csvResult');
+      resultDiv.style.display = 'block';
+
+      if (data.error) {
+        resultDiv.innerHTML = '<div class="alert alert-danger"><span class="alert-icon">&#9888;</span><div>' + escHtml(data.error) + '</div></div>';
+        btn.textContent = 'Import & Match to Posts';
+        btn.disabled = false;
+        return;
+      }
+
+      var html = '<div class="alert alert-ok"><span class="alert-icon">&#10003;</span><div><strong>' + data.matched + ' of ' + data.total + ' posts matched and updated.</strong>';
+      if (data.unmatched > 0) html += ' ' + data.unmatched + ' could not be matched to existing posts.';
+      html += '</div></div>';
+
+      // Show match details
+      if (data.results && data.results.length) {
+        html += '<div style="max-height:200px;overflow-y:auto;margin-top:10px">';
+        data.results.forEach(function(r) {
+          var icon = r.matched ? '<span style="color:var(--success)">&#10003;</span>' : '<span style="color:var(--danger)">&#10007;</span>';
+          var sim = r.similarity ? ' (' + r.similarity + '% match)' : '';
+          html += '<div style="font-size:12px;margin-bottom:4px">' + icon + ' ' + escHtml(r.csvContent) + '...' + sim + '</div>';
+        });
+        html += '</div>';
+      }
+
+      resultDiv.innerHTML = html;
+      document.getElementById('csvPreview').style.display = 'none';
+      window._csvRows = null;
+
+      // Reload content to show updated data
+      loadContent();
+    }).catch(function(e) {
+      document.getElementById('csvResult').style.display = 'block';
+      document.getElementById('csvResult').innerHTML = '<div class="alert alert-danger"><span class="alert-icon">&#9888;</span><div>Import failed: ' + escHtml(e.message) + '</div></div>';
+      btn.textContent = 'Import & Match to Posts';
+      btn.disabled = false;
+    });
+  };
 
 })();
 </script>
