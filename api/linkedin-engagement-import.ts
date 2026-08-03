@@ -24,14 +24,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: 'Missing SUPABASE_SERVICE_ROLE_KEY' })
   }
 
-  const { posts: postRows, auth_hash } = req.body || {}
+  const { posts: postRows, audience, auth_hash } = req.body || {}
 
   if (auth_hash !== PWD_HASH) {
     return res.status(403).json({ error: 'Unauthorized' })
   }
 
-  if (!postRows || !Array.isArray(postRows) || postRows.length === 0) {
-    return res.status(400).json({ error: 'No posts provided' })
+  if ((!postRows || !Array.isArray(postRows) || postRows.length === 0) && !audience) {
+    return res.status(400).json({ error: 'No data provided' })
   }
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
@@ -89,11 +89,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   }
 
+  // Save audience data snapshot if provided
+  let audienceSaved = false
+  if (audience && typeof audience === 'object') {
+    // Upsert as a site_event with special type
+    await supabase.from('site_events').insert({
+      event_type: 'linkedin_audience_snapshot',
+      event_name: 'linkedin_audience',
+      site: 'quantum5dconsulting.com',
+      metadata: audience,
+    })
+    audienceSaved = true
+  }
+
   return res.status(200).json({
     success: true,
-    total: postRows.length,
+    total: (postRows || []).length,
     matched: updated,
-    unmatched: postRows.length - updated,
+    unmatched: (postRows || []).length - updated,
+    audienceSaved,
     results,
   })
 }

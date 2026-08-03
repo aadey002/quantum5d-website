@@ -265,6 +265,12 @@ tr:hover{background:#f9f8fd}
         </div>
       </div>
 
+      <!-- LinkedIn Audience -->
+      <div class="section" style="margin-bottom:28px">
+        <h2 class="section-title">LinkedIn Audience</h2>
+        <div id="contentAudience"><div class="loading"><div class="spinner"></div><div>Loading...</div></div></div>
+      </div>
+
       <!-- LinkedIn CSV Import -->
       <div class="panel" style="margin-bottom:28px">
         <h3>Import LinkedIn Analytics</h3>
@@ -1036,6 +1042,118 @@ tr:hover{background:#f9f8fd}
     }).catch(function(e) {
       document.getElementById('contentDownloads').innerHTML = '<p style="color:var(--danger)">Error: ' + escHtml(e.message) + '</p>';
     });
+
+    // LinkedIn Audience — load latest snapshot
+    sbFetch('site_events?select=metadata,created_at&event_type=eq.linkedin_audience_snapshot&order=created_at.desc&limit=1').then(function(data) {
+      var el = document.getElementById('contentAudience');
+      if (!data.length || !data[0].metadata) {
+        el.innerHTML = '<p style="color:var(--soft-purple)">No audience data yet. Upload a LinkedIn Analytics XLSX to populate this section.</p>';
+        return;
+      }
+      var a = data[0].metadata;
+      var importDate = data[0].created_at;
+
+      var html = '<p style="font-size:11px;color:var(--soft-purple);margin-bottom:12px;font-family:IBM Plex Mono,monospace">Last imported: ' + fmtDateTime(importDate) + '</p>';
+
+      // KPI cards
+      html += '<div class="kpi-grid" style="margin-bottom:20px">';
+      if (a.followers) html += '<div class="kpi-card"><div class="kpi-label">Followers</div><div class="kpi-value">' + a.followers.toLocaleString() + '</div></div>';
+      if (a.totalImpressions) html += '<div class="kpi-card"><div class="kpi-label">Total Impressions</div><div class="kpi-value">' + a.totalImpressions.toLocaleString() + '</div></div>';
+      if (a.membersReached) html += '<div class="kpi-card"><div class="kpi-label">Members Reached</div><div class="kpi-value">' + a.membersReached.toLocaleString() + '</div></div>';
+      html += '</div>';
+
+      // Daily engagement trend chart (SVG)
+      if (a.engagementDaily && a.engagementDaily.length > 7) {
+        var ed = a.engagementDaily;
+        // Show last 90 days if available
+        var recentEd = ed.slice(-90);
+        var maxImp = 1;
+        recentEd.forEach(function(d){ if(d.impressions > maxImp) maxImp = d.impressions; });
+
+        var svgW = 700, svgH = 160, padX = 10, padY = 10;
+        var plotW = svgW - padX*2, plotH = svgH - padY*2;
+
+        // Impressions line
+        var impPoints = [];
+        recentEd.forEach(function(d, i) {
+          var x = padX + (i / (recentEd.length - 1)) * plotW;
+          var y = padY + plotH - (d.impressions / maxImp) * plotH;
+          impPoints.push(x + ',' + y);
+        });
+        var impArea = padX + ',' + (padY + plotH) + ' ' + impPoints.join(' ') + ' ' + (padX + plotW) + ',' + (padY + plotH);
+
+        html += '<div class="panel" style="margin-bottom:16px"><h3>Daily Impressions (Last ' + recentEd.length + ' Days)</h3>';
+        html += '<svg viewBox="0 0 ' + svgW + ' ' + svgH + '" style="width:100%;height:auto;max-width:700px">';
+        html += '<polygon points="' + impArea + '" fill="var(--purple)" opacity="0.1"/>';
+        html += '<polyline fill="none" stroke="var(--purple)" stroke-width="1.5" stroke-linejoin="round" points="' + impPoints.join(' ') + '"/>';
+        html += '</svg>';
+
+        // Summary stats
+        var totalImp = 0, totalEng = 0;
+        recentEd.forEach(function(d){ totalImp += d.impressions; totalEng += d.engagements; });
+        var avgImp = Math.round(totalImp / recentEd.length);
+        var avgEng = recentEd.length > 0 ? (totalEng / recentEd.length).toFixed(1) : '0';
+        html += '<div style="display:flex;gap:24px;margin-top:8px;font-size:12px;font-family:IBM Plex Mono,monospace;color:var(--charcoal)">';
+        html += '<span>Avg daily impressions: <strong>' + avgImp + '</strong></span>';
+        html += '<span>Avg daily engagements: <strong>' + avgEng + '</strong></span>';
+        html += '<span>Total period: <strong>' + totalImp.toLocaleString() + ' impr / ' + totalEng + ' eng</strong></span>';
+        html += '</div></div>';
+      }
+
+      // Follower growth chart
+      if (a.followerDaily && a.followerDaily.length > 7) {
+        var fd = a.followerDaily.slice(-90);
+        var totalNewFollowers = 0;
+        fd.forEach(function(d){ totalNewFollowers += d.new_followers; });
+
+        if (totalNewFollowers > 0) {
+          // Cumulative follower growth
+          var cumulative = [];
+          var runningTotal = 0;
+          fd.forEach(function(d) { runningTotal += d.new_followers; cumulative.push(runningTotal); });
+          var maxCum = Math.max(runningTotal, 1);
+
+          var fSvgW = 700, fSvgH = 120, fPadX = 10, fPadY = 10;
+          var fPlotW = fSvgW - fPadX*2, fPlotH = fSvgH - fPadY*2;
+          var fPoints = [];
+          cumulative.forEach(function(v, i) {
+            var x = fPadX + (i / (cumulative.length - 1)) * fPlotW;
+            var y = fPadY + fPlotH - (v / maxCum) * fPlotH;
+            fPoints.push(x + ',' + y);
+          });
+          var fArea = fPadX + ',' + (fPadY + fPlotH) + ' ' + fPoints.join(' ') + ' ' + (fPadX + fPlotW) + ',' + (fPadY + fPlotH);
+
+          html += '<div class="panel" style="margin-bottom:16px"><h3>Follower Growth (Last ' + fd.length + ' Days) &mdash; +' + totalNewFollowers + ' new</h3>';
+          html += '<svg viewBox="0 0 ' + fSvgW + ' ' + fSvgH + '" style="width:100%;height:auto;max-width:700px">';
+          html += '<polygon points="' + fArea + '" fill="#2d9a5c" opacity="0.1"/>';
+          html += '<polyline fill="none" stroke="#2d9a5c" stroke-width="1.5" stroke-linejoin="round" points="' + fPoints.join(' ') + '"/>';
+          html += '</svg></div>';
+        }
+      }
+
+      // Demographics
+      if (a.demographics) {
+        html += '<div class="grid-2">';
+        var demoCategories = Object.keys(a.demographics);
+        demoCategories.forEach(function(cat) {
+          var items = a.demographics[cat];
+          if (!items || !items.length) return;
+          html += '<div class="panel panel-sm"><h3 style="font-size:16px;margin-bottom:10px">Top ' + escHtml(cat) + '</h3>';
+          items.slice(0, 8).forEach(function(item, i) {
+            html += '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;border-bottom:1px solid var(--border)">';
+            html += '<span>' + (i+1) + '. ' + escHtml(item.name) + '</span>';
+            html += '<span class="mono" style="color:var(--purple);font-weight:600">' + escHtml(item.percentage) + '</span>';
+            html += '</div>';
+          });
+          html += '</div>';
+        });
+        html += '</div>';
+      }
+
+      el.innerHTML = html;
+    }).catch(function(e) {
+      document.getElementById('contentAudience').innerHTML = '<p style="color:var(--danger)">Error: ' + escHtml(e.message) + '</p>';
+    });
   }
 
   // ============ TAB 4: TRAFFIC ============
@@ -1279,26 +1397,67 @@ tr:hover{background:#f9f8fd}
       }
     }
 
-    // Also grab DISCOVERY summary
+    // Parse all audience data
     window._linkedInDiscovery = null;
+    window._linkedInAudience = null;
+    var audience = {};
+
+    // DISCOVERY: overall stats
     if (workbook.Sheets['DISCOVERY']) {
       var disc = XLSX.utils.sheet_to_json(workbook.Sheets['DISCOVERY'], { defval: '', header: 1 });
-      var discovery = {};
       disc.forEach(function(dr) {
-        if (String(dr[0]).indexOf('Impression') >= 0) discovery.totalImpressions = parseInt(dr[1]) || 0;
-        if (String(dr[0]).indexOf('Members') >= 0) discovery.membersReached = parseInt(dr[1]) || 0;
+        if (String(dr[0]).indexOf('Impression') >= 0) audience.totalImpressions = parseInt(dr[1]) || 0;
+        if (String(dr[0]).indexOf('Members') >= 0) audience.membersReached = parseInt(dr[1]) || 0;
       });
-      window._linkedInDiscovery = discovery;
     }
 
-    // Also grab FOLLOWERS count
+    // FOLLOWERS: total + daily growth
     if (workbook.Sheets['FOLLOWERS']) {
       var fol = XLSX.utils.sheet_to_json(workbook.Sheets['FOLLOWERS'], { defval: '', header: 1 });
-      if (fol.length > 0) {
-        var followerCount = parseInt(fol[0][0]) || 0;
-        if (window._linkedInDiscovery) window._linkedInDiscovery.followers = followerCount;
+      if (fol.length > 0) audience.followers = parseInt(fol[0][1]) || parseInt(fol[0][0]) || 0;
+      // Daily follower data (skip header rows)
+      var followerDaily = [];
+      for (var fi = 0; fi < fol.length; fi++) {
+        var fDate = String(fol[fi][0] || '');
+        var fNew = parseInt(fol[fi][1]);
+        if (!isNaN(fNew) && fDate.match(/\d+\/\d+\/\d+/)) {
+          followerDaily.push({ date: fDate, new_followers: fNew });
+        }
       }
+      audience.followerDaily = followerDaily;
     }
+
+    // ENGAGEMENT: daily impressions + engagements
+    if (workbook.Sheets['ENGAGEMENT']) {
+      var eng = XLSX.utils.sheet_to_json(workbook.Sheets['ENGAGEMENT'], { defval: '', header: 1 });
+      var engDaily = [];
+      eng.forEach(function(er) {
+        var eDate = String(er[0] || '');
+        if (eDate.match(/\d+\/\d+\/\d+/)) {
+          engDaily.push({ date: eDate, impressions: parseInt(er[1]) || 0, engagements: parseInt(er[2]) || 0 });
+        }
+      });
+      audience.engagementDaily = engDaily;
+    }
+
+    // DEMOGRAPHICS: companies, industries, etc.
+    if (workbook.Sheets['DEMOGRAPHICS']) {
+      var demo = XLSX.utils.sheet_to_json(workbook.Sheets['DEMOGRAPHICS'], { defval: '', header: 1 });
+      var demographics = {};
+      demo.forEach(function(dr) {
+        var category = String(dr[0] || '').trim();
+        var value = String(dr[1] || '').trim();
+        var pct = String(dr[2] || '').trim();
+        if (!category || category === 'Top Demographics' || !value) return;
+        if (!demographics[category]) demographics[category] = [];
+        demographics[category].push({ name: value, percentage: pct });
+      });
+      audience.demographics = demographics;
+    }
+
+    audience.importedAt = new Date().toISOString();
+    window._linkedInDiscovery = audience;
+    window._linkedInAudience = audience;
 
     var posts = Object.values(postMap);
     // Sort by impressions desc
@@ -1451,18 +1610,18 @@ tr:hover{background:#f9f8fd}
     btn.disabled = true;
 
     var isLinkedIn = window._isLinkedInFormat;
+    var audience = window._linkedInAudience || null;
 
     hashPassword('q5d2026').then(function(authHash) {
-      var body;
+      var payload;
       if (isLinkedIn) {
-        // LinkedIn format: send as posts array with share_id
-        body = JSON.stringify({ posts: rows, auth_hash: authHash });
+        payload = { posts: rows, audience: audience, auth_hash: authHash };
       } else {
-        // Generic CSV format: send as rows
-        body = JSON.stringify({ posts: rows.map(function(r) {
+        payload = { posts: rows.map(function(r) {
           return { url: '', share_id: '', date: r.date || '', engagements: (r.likes||0)+(r.comments||0)+(r.shares||0), impressions: r.impressions||0 };
-        }), auth_hash: authHash });
+        }), auth_hash: authHash };
       }
+      var body = JSON.stringify(payload);
       return fetch('/api/linkedin-engagement-import', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
