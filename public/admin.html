@@ -562,7 +562,9 @@ tr:hover{background:#f9f8fd}
       data.forEach(function(p) {
         if (!p.engagement_data) return;
         var ed = typeof p.engagement_data === 'string' ? JSON.parse(p.engagement_data) : p.engagement_data;
-        totEng += (parseInt(ed.likes)||0) + (parseInt(ed.comments)||0) + (parseInt(ed.shares)||0);
+        var itemEng = (parseInt(ed.likes)||0) + (parseInt(ed.comments)||0) + (parseInt(ed.shares)||0);
+        if (itemEng === 0) itemEng = parseInt(ed.engagements) || 0;
+        totEng += itemEng;
         totImp += parseInt(ed.impressions) || 0;
       });
       var rate = totImp > 0 ? ((totEng / totImp) * 100).toFixed(1) + '%' : '--';
@@ -944,6 +946,7 @@ tr:hover{background:#f9f8fd}
         catch(e) { return {}; }
       }
 
+      var totEngagements = 0;
       data.forEach(function(p) {
         if (p.status === 'posted') posted++;
         if (p.status === 'scheduled') scheduled++;
@@ -951,19 +954,21 @@ tr:hover{background:#f9f8fd}
         totLikes += parseInt(ed.likes)||0; totComments += parseInt(ed.comments)||0;
         totImpressions += parseInt(ed.impressions)||0; totClicks += parseInt(ed.clicks)||0;
         totShares += parseInt(ed.shares)||0;
+        totEngagements += parseInt(ed.engagements)||0;
       });
 
       document.getElementById('cLinkedInCount').textContent = posted;
       document.getElementById('cImpressions').textContent = totImpressions.toLocaleString();
 
+      // Use combined engagements if individual breakdown isn't available
+      var totalEng = (totLikes + totComments + totShares) || totEngagements;
       var ctr = totImpressions > 0 ? ((totClicks / totImpressions) * 100).toFixed(1) + '%' : '--';
-      var engRate = totImpressions > 0 ? (((totLikes + totComments + totShares) / totImpressions) * 100).toFixed(1) + '%' : '--';
+      var engRate = totImpressions > 0 ? ((totalEng / totImpressions) * 100).toFixed(1) + '%' : '--';
 
-      var html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">';
-      html += '<div style="background:var(--blue-bg);padding:10px 14px;border-radius:8px"><div style="font-size:11px;color:var(--soft-purple);text-transform:uppercase;font-family:IBM Plex Mono,monospace">CTR</div><div style="font-size:20px;font-weight:700;color:var(--navy);font-family:IBM Plex Mono,monospace">' + ctr + '</div></div>';
+      var html = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">';
       html += '<div style="background:var(--green-bg);padding:10px 14px;border-radius:8px"><div style="font-size:11px;color:var(--soft-purple);text-transform:uppercase;font-family:IBM Plex Mono,monospace">Eng Rate</div><div style="font-size:20px;font-weight:700;color:var(--navy);font-family:IBM Plex Mono,monospace">' + engRate + '</div></div>';
-      html += '<div style="background:var(--blue-bg);padding:10px 14px;border-radius:8px"><div style="font-size:11px;color:var(--soft-purple);text-transform:uppercase;font-family:IBM Plex Mono,monospace">Likes</div><div style="font-size:20px;font-weight:700;color:var(--navy);font-family:IBM Plex Mono,monospace">' + totLikes + '</div></div>';
-      html += '<div style="background:var(--blue-bg);padding:10px 14px;border-radius:8px"><div style="font-size:11px;color:var(--soft-purple);text-transform:uppercase;font-family:IBM Plex Mono,monospace">Comments</div><div style="font-size:20px;font-weight:700;color:var(--navy);font-family:IBM Plex Mono,monospace">' + totComments + '</div></div>';
+      html += '<div style="background:var(--blue-bg);padding:10px 14px;border-radius:8px"><div style="font-size:11px;color:var(--soft-purple);text-transform:uppercase;font-family:IBM Plex Mono,monospace">Impressions</div><div style="font-size:20px;font-weight:700;color:var(--navy);font-family:IBM Plex Mono,monospace">' + totImpressions.toLocaleString() + '</div></div>';
+      html += '<div style="background:var(--blue-bg);padding:10px 14px;border-radius:8px"><div style="font-size:11px;color:var(--soft-purple);text-transform:uppercase;font-family:IBM Plex Mono,monospace">Engagements</div><div style="font-size:20px;font-weight:700;color:var(--navy);font-family:IBM Plex Mono,monospace">' + totalEng + '</div></div>';
       html += '</div>';
 
       // Token status
@@ -986,8 +991,8 @@ tr:hover{background:#f9f8fd}
       // Sort by total engagement (highest first) — posted first, then scheduled
       data.sort(function(a, b) {
         var aEd = parseEd(a), bEd = parseEd(b);
-        var aEng = (parseInt(aEd.likes)||0) + (parseInt(aEd.comments)||0) + (parseInt(aEd.shares)||0) + (parseInt(aEd.impressions)||0);
-        var bEng = (parseInt(bEd.likes)||0) + (parseInt(bEd.comments)||0) + (parseInt(bEd.shares)||0) + (parseInt(bEd.impressions)||0);
+        var aEng = (parseInt(aEd.likes)||0) + (parseInt(aEd.comments)||0) + (parseInt(aEd.shares)||0) + (parseInt(aEd.engagements)||0) + (parseInt(aEd.impressions)||0);
+        var bEng = (parseInt(bEd.likes)||0) + (parseInt(bEd.comments)||0) + (parseInt(bEd.shares)||0) + (parseInt(bEd.engagements)||0) + (parseInt(bEd.impressions)||0);
         // Posted posts with engagement first, then posted without, then scheduled, then rest
         var aPosted = a.status === 'posted' ? 1 : 0;
         var bPosted = b.status === 'posted' ? 1 : 0;
@@ -1005,6 +1010,7 @@ tr:hover{background:#f9f8fd}
         var ed = parseEd(p);
         var imp = parseInt(ed.impressions)||0;
         var eng = (parseInt(ed.likes)||0) + (parseInt(ed.comments)||0) + (parseInt(ed.shares)||0);
+        if (eng === 0) eng = parseInt(ed.engagements) || 0;
         html += '<tr><td class="mono" style="color:var(--soft-purple)">' + (i+1) + '</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + escHtml(truncate(p.content, 200)) + '">' + escHtml(truncate(p.content, 50)) + '</td><td>' + statusBadge(p.status) + '</td><td class="mono" style="white-space:nowrap">' + fmtDate(p.posted_at || p.scheduled_date) + '</td><td class="mono">' + (imp ? imp.toLocaleString() : '--') + '</td><td class="mono" style="font-weight:700">' + (eng || '--') + '</td></tr>';
       });
       html += '</tbody></table></div>';
