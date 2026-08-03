@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -270,8 +271,8 @@ tr:hover{background:#f9f8fd}
         <p style="font-size:13px;color:var(--charcoal);margin-bottom:12px">Upload a CSV exported from LinkedIn to backfill engagement data (impressions, clicks, likes, comments, shares).</p>
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
           <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:var(--purple);color:#fff;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600">
-            <span>Choose CSV File</span>
-            <input type="file" id="csvFileInput" accept=".csv" style="display:none">
+            <span>Choose File</span>
+            <input type="file" id="csvFileInput" accept=".csv,.xlsx,.xls" style="display:none">
           </label>
           <span id="csvFileName" style="font-size:13px;color:var(--soft-purple)">No file selected</span>
         </div>
@@ -1155,19 +1156,83 @@ tr:hover{background:#f9f8fd}
       document.getElementById('csvFileName').textContent = file.name;
       document.getElementById('csvResult').style.display = 'none';
 
+      var isExcel = file.name.match(/\.xlsx?$/i);
+
       var reader = new FileReader();
       reader.onload = function(ev) {
-        var text = ev.target.result;
-        var parsed = parseCsv(text);
+        var parsed;
+        if (isExcel) {
+          parsed = parseXlsx(ev.target.result);
+        } else {
+          parsed = parseCsv(ev.target.result);
+        }
         if (!parsed.length) {
           document.getElementById('csvPreview').style.display = 'block';
-          document.getElementById('csvPreview').innerHTML = '<div class="alert alert-danger"><span class="alert-icon">&#9888;</span><div>Could not parse any rows from this CSV. Check the file format.</div></div>';
+          document.getElementById('csvPreview').innerHTML = '<div class="alert alert-danger"><span class="alert-icon">&#9888;</span><div>Could not parse any rows from this file. Check the format.</div></div>';
           return;
         }
         showCsvPreview(parsed);
       };
-      reader.readAsText(file);
+      if (isExcel) {
+        reader.readAsArrayBuffer(file);
+      } else {
+        reader.readAsText(file);
+      }
     });
+  }
+
+  function parseXlsx(data) {
+    if (typeof XLSX === 'undefined') {
+      alert('SheetJS library not loaded. Please refresh the page and try again.');
+      return [];
+    }
+    var workbook = XLSX.read(data, { type: 'array' });
+    var sheetName = workbook.SheetNames[0];
+    var sheet = workbook.Sheets[sheetName];
+    var jsonData = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+
+    if (!jsonData.length) return [];
+
+    // Auto-detect columns from the first row's keys
+    var keys = Object.keys(jsonData[0]);
+    var colMap = { content: '', impressions: '', clicks: '', likes: '', comments: '', shares: '', date: '' };
+
+    keys.forEach(function(k) {
+      var kl = k.toLowerCase();
+      if (!colMap.content && (kl.indexOf('content') >= 0 || kl.indexOf('post text') >= 0 || kl.indexOf('title') >= 0 || kl.indexOf('body') >= 0 || kl.indexOf('message') >= 0 || kl.indexOf('text') >= 0)) colMap.content = k;
+      if (!colMap.impressions && kl.indexOf('impression') >= 0) colMap.impressions = k;
+      if (!colMap.clicks && kl.indexOf('click') >= 0 && kl.indexOf('ctr') < 0) colMap.clicks = k;
+      if (!colMap.likes && (kl.indexOf('like') >= 0 || kl.indexOf('reaction') >= 0)) colMap.likes = k;
+      if (!colMap.comments && kl.indexOf('comment') >= 0) colMap.comments = k;
+      if (!colMap.shares && (kl.indexOf('share') >= 0 || kl.indexOf('repost') >= 0)) colMap.shares = k;
+      if (!colMap.date && (kl.indexOf('date') >= 0 || kl.indexOf('published') >= 0 || kl.indexOf('posted') >= 0)) colMap.date = k;
+    });
+
+    // Fallback: if no content column found, use the first text-like column
+    if (!colMap.content) {
+      for (var ki = 0; ki < keys.length; ki++) {
+        var sample = String(jsonData[0][keys[ki]] || '');
+        if (sample.length > 20) { colMap.content = keys[ki]; break; }
+      }
+    }
+    if (!colMap.content) colMap.content = keys[0];
+
+    var rows = [];
+    jsonData.forEach(function(row) {
+      var content = String(row[colMap.content] || '');
+      if (content.length < 10) return;
+
+      rows.push({
+        content: content,
+        impressions: parseInt(row[colMap.impressions]) || 0,
+        clicks: parseInt(row[colMap.clicks]) || 0,
+        likes: parseInt(row[colMap.likes]) || 0,
+        comments: parseInt(row[colMap.comments]) || 0,
+        shares: parseInt(row[colMap.shares]) || 0,
+        date: String(row[colMap.date] || '')
+      });
+    });
+    return rows;
   }
 
   function parseCsv(text) {
