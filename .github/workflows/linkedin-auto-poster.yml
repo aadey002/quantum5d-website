@@ -3,7 +3,7 @@ name: LinkedIn Auto-Poster
 
 on:
   schedule:
-    - cron: '0 13 * * 1-5'  # 9am ET (13:00 UTC) weekdays
+    - cron: '0 13 * * 1,3,5'  # 9am ET (13:00 UTC) Mon/Wed/Fri — Phase 4 re-enabled 2026-08-08
   workflow_dispatch:
 
 jobs:
@@ -98,6 +98,33 @@ jobs:
                 -H "Authorization: Bearer $SUPABASE_KEY" \
                 -H "Content-Type: application/json" \
                 -d "{\"status\": \"posted\", \"posted_at\": \"$NOW\", \"linkedin_post_id\": \"$LI_POST_ID\"}"
+
+              # Post first comment if a blog URL is mapped for this post
+              FIRST_COMMENT_URL=$(echo "$POST" | jq -r '.first_comment_url // empty')
+              if [ -n "$FIRST_COMMENT_URL" ] && [ -n "$LI_POST_ID" ]; then
+                ENCODED_URN=$(echo "$LI_POST_ID" | sed 's/:/%3A/g')
+
+                COMMENT_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+                  "https://api.linkedin.com/v2/socialActions/$ENCODED_URN/comments" \
+                  -H "Authorization: Bearer $ACCESS_TOKEN" \
+                  -H "Content-Type: application/json" \
+                  -H "X-Restli-Protocol-Version: 2.0.0" \
+                  -d "$(jq -n \
+                    --arg actor "urn:li:person:$LINKEDIN_USER_ID" \
+                    --arg text "$FIRST_COMMENT_URL" \
+                    '{
+                      "actor": $actor,
+                      "message": { "text": $text }
+                    }')")
+
+                COMMENT_HTTP=$(echo "$COMMENT_RESPONSE" | tail -1)
+                if [ "$COMMENT_HTTP" = "201" ]; then
+                  echo "First comment posted: $FIRST_COMMENT_URL"
+                else
+                  echo "First comment failed: HTTP $COMMENT_HTTP"
+                  echo "$COMMENT_RESPONSE" | sed '$d'
+                fi
+              fi
             else
               echo "Failed to post $POST_ID: HTTP $HTTP_CODE"
               echo "$BODY"
