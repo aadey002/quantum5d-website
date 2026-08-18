@@ -153,12 +153,9 @@ footer{background:var(--navy);color:rgba(255,255,255,.6);padding:32px 24px;font-
 document.getElementById('yr').textContent=new Date().getFullYear();
 
 var MATURITY_CONFIG = {
-  'pilot_ready':            {label:'Pilot-Ready',             cls:'b-pilot',    order:1, desc:'Core workflow ready for a controlled pilot subject to security review.'},
-  'technical_poc':          {label:'Technical Proof of Concept', cls:'b-poc',   order:2, desc:'Tests whether a capability is technically feasible with real integrations.'},
-  'interactive_prototype':  {label:'Interactive Prototype',   cls:'b-proto',    order:3, desc:'Demonstrates intended functionality using synthetic data.'},
-  'design_partner':         {label:'Design Partner Development', cls:'b-design', order:4, desc:'Being shaped with prospective users before controlled pilot.'},
-  'concept_demonstration':  {label:'Concept Demonstration',   cls:'b-concept',  order:5, desc:'Illustrates a proposed workflow or product direction.'},
-  'in_development':         {label:'In Development',          cls:'b-dev',      order:6, desc:'Under active development.'}
+  'interactive_prototype':  {label:'Interactive Prototype',   cls:'b-proto',    order:1, desc:'Client-side demonstration using illustrative data. Not a production system.'},
+  'concept':                {label:'Concept',                 cls:'b-concept',  order:2, desc:'Described but not yet built as an interactive prototype.'},
+  'in_development':         {label:'In Development',          cls:'b-dev',      order:3, desc:'Under active construction but not yet interactive.'}
 };
 
 var TOOLS=[
