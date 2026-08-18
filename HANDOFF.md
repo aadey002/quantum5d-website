@@ -13,6 +13,19 @@ Reposition quantum5d.ai from a commercial SaaS platform to an educational resour
 
 ---
 
+## Wednesday Aug 19 — W06 COMPLETE, W07-A05 Remaining
+
+### W06 completed this session:
+- Homepage: partners, roadmap, architecture, CoverageGuard desc, IRA prototype, popups all reframed
+- Roadmap page: full reframe (title, meta, headings, prose — "Platform" → "Development", "design-partner pilots" → "proposed controlled evaluations")
+- Partners page: meta, prose, cards, program name, consent label all reframed
+- Services page: meta descriptions, hero subtitle reframed
+- Exit-intent popup: reframed from sales to resource delivery
+- Post-prototype popup: reframed from walkthrough to educational briefing
+- Commit: `50a1e6a`
+
+---
+
 ## Tuesday Aug 18 — All 7 Tasks COMPLETE
 
 | Task | Status | Commit |
@@ -113,9 +126,39 @@ Shared constants: `DISCLOSURE_OWNERSHIP` and `DISCLOSURE_STATUS` in `quantum5d-s
 
 ---
 
-## Wednesday Tasks (W07, W08, W09, A04, A05)
+## Remaining Wednesday Tasks
 
-To be assigned by Dr. T after confirming Tuesday's work.
+### W07 — Reframe application library as Prototype Lab
+- Rename portfolio section "Applied AI Prototype Lab"
+- For every prototype expose: operational problem, potential AI application, intended users, illustrative workflow, required data/infrastructure, governance/human oversight, potential value measures, limitations, evidence status, maturity label
+- All 15 must show "Interactive Prototype" maturity
+- Do not invent evidence. Preserve all 15 launch experiences and routes
+- Key files: `public/application.html` (detail page template), `public/applications.html` (listing), tool TOOLS arrays in all 3 serving HTML files
+
+### W08 — Close roadmap, DTM, and executive brief claim gaps
+- Run `node scripts/maturity-check.cjs` — report results
+- Verify all MATURITY_CONFIGs are clean (should be after W03)
+- Check DTM prototype for any "live pilot" language (already fixed to "illustrative DTM application data" — verify)
+- Check if any `pilot_ready` in briefs or datasets survived
+- Verify W05 disclosures render in all 15 prototype contexts
+
+### W09 — Technical UX, accessibility, and performance
+- Run Lighthouse on: homepage, applications, one prototype detail, blog index, resources
+- Run axe accessibility scan
+- Address: mobile hero, 44px tap targets, horizontal overflow, reduced-motion, heading hierarchy, keyboard focus, color contrast, modal accessibility, lazy loading, LCP, CLS, INP
+- Report actual measured scores
+
+### A04 — Safe educational analytics events
+- Implement 17 named events with safe categorical parameters
+- Build event register: trigger, parameters, destination, owner, validation status
+- Never transmit narratives, email addresses, quiz answers, PHI, full IPs, or unrestricted search terms
+- Document events requiring GA4 custom dimension configuration
+
+### A05 — Rebuild admin dashboard
+- Replace sales-funnel KPIs with 5 educational sections: Reach, Learning Engagement, Applied Exploration, Community Engagement, Content Intelligence
+- Add date-range controls, source freshness timestamps, metric definitions, sample-size indicators
+- Mark unavailable metrics explicitly — do not fabricate zeros
+- File: `public/admin.html`
 
 ---
 
