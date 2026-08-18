@@ -98,7 +98,7 @@ footer{background:var(--navy);color:#CDC8E4;padding:28px 0;font-size:13px}
     <a href="/services">Services</a>
     <a href="/roadmap">Roadmap</a>
     <a href="/security-and-trust">Security &amp; Trust</a>
-    <a class="btn btn-primary" href="/#contact">Schedule a Briefing</a>
+    <a class="btn btn-primary" href="/#contact">Request an Educational Briefing</a>
   </div>
   <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('nav-open')" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -264,8 +264,8 @@ var CATS=[];
   html+='</div>';
   html+='<div class="ownership" style="margin-top:24px;padding:16px 0;border-top:1px solid var(--line);font-size:13px;color:var(--muted)">Built and owned by Quantum 5D Consulting, LLC.</div>';
   html+='<div class="app-cta"><h3>Interested in '+app.name+'?</h3>';
-  html+='<p>Schedule a briefing to learn how this application can work for your organization.</p>';
-  html+='<a class="btn btn-primary" href="/#contact">Schedule a briefing about '+app.name+'</a></div>';
+  html+='<p>Request an educational briefing to learn how this application can work for your organization.</p>';
+  html+='<a class="btn btn-primary" href="/#contact">Request an educational briefing about '+app.name+'</a></div>';
   var related=[];
   for(var r=0;r<TOOLS.length;r++){
     if(TOOLS[r].cat===app.cat&&TOOLS[r].id!==app.id) related.push(TOOLS[r]);

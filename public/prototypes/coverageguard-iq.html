@@ -249,7 +249,7 @@
     {lab:"Renewals due · 60 days",val:"1,934",foot:"six-month cycle"},
     {lab:"Coverage conflicts open",val:"228",foot:"routed to queues"},
     {lab:"Recerts in flight",val:"146",foot:"tracked to decision",tint:true},
-    {lab:"Revenue protected · QTD",val:"$1.24M",foot:"renewed + rebilled",tint:true}
+    {lab:"Illustrative revenue impact · QTD",val:"$1.24M",foot:"synthetic data",tint:true}
   ];
   document.getElementById("kpis").innerHTML=KPIS.map(function(k){
     return '<div class="kpi"><div class="lab">'+k.lab+'</div><div class="val'+(k.tint?" tint":"")+'">'+k.val+'</div><div class="foot">'+k.foot+'</div></div>';
