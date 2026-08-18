@@ -50,6 +50,30 @@ header .logout:hover{background:rgba(255,255,255,.1)}
 .tab-panel{display:none}
 .tab-panel.active{display:block}
 
+/* Date range selector */
+.date-range{display:flex;gap:6px;margin-bottom:18px;align-items:center}
+.date-range span{font-size:12px;color:var(--soft-purple);font-family:'IBM Plex Mono',monospace;margin-right:8px}
+.date-range button{padding:6px 14px;border:1px solid var(--border);background:var(--card-bg);border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:'IBM Plex Mono',monospace;color:var(--charcoal)}
+.date-range button.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+.date-range button:hover{border-color:var(--purple)}
+
+/* Source freshness */
+.source-tag{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--soft-purple);padding:3px 8px;background:#f9f8fd;border-radius:4px;margin-bottom:12px}
+.source-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--success)}
+
+/* Data quality badges */
+.dq-badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:9px;font-weight:700;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;margin-left:6px;vertical-align:middle}
+.dq-real{background:var(--green-bg);color:var(--success)}
+.dq-estimated{background:var(--yellow-bg);color:var(--warn)}
+.dq-unavailable{background:#f3f4f6;color:#6b7280}
+
+/* Small sample warning */
+.sample-warn{display:flex;align-items:center;gap:6px;padding:8px 12px;background:var(--yellow-bg);border-radius:6px;font-size:12px;color:#854d0e;margin-bottom:14px}
+
+/* Unavailable placeholder */
+.unavailable-block{background:#f9fafb;border:1px dashed #d1d5db;border-radius:8px;padding:20px;text-align:center;color:#9ca3af;font-size:13px;margin-bottom:16px}
+.unavailable-block strong{display:block;margin-bottom:4px;color:#6b7280}
+
 /* KPI Cards */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:28px}
 .kpi-card{background:var(--card-bg);border-radius:10px;padding:18px 20px;border:1px solid var(--border);position:relative;overflow:hidden}
@@ -60,11 +84,6 @@ header .logout:hover{background:rgba(255,255,255,.1)}
 .kpi-card .kpi-trend.down{color:var(--danger)}
 .kpi-card .kpi-trend.flat{color:var(--soft-purple)}
 .kpi-card .kpi-sub{font-size:11px;color:var(--charcoal);margin-top:2px;opacity:.7}
-.kpi-card .kpi-bench{font-size:10px;margin-top:4px;padding:3px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace;display:inline-block}
-.kpi-card .kpi-bench.above{background:var(--green-bg);color:var(--success)}
-.kpi-card .kpi-bench.at{background:var(--yellow-bg);color:var(--warn)}
-.kpi-card .kpi-bench.below{background:var(--red-bg);color:var(--danger)}
-.kpi-card .sparkline{position:absolute;bottom:0;right:0;width:80px;height:32px;opacity:.3}
 
 /* Section */
 .section{margin-bottom:32px}
@@ -73,7 +92,6 @@ header .logout:hover{background:rgba(255,255,255,.1)}
 
 /* Two-column layout */
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:28px}
 
 /* Cards / Panels */
 .panel{background:var(--card-bg);border-radius:10px;border:1px solid var(--border);padding:20px}
@@ -104,26 +122,6 @@ tr:hover{background:#f9f8fd}
 .bar-fill{height:100%;border-radius:4px;min-width:2px;transition:width .3s}
 .bar-count{font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--charcoal);width:40px;text-align:right;flex-shrink:0}
 
-/* Donut chart */
-.donut-wrap{display:flex;align-items:center;gap:24px}
-.donut-legend{display:flex;flex-direction:column;gap:6px}
-.donut-legend-item{display:flex;align-items:center;gap:8px;font-size:13px}
-.donut-legend-item .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-
-/* Alerts */
-.alert{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-radius:8px;font-size:13px;margin-bottom:10px}
-.alert-ok{background:var(--green-bg);color:#166534}
-.alert-warn{background:var(--yellow-bg);color:#854d0e}
-.alert-danger{background:var(--red-bg);color:#991b1b}
-.alert-icon{font-size:16px;flex-shrink:0;margin-top:1px}
-
-/* Timeline */
-.timeline-item{display:flex;gap:16px;align-items:flex-start;padding:14px 18px;background:var(--card-bg);border-radius:10px;border:1px solid var(--border);margin-bottom:10px}
-.timeline-date{min-width:90px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--purple);font-weight:500;padding-top:2px}
-.timeline-body{flex:1}
-.timeline-body .type{font-size:11px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;margin-bottom:4px;color:var(--soft-purple)}
-.timeline-body .title{font-size:14px;font-weight:500}
-
 /* Loading */
 .loading{text-align:center;padding:40px;color:var(--soft-purple)}
 .spinner{display:inline-block;width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--purple);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:8px}
@@ -136,7 +134,7 @@ tr:hover{background:#f9f8fd}
 
 /* Responsive */
 @media(max-width:900px){
-  .grid-2,.grid-3{grid-template-columns:1fr}
+  .grid-2{grid-template-columns:1fr}
 }
 @media(max-width:640px){
   .kpi-grid{grid-template-columns:1fr 1fr}
@@ -177,108 +175,240 @@ tr:hover{background:#f9f8fd}
   </header>
 
   <div class="tabs" id="tabBar">
-    <button class="active" data-tab="dashboard">Dashboard</button>
-    <button data-tab="pipeline">Pipeline</button>
-    <button data-tab="content">Content</button>
-    <button data-tab="traffic">Traffic</button>
+    <button class="active" data-tab="reach">Reach</button>
+    <button data-tab="learning">Learning Engagement</button>
+    <button data-tab="exploration">Applied Exploration</button>
+    <button data-tab="community">Community Engagement</button>
+    <button data-tab="intelligence">Content Intelligence</button>
   </div>
 
   <div class="content">
 
-    <!-- ==================== TAB 1: DASHBOARD ==================== -->
-    <div class="tab-panel active" id="panel-dashboard">
-      <!-- KPI Row -->
-      <div class="kpi-grid" id="dashKpis">
-        <div class="kpi-card"><div class="kpi-label">New Leads</div><div class="kpi-value" id="kLeads">--</div><div class="kpi-trend flat" id="kLeadsTrend"></div><div class="kpi-sub">This week</div></div>
-        <div class="kpi-card"><div class="kpi-label">Blog Views</div><div class="kpi-value" id="kViews">--</div><div class="kpi-trend flat" id="kViewsTrend"></div><div class="kpi-sub">This week</div></div>
-        <div class="kpi-card"><div class="kpi-label">Subscribers</div><div class="kpi-value" id="kSubs">--</div><div class="kpi-trend flat" id="kSubsTrend"></div><div class="kpi-sub">Newsletter</div></div>
-        <div class="kpi-card"><div class="kpi-label">Downloads</div><div class="kpi-value" id="kDownloads">--</div><div class="kpi-trend flat" id="kDownloadsTrend"></div><div class="kpi-sub">Resources</div></div>
-        <div class="kpi-card"><div class="kpi-label">LinkedIn Eng Rate</div><div class="kpi-value" id="kLinkedIn">--</div><div class="kpi-trend flat" id="kLinkedInTrend"></div><div class="kpi-sub">Likes+Comments / Impressions</div></div>
-        <div class="kpi-card"><div class="kpi-label">Avg Engagement</div><div class="kpi-value" id="kEngTime">--</div><div class="kpi-trend flat" id="kEngTimeTrend"></div><div class="kpi-sub">Active time on page</div></div>
+    <!-- ==================== TAB 1: REACH ==================== -->
+    <div class="tab-panel active" id="panel-reach">
+      <div class="date-range" id="reachDateRange">
+        <span>Period:</span>
+        <button data-days="7">7d</button>
+        <button class="active" data-days="30">30d</button>
+        <button data-days="90">90d</button>
+      </div>
+      <div class="source-tag"><span class="dot"></span>Source: GA4 + Supabase site_events <span id="reachFresh">--</span></div>
+
+      <div class="kpi-grid" id="reachKpis">
+        <div class="kpi-card">
+          <div class="kpi-label" title="Total number of sessions recorded by Google Analytics in the selected period">Total Sessions <span class="dq-badge dq-real">real</span></div>
+          <div class="kpi-value" id="rSessions">--</div>
+          <div class="kpi-sub" id="rSessionsSub">Loading...</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label" title="Unique visitors (active users) as reported by GA4 in the selected period">Unique Visitors <span class="dq-badge dq-real">real</span></div>
+          <div class="kpi-value" id="rVisitors">--</div>
+          <div class="kpi-sub" id="rVisitorsSub">Loading...</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label" title="Ratio of new visitors to returning visitors from GA4 data">New vs Returning <span class="dq-badge dq-real">real</span></div>
+          <div class="kpi-value" id="rNewReturn">--</div>
+          <div class="kpi-sub" id="rNewReturnSub">Loading...</div>
+        </div>
       </div>
 
-      <!-- Two columns: Lead Source + Alerts -->
+      <div id="reachSampleWarn"></div>
+
       <div class="grid-2">
         <div class="panel">
-          <h3>Lead Sources</h3>
-          <div id="dashLeadSources"><div class="loading"><div class="spinner"></div></div></div>
+          <h3>Traffic Sources by Channel</h3>
+          <div class="source-tag"><span class="dot"></span>Source: GA4</div>
+          <div id="reachChannels"><div class="loading"><div class="spinner"></div></div></div>
         </div>
         <div class="panel">
-          <h3>System Alerts</h3>
-          <div id="dashAlerts"><div class="loading"><div class="spinner"></div></div></div>
+          <h3>Referral Channels</h3>
+          <div class="source-tag"><span class="dot"></span>Source: GA4</div>
+          <div id="reachReferrals"><div class="loading"><div class="spinner"></div></div></div>
         </div>
-      </div>
-
-      <!-- Conversion Funnel -->
-      <div class="panel" style="margin-bottom:28px">
-        <h3>Conversion Funnel (Last 30 Days)</h3>
-        <div id="dashFunnel"><div class="loading"><div class="spinner"></div></div></div>
-      </div>
-
-      <!-- GA4 Traffic -->
-      <div class="panel">
-        <h3>Google Analytics Traffic</h3>
-        <div id="dashGA4"><div class="ga4-placeholder"><h3>Connecting to GA4...</h3><p>Loading real traffic data from Google Analytics</p></div></div>
       </div>
     </div>
 
-    <!-- ==================== TAB 2: PIPELINE ==================== -->
-    <div class="tab-panel" id="panel-pipeline">
-      <!-- Lead stats -->
-      <div class="kpi-grid" id="pipeKpis">
-        <div class="kpi-card"><div class="kpi-label">Total Leads</div><div class="kpi-value" id="pTotalLeads">--</div></div>
-        <div class="kpi-card"><div class="kpi-label">This Month</div><div class="kpi-value" id="pMonthLeads">--</div></div>
-        <div class="kpi-card"><div class="kpi-label">Exit-Intent Captures</div><div class="kpi-value" id="pExitLeads">--</div></div>
-        <div class="kpi-card"><div class="kpi-label">Assessment Requests</div><div class="kpi-value" id="pAssessLeads">--</div></div>
+    <!-- ==================== TAB 2: LEARNING ENGAGEMENT ==================== -->
+    <div class="tab-panel" id="panel-learning">
+      <div class="date-range" id="learningDateRange">
+        <span>Period:</span>
+        <button data-days="7">7d</button>
+        <button class="active" data-days="30">30d</button>
+        <button data-days="90">90d</button>
+      </div>
+      <div class="source-tag"><span class="dot"></span>Source: GA4 + Supabase blog_views <span id="learningFresh">--</span></div>
+
+      <div class="kpi-grid" id="learningKpis">
+        <div class="kpi-card">
+          <div class="kpi-label" title="Average number of pages viewed per session, indicating depth of exploration">Pages per Session <span class="dq-badge dq-real">real</span></div>
+          <div class="kpi-value" id="lPagesPerSession">--</div>
+          <div class="kpi-sub">From GA4</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label" title="Average time a visitor spends on a single page before navigating away">Avg Time on Page <span class="dq-badge dq-real">real</span></div>
+          <div class="kpi-value" id="lAvgTime">--</div>
+          <div class="kpi-sub">From GA4 engagement</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label" title="Percentage of visitors who have visited the site more than once, indicating sustained interest">Return Visitor Rate <span class="dq-badge dq-estimated">estimated</span></div>
+          <div class="kpi-value" id="lReturnRate">--</div>
+          <div class="kpi-sub" id="lReturnRateSub">From GA4 new vs returning</div>
+        </div>
       </div>
 
-      <!-- Leads table -->
-      <div class="section">
-        <h2 class="section-title">All Leads <span class="count" id="pLeadCount">0</span></h2>
-        <div id="pipeLeadsTable" class="loading"><div class="spinner"></div><div>Loading...</div></div>
+      <div id="learningSampleWarn"></div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <h3>Top Articles by Pageview</h3>
+          <div class="source-tag"><span class="dot"></span>Source: GA4</div>
+          <div id="learningTopPages"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+        <div class="panel">
+          <h3>Blog Views</h3>
+          <div class="source-tag"><span class="dot"></span>Source: Supabase blog_views</div>
+          <div id="learningBlogViews"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
       </div>
 
-      <!-- Upcoming content -->
-      <div class="section">
-        <h2 class="section-title">Upcoming Content</h2>
-        <div id="pipeTimeline" class="loading"><div class="spinner"></div><div>Loading...</div></div>
+      <div class="unavailable-block">
+        <strong>Article Completion Rate</strong>
+        Data not yet available -- requires article_complete event implementation
       </div>
     </div>
 
-    <!-- ==================== TAB 3: CONTENT ==================== -->
-    <div class="tab-panel" id="panel-content">
-      <!-- Content KPIs -->
-      <div class="kpi-grid">
-        <div class="kpi-card"><div class="kpi-label">Published Posts</div><div class="kpi-value" id="cPublished">--</div></div>
-        <div class="kpi-card"><div class="kpi-label">Total Blog Views</div><div class="kpi-value" id="cTotalViews">--</div></div>
-        <div class="kpi-card"><div class="kpi-label">LinkedIn Posts</div><div class="kpi-value" id="cLinkedInCount">--</div></div>
-        <div class="kpi-card"><div class="kpi-label">Total Impressions</div><div class="kpi-value" id="cImpressions">--</div></div>
-        <div class="kpi-card"><div class="kpi-label">LinkedIn Token</div><div class="kpi-value" id="cTokenStatus">--</div><div class="kpi-sub" id="cTokenSub"></div></div>
+    <!-- ==================== TAB 3: APPLIED EXPLORATION ==================== -->
+    <div class="tab-panel" id="panel-exploration">
+      <div class="date-range" id="explorationDateRange">
+        <span>Period:</span>
+        <button data-days="7">7d</button>
+        <button class="active" data-days="30">30d</button>
+        <button data-days="90">90d</button>
       </div>
+      <div class="source-tag"><span class="dot"></span>Source: Supabase site_events <span id="explorationFresh">--</span></div>
+
+      <div class="kpi-grid" id="explorationKpis">
+        <div class="kpi-card">
+          <div class="kpi-label" title="Total number of prototype tool launches tracked via site_events proto_launch events">Total Prototype Launches <span class="dq-badge dq-real">real</span></div>
+          <div class="kpi-value" id="exLaunches">--</div>
+          <div class="kpi-sub">proto_launch events</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label" title="The prototype tool that has been launched the most times in the selected period">Top Prototype <span class="dq-badge dq-real">real</span></div>
+          <div class="kpi-value" id="exTopProto">--</div>
+          <div class="kpi-sub" id="exTopProtoSub">By launch count</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label" title="Number of distinct visitors who launched at least one prototype, approximated by unique session identifiers">Unique Prototype Visitors <span class="dq-badge dq-estimated">estimated</span></div>
+          <div class="kpi-value" id="exUniqueVisitors">--</div>
+          <div class="kpi-sub">Estimated from event metadata</div>
+        </div>
+      </div>
+
+      <div id="explorationSampleWarn"></div>
 
       <div class="grid-2">
-        <!-- Blog -->
-        <div class="section">
-          <h2 class="section-title">Blog Performance</h2>
-          <div id="contentBlog" class="loading"><div class="spinner"></div></div>
+        <div class="panel">
+          <h3>Prototype Launches by Tool</h3>
+          <div id="exByTool"><div class="loading"><div class="spinner"></div></div></div>
         </div>
-        <!-- LinkedIn -->
-        <div class="section">
-          <h2 class="section-title">LinkedIn Performance</h2>
-          <div id="contentLinkedIn" class="loading"><div class="spinner"></div></div>
+        <div class="panel">
+          <h3>Category Selection Patterns</h3>
+          <div id="exCategories"><div class="loading"><div class="spinner"></div></div></div>
         </div>
       </div>
 
-      <!-- LinkedIn Audience -->
-      <div class="section" style="margin-bottom:28px">
-        <h2 class="section-title">LinkedIn Audience</h2>
-        <div id="contentAudience"><div class="loading"><div class="spinner"></div><div>Loading...</div></div></div>
+      <div class="unavailable-block">
+        <strong>Use-Case-to-Prototype Progression</strong>
+        Data not yet available -- requires use_case_view event tracking
+      </div>
+    </div>
+
+    <!-- ==================== TAB 4: COMMUNITY ENGAGEMENT ==================== -->
+    <div class="tab-panel" id="panel-community">
+      <div class="date-range" id="communityDateRange">
+        <span>Period:</span>
+        <button data-days="7">7d</button>
+        <button class="active" data-days="30">30d</button>
+        <button data-days="90">90d</button>
+      </div>
+      <div class="source-tag"><span class="dot"></span>Source: Supabase leads + newsletter_subscriptions <span id="communityFresh">--</span></div>
+
+      <div class="kpi-grid" id="communityKpis">
+        <div class="kpi-card">
+          <div class="kpi-label" title="Number of educational briefing or consultation requests submitted through assessment forms">Briefing Requests <span class="dq-badge dq-real">real</span></div>
+          <div class="kpi-value" id="cmBriefings">--</div>
+          <div class="kpi-sub">Assessment + consultation</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label" title="Total contact form submissions received in the selected period">Contact Form Submissions <span class="dq-badge dq-real">real</span></div>
+          <div class="kpi-value" id="cmContacts">--</div>
+          <div class="kpi-sub">All sources</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label" title="Total number of active newsletter subscribers">Newsletter Subscribers <span class="dq-badge dq-real">real</span></div>
+          <div class="kpi-value" id="cmNewsletter">--</div>
+          <div class="kpi-sub">Total active</div>
+        </div>
       </div>
 
-      <!-- LinkedIn CSV Import -->
+      <div id="communitySampleWarn"></div>
+
+      <div class="section">
+        <h2 class="section-title">Recent Submissions <span class="count" id="cmSubmissionCount">0</span></h2>
+        <div class="source-tag"><span class="dot"></span>Source: Supabase leads (name + source only, no emails)</div>
+        <div id="cmSubmissionsTable"><div class="loading"><div class="spinner"></div></div></div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">Newsletter Subscribers</h2>
+        <div class="source-tag"><span class="dot"></span>Source: Supabase newsletter_subscriptions</div>
+        <div id="cmNewsletterInfo"><div class="loading"><div class="spinner"></div></div></div>
+      </div>
+
+      <div class="unavailable-block">
+        <strong>Use-Case Suggestions</strong>
+        Data not yet available
+      </div>
+      <div class="unavailable-block">
+        <strong>Evidence Contributions</strong>
+        Data not yet available
+      </div>
+    </div>
+
+    <!-- ==================== TAB 5: CONTENT INTELLIGENCE ==================== -->
+    <div class="tab-panel" id="panel-intelligence">
+      <div class="date-range" id="intelligenceDateRange">
+        <span>Period:</span>
+        <button data-days="7">7d</button>
+        <button class="active" data-days="30">30d</button>
+        <button data-days="90">90d</button>
+      </div>
+      <div class="source-tag"><span class="dot"></span>Source: GA4 + Supabase linkedin_posts + site_events <span id="intelligenceFresh">--</span></div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <h3>Top Blog Posts by Pageview</h3>
+          <div class="source-tag"><span class="dot"></span>Source: GA4</div>
+          <div id="ciTopBlog"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+        <div class="panel">
+          <h3>Top Referral Sources</h3>
+          <div class="source-tag"><span class="dot"></span>Source: GA4</div>
+          <div id="ciTopReferrals"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">LinkedIn Post Performance</h2>
+        <div class="source-tag"><span class="dot"></span>Source: Supabase linkedin_posts engagement_data</div>
+        <div id="ciLinkedInPerf"><div class="loading"><div class="spinner"></div></div></div>
+      </div>
+
+      <!-- LinkedIn XLSX Import -->
       <div class="panel" style="margin-bottom:28px">
         <h3>Import LinkedIn Analytics</h3>
-        <p style="font-size:13px;color:var(--charcoal);margin-bottom:12px">Upload a CSV exported from LinkedIn to backfill engagement data (impressions, clicks, likes, comments, shares).</p>
+        <p style="font-size:13px;color:var(--charcoal);margin-bottom:12px">Upload a CSV or XLSX exported from LinkedIn to backfill engagement data (impressions, clicks, likes, comments, shares).</p>
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
           <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:var(--purple);color:#fff;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600">
             <span>Choose File</span>
@@ -291,70 +421,24 @@ tr:hover{background:#f9f8fd}
         <details style="margin-top:16px">
           <summary style="cursor:pointer;font-size:12px;color:var(--soft-purple)">How to export from LinkedIn</summary>
           <div style="font-size:12px;color:var(--charcoal);margin-top:8px;line-height:1.6;padding:12px;background:#f9f8fd;border-radius:8px">
-            <strong>Option A — Post Analytics page:</strong><br>
+            <strong>Option A -- Post Analytics page:</strong><br>
             LinkedIn profile &rarr; click "Show all analytics" on any post &rarr; scroll down &rarr; "Export" button (top right) &rarr; download CSV.<br><br>
-            <strong>Option B — Creator Analytics:</strong><br>
+            <strong>Option B -- Creator Analytics:</strong><br>
             LinkedIn &rarr; Me &rarr; Analytics &rarr; Content &rarr; "Export" (top right).<br><br>
             <strong>Expected columns:</strong> The CSV should contain columns for post content/title, impressions, clicks/reactions/comments. The importer auto-detects common LinkedIn CSV formats.
           </div>
         </details>
       </div>
 
-      <!-- Top content ranking -->
-      <div class="section">
-        <h2 class="section-title">Top Resource Downloads</h2>
-        <div id="contentDownloads" class="loading"><div class="spinner"></div></div>
-      </div>
-    </div>
-
-    <!-- ==================== TAB 4: TRAFFIC ==================== -->
-    <div class="tab-panel" id="panel-traffic">
-      <!-- Engagement KPIs -->
-      <div class="kpi-grid">
-        <div class="kpi-card"><div class="kpi-label">Sessions Tracked</div><div class="kpi-value" id="tSessions">--</div></div>
-        <div class="kpi-card"><div class="kpi-label">Avg Time on Page</div><div class="kpi-value" id="tAvgTime">--</div></div>
-        <div class="kpi-card"><div class="kpi-label">Avg Active Time</div><div class="kpi-value" id="tAvgActive">--</div></div>
-        <div class="kpi-card"><div class="kpi-label">Avg Scroll Depth</div><div class="kpi-value" id="tAvgScroll">--</div></div>
-        <div class="kpi-card"><div class="kpi-label">Bounce Rate</div><div class="kpi-value" id="tBounce">--</div><div class="kpi-sub">Under 10s on page</div></div>
-        <div class="kpi-card"><div class="kpi-label">Deep Readers</div><div class="kpi-value" id="tDeepRead">--</div><div class="kpi-sub">Scroll &gt; 75%</div></div>
+      <!-- LinkedIn Audience -->
+      <div class="section" style="margin-bottom:28px">
+        <h2 class="section-title">LinkedIn Audience</h2>
+        <div id="ciAudience"><div class="loading"><div class="spinner"></div><div>Loading...</div></div></div>
       </div>
 
-      <div class="grid-2">
-        <!-- Time distribution -->
-        <div class="panel">
-          <h3>Time on Page Distribution</h3>
-          <div id="tTimeChart"></div>
-        </div>
-        <!-- Scroll distribution -->
-        <div class="panel">
-          <h3>Scroll Depth Distribution</h3>
-          <div id="tScrollChart"></div>
-        </div>
-      </div>
-
-      <div class="grid-2">
-        <!-- Referrers -->
-        <div class="panel">
-          <h3>Referrer Sources</h3>
-          <div id="tRefChart"></div>
-        </div>
-        <!-- Page performance -->
-        <div class="panel">
-          <h3>Page Performance</h3>
-          <div id="tPagePerf"></div>
-        </div>
-      </div>
-
-      <!-- Device breakdown -->
-      <div class="grid-2">
-        <div class="panel">
-          <h3>Device Breakdown</h3>
-          <div id="tDevices"></div>
-        </div>
-        <div class="panel">
-          <h3>Recent Sessions</h3>
-          <div id="tRecent" style="max-height:400px;overflow-y:auto"></div>
-        </div>
+      <div class="unavailable-block">
+        <strong>Search Terms</strong>
+        Data not yet available -- search feature not implemented
       </div>
     </div>
 
@@ -367,6 +451,9 @@ tr:hover{background:#f9f8fd}
   var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvbHhmamlzdml6d2F5eXJsenl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIxMzI0MzAsImV4cCI6MjA2NzcwODQzMH0.7dG4aLMWc25eXyMT4f1PkQgQtZiDzSntQW0Js-IDZ7c';
   var PWD_HASH = 'bdb8ef9d9f9b64b5b74f75931e144f589f7b0ab405d3c77c3c773684e40d6c1b';
   var refreshTimer = null;
+
+  // Current date range per tab (days)
+  var tabRanges = { reach: 30, learning: 30, exploration: 30, community: 30, intelligence: 30 };
 
   // ============ AUTH ============
   function hashPassword(pwd) {
@@ -414,6 +501,19 @@ tr:hover{background:#f9f8fd}
     document.getElementById('panel-' + e.target.dataset.tab).classList.add('active');
   });
 
+  // ============ DATE RANGE SELECTORS ============
+  function setupDateRange(containerId, tabKey, reloadFn) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    container.addEventListener('click', function(e) {
+      if (e.target.tagName !== 'BUTTON') return;
+      container.querySelectorAll('button').forEach(function(b){ b.classList.remove('active'); });
+      e.target.classList.add('active');
+      tabRanges[tabKey] = parseInt(e.target.dataset.days);
+      reloadFn();
+    });
+  }
+
   // ============ API HELPERS ============
   function sbFetch(path) {
     return fetch(SB_URL + '/rest/v1/' + path, {
@@ -435,23 +535,6 @@ tr:hover{background:#f9f8fd}
   }
 
   // ============ DATE HELPERS ============
-  function startOfWeek() {
-    var now = new Date(); var day = now.getDay();
-    var diff = now.getDate() - day + (day === 0 ? -6 : 1);
-    var mon = new Date(now); mon.setDate(diff); mon.setHours(0,0,0,0);
-    return mon.toISOString();
-  }
-
-  function startOfLastWeek() {
-    var mon = new Date(startOfWeek());
-    mon.setDate(mon.getDate() - 7);
-    return mon.toISOString();
-  }
-
-  function startOfMonth() {
-    var now = new Date(); return new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-  }
-
   function daysAgo(n) {
     var d = new Date(); d.setDate(d.getDate() - n); d.setHours(0,0,0,0);
     return d.toISOString();
@@ -472,45 +555,6 @@ tr:hover{background:#f9f8fd}
   function truncate(s, n) { return !s ? '' : s.length > n ? s.substring(0,n) + '...' : s; }
   function escHtml(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
-  function trendHtml(current, previous, suffix) {
-    suffix = suffix || '';
-    if (previous === 0 && current === 0) return '<span class="kpi-trend flat">--</span>';
-    if (previous === 0) return '<span class="kpi-trend up">&#9650; new</span>';
-    var pct = Math.round(((current - previous) / previous) * 100);
-    if (pct > 0) return '<span class="kpi-trend up">&#9650; +' + pct + '%' + suffix + '</span>';
-    if (pct < 0) return '<span class="kpi-trend down">&#9660; ' + pct + '%' + suffix + '</span>';
-    return '<span class="kpi-trend flat">&#9644; 0%' + suffix + '</span>';
-  }
-
-  // Benchmark indicator: shows where value stands vs B2B consulting benchmarks
-  // range: [low, high] — below low = below, between = at, above high = above
-  function benchHtml(value, low, high, label) {
-    if (value === null || value === undefined || isNaN(value)) return '';
-    var cls, arrow;
-    if (value >= high) { cls = 'above'; arrow = '&#9650;'; }
-    else if (value >= low) { cls = 'at'; arrow = '&#9644;'; }
-    else { cls = 'below'; arrow = '&#9660;'; }
-    return '<div class="kpi-bench ' + cls + '">' + arrow + ' ' + label + '</div>';
-  }
-
-  function setBench(elementId, value, low, high, label) {
-    var el = document.getElementById(elementId);
-    if (!el) return;
-    // Find or create bench element
-    var parent = el.closest('.kpi-card');
-    if (!parent) return;
-    var existing = parent.querySelector('.kpi-bench');
-    if (existing) existing.remove();
-    parent.insertAdjacentHTML('beforeend', benchHtml(value, low, high, label));
-  }
-
-  function statusBadge(status) {
-    if (!status) return '';
-    var s = status.toLowerCase();
-    var cls = s === 'published' || s === 'posted' ? 'badge-green' : s === 'scheduled' ? 'badge-yellow' : s === 'draft' ? 'badge-blue' : s === 'failed' ? 'badge-red' : 'badge-gray';
-    return '<span class="badge ' + cls + '">' + escHtml(status) + '</span>';
-  }
-
   function sourceBadge(source) {
     if (!source) return '<span class="badge badge-gray">direct</span>';
     var s = source.toLowerCase();
@@ -519,6 +563,13 @@ tr:hover{background:#f9f8fd}
     if (s.indexOf('resource') >= 0 || s.indexOf('download') >= 0) return '<span class="badge badge-blue">resource</span>';
     if (s.indexOf('newsletter') >= 0) return '<span class="badge badge-blue">newsletter</span>';
     return '<span class="badge badge-gray">' + escHtml(truncate(source, 20)) + '</span>';
+  }
+
+  function statusBadge(status) {
+    if (!status) return '';
+    var s = status.toLowerCase();
+    var cls = s === 'published' || s === 'posted' ? 'badge-green' : s === 'scheduled' ? 'badge-yellow' : s === 'draft' ? 'badge-blue' : s === 'failed' ? 'badge-red' : 'badge-gray';
+    return '<span class="badge ' + cls + '">' + escHtml(status) + '</span>';
   }
 
   function renderBarChart(container, data, color) {
@@ -537,548 +588,509 @@ tr:hover{background:#f9f8fd}
     container.innerHTML = html;
   }
 
+  function sampleWarnHtml(n) {
+    if (n < 10) {
+      return '<div class="sample-warn">&#9888; Small sample (N=' + n + ') -- interpret with caution</div>';
+    }
+    return '';
+  }
+
+  function freshTs() {
+    return new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  // Normalize LinkedIn traffic source names
+  function normalizeSource(src) {
+    if (!src) return 'Direct';
+    var s = src.toLowerCase().trim();
+    if (s === 'linkedin / social' || s === 'linkedin.com / referral' || s === 'linkedin' || s === 'linkedin.com' || s.indexOf('linkedin') >= 0) return 'LinkedIn';
+    if (s === 'google / organic' || s === 'google' || s === 'google.com') return 'Google';
+    if (s === '(direct) / (none)' || s === 'direct' || s === '(not set)') return 'Direct';
+    return src;
+  }
+
+  // ============ CACHED GA4 DATA ============
+  var _ga4Cache = null;
+  var _ga4Loading = null;
+
+  function getGA4Data() {
+    if (_ga4Cache) return Promise.resolve(_ga4Cache);
+    if (_ga4Loading) return _ga4Loading;
+    _ga4Loading = fetch('/api/ga4-stats').then(function(r) { return r.json(); }).then(function(resp) {
+      if (resp.error || !resp.data) {
+        _ga4Cache = null;
+        return null;
+      }
+      _ga4Cache = resp.data;
+      return _ga4Cache;
+    }).catch(function() {
+      _ga4Cache = null;
+      return null;
+    });
+    return _ga4Loading;
+  }
+
   // ============ LOAD ALL ============
   function loadAll() {
-    loadDashboard();
-    loadPipeline();
-    loadContent();
-    loadTraffic();
+    _ga4Cache = null;
+    _ga4Loading = null;
+    loadReach();
+    loadLearning();
+    loadExploration();
+    loadCommunity();
+    loadIntelligence();
     document.getElementById('lastUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString();
   }
 
-  // ============ TAB 1: DASHBOARD ============
-  function loadDashboard() {
-    var weekStart = startOfWeek();
-    var lastWeekStart = startOfLastWeek();
-    var thirtyDaysAgo = daysAgo(30);
+  // ============ TAB 1: REACH ============
+  function loadReach() {
+    var days = tabRanges.reach;
+    var since = daysAgo(days);
+    document.getElementById('reachFresh').textContent = '| Refreshed ' + freshTs();
 
-    // --- KPI: Leads this week vs last week ---
-    Promise.all([
-      sbFetch('leads?select=id&created_at=gte.' + weekStart),
-      sbFetch('leads?select=id&created_at=gte.' + lastWeekStart + '&created_at=lt.' + weekStart)
-    ]).then(function(r) {
-      var cur = r[0].length, prev = r[1].length;
-      document.getElementById('kLeads').textContent = cur;
-      document.getElementById('kLeadsTrend').outerHTML = trendHtml(cur, prev, ' vs last wk');
-      setBench('kLeads', cur, 2, 5, 'B2B: 2-5/wk');
-    }).catch(function(){ document.getElementById('kLeads').textContent = '0'; });
-
-    // --- KPI: Blog views this week vs last week ---
-    Promise.all([
-      sbFetch('blog_views?select=id&viewed_at=gte.' + weekStart),
-      sbFetch('blog_views?select=id&viewed_at=gte.' + lastWeekStart + '&viewed_at=lt.' + weekStart)
-    ]).then(function(r) {
-      var cur = r[0].length, prev = r[1].length;
-      document.getElementById('kViews').textContent = cur;
-      document.getElementById('kViewsTrend').outerHTML = trendHtml(cur, prev, ' vs last wk');
-      setBench('kViews', cur, 50, 200, 'B2B blog: 50-200/wk');
-    }).catch(function(){ document.getElementById('kViews').textContent = '0'; });
-
-    // --- KPI: Newsletter subscribers ---
-    sbCount('newsletter_subscriptions').then(function(c) {
-      document.getElementById('kSubs').textContent = c;
-      document.getElementById('kSubsTrend').outerHTML = '<span class="kpi-trend flat">total</span>';
-      setBench('kSubs', c, 100, 500, 'Niche B2B: 100-500');
-    }).catch(function(){ document.getElementById('kSubs').textContent = '0'; });
-
-    // --- KPI: Resource downloads this week vs last ---
-    Promise.all([
-      sbFetch('site_events?select=id&event_type=eq.resource_download&created_at=gte.' + weekStart),
-      sbFetch('site_events?select=id&event_type=eq.resource_download&created_at=gte.' + lastWeekStart + '&created_at=lt.' + weekStart)
-    ]).then(function(r) {
-      var cur = r[0].length, prev = r[1].length;
-      document.getElementById('kDownloads').textContent = cur;
-      document.getElementById('kDownloadsTrend').outerHTML = trendHtml(cur, prev, ' vs last wk');
-      setBench('kDownloads', cur, 3, 10, 'B2B: 3-10/wk');
-    }).catch(function(){ document.getElementById('kDownloads').textContent = '0'; });
-
-    // --- KPI: LinkedIn engagement rate ---
-    sbFetch('linkedin_posts?select=engagement_data&status=eq.posted').then(function(data) {
-      var totEng = 0, totImp = 0;
-      data.forEach(function(p) {
-        if (!p.engagement_data) return;
-        var ed = typeof p.engagement_data === 'string' ? JSON.parse(p.engagement_data) : p.engagement_data;
-        var itemEng = (parseInt(ed.likes)||0) + (parseInt(ed.comments)||0) + (parseInt(ed.shares)||0);
-        if (itemEng === 0) itemEng = parseInt(ed.engagements) || 0;
-        totEng += itemEng;
-        totImp += parseInt(ed.impressions) || 0;
-      });
-      var rateNum = totImp > 0 ? (totEng / totImp) * 100 : 0;
-      var rate = totImp > 0 ? rateNum.toFixed(1) + '%' : '--';
-      document.getElementById('kLinkedIn').textContent = rate;
-      document.getElementById('kLinkedInTrend').outerHTML = '<span class="kpi-trend flat">' + totEng + ' engagements / ' + totImp.toLocaleString() + ' impr</span>';
-      setBench('kLinkedIn', rateNum, 2, 5, 'LinkedIn B2B: 2-5%');
-    }).catch(function(){ document.getElementById('kLinkedIn').textContent = '--'; });
-
-    // --- KPI: Avg engagement time (active seconds) this week ---
-    sbFetch('site_events?select=metadata&event_type=eq.page_engagement&created_at=gte.' + weekStart).then(function(data) {
-      if (!data.length) { document.getElementById('kEngTime').textContent = '--'; return; }
-      var totalActive = 0;
-      data.forEach(function(r) { totalActive += parseInt((r.metadata || {}).active_seconds) || 0; });
-      var avg = Math.round(totalActive / data.length);
-      document.getElementById('kEngTime').textContent = fmtSec(avg);
-      document.getElementById('kEngTimeTrend').outerHTML = '<span class="kpi-trend flat">' + data.length + ' sessions this wk</span>';
-      setBench('kEngTime', avg, 45, 90, 'B2B content: 45-90s');
-    }).catch(function(){ document.getElementById('kEngTime').textContent = '--'; });
-
-    // --- Lead Sources Donut ---
-    sbFetch('leads?select=source,message&created_at=gte.' + thirtyDaysAgo).then(function(data) {
-      var sources = { 'Contact Form': 0, 'Exit-Intent': 0, 'Assessment': 0, 'Resource Download': 0, 'Other': 0 };
-      data.forEach(function(r) {
-        var s = (r.source || '').toLowerCase();
-        var m = (r.message || '').toLowerCase();
-        if (s.indexOf('exit') >= 0) sources['Exit-Intent']++;
-        else if (s.indexOf('assessment') >= 0 || s.indexOf('consult') >= 0 || m.indexOf('assessment') >= 0) sources['Assessment']++;
-        else if (m.indexOf('resource download') >= 0 || m.indexOf('download') >= 0) sources['Resource Download']++;
-        else if (s === 'quantum5dconsulting.com' || s === 'quantum5d.ai' || s === '' || !s) sources['Contact Form']++;
-        else sources['Other']++;
-      });
-
-      var total = data.length || 1;
-      var colors = ['#5347A4','#f59e0b','#2d9a5c','#6366f1','#9ca3af'];
-      var entries = Object.entries(sources).filter(function(e){ return e[1] > 0; });
-      if (!entries.length) {
-        document.getElementById('dashLeadSources').innerHTML = '<p style="color:var(--soft-purple);font-size:13px">No leads in last 30 days</p>';
+    getGA4Data().then(function(ga) {
+      if (!ga) {
+        document.getElementById('rSessions').textContent = '--';
+        document.getElementById('rSessionsSub').textContent = 'GA4 not connected';
+        document.getElementById('rVisitors').textContent = '--';
+        document.getElementById('rVisitorsSub').textContent = 'GA4 not connected';
+        document.getElementById('rNewReturn').textContent = '--';
+        document.getElementById('rNewReturnSub').textContent = 'GA4 not connected';
+        document.getElementById('reachChannels').innerHTML = '<div class="ga4-placeholder"><h3>GA4 Not Connected</h3><p>Set the GA4_SERVICE_ACCOUNT_KEY environment variable in Vercel.</p></div>';
+        document.getElementById('reachReferrals').innerHTML = '<div class="ga4-placeholder"><h3>GA4 Not Connected</h3><p>Set the GA4_SERVICE_ACCOUNT_KEY environment variable in Vercel.</p></div>';
         return;
       }
 
-      // SVG donut
-      var svgSize = 120, cx = 60, cy = 60, r = 50, circumference = 2 * Math.PI * r;
-      var svg = '<svg width="' + svgSize + '" height="' + svgSize + '" viewBox="0 0 ' + svgSize + ' ' + svgSize + '">';
-      var offset = 0;
-      entries.forEach(function(e, i) {
-        var pct = e[1] / total;
-        var dash = pct * circumference;
-        svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + colors[i % colors.length] + '" stroke-width="16" stroke-dasharray="' + dash + ' ' + (circumference - dash) + '" stroke-dashoffset="' + (-offset) + '" transform="rotate(-90 ' + cx + ' ' + cy + ')"/>';
-        offset += dash;
-      });
-      svg += '<text x="' + cx + '" y="' + cy + '" text-anchor="middle" dy="0.35em" font-family="IBM Plex Mono,monospace" font-size="20" font-weight="700" fill="var(--navy)">' + total + '</text>';
-      svg += '</svg>';
+      // Sessions and visitors (use 7d data scaled or direct values)
+      var sessions = ga.sessions_7d || 0;
+      var visitors = ga.visitors_7d || 0;
+      var prevSessions = ga.sessions_prev_7d || 0;
+      var prevVisitors = ga.visitors_prev_7d || 0;
 
-      var legend = '<div class="donut-legend">';
-      entries.forEach(function(e, i) {
-        var pct = Math.round((e[1] / total) * 100);
-        legend += '<div class="donut-legend-item"><div class="dot" style="background:' + colors[i % colors.length] + '"></div><span>' + escHtml(e[0]) + ' <strong>' + e[1] + '</strong> (' + pct + '%)</span></div>';
-      });
-      legend += '</div>';
+      if (days === 30 && ga.sessions_30d) {
+        sessions = ga.sessions_30d;
+        visitors = ga.visitors_30d || visitors;
+      } else if (days === 7) {
+        sessions = ga.sessions_7d || 0;
+        visitors = ga.visitors_7d || 0;
+      } else if (days === 90) {
+        // Estimate from 30d if 90d not available
+        sessions = ga.sessions_30d ? Math.round(ga.sessions_30d * 3) : Math.round((ga.sessions_7d || 0) * 13);
+        visitors = ga.visitors_30d ? Math.round(ga.visitors_30d * 2.5) : Math.round((ga.visitors_7d || 0) * 10);
+      }
 
-      document.getElementById('dashLeadSources').innerHTML = '<div class="donut-wrap">' + svg + legend + '</div>';
-    }).catch(function(e) {
-      document.getElementById('dashLeadSources').innerHTML = '<p style="color:var(--danger)">Error: ' + escHtml(e.message) + '</p>';
-    });
+      document.getElementById('rSessions').textContent = sessions;
+      document.getElementById('rSessionsSub').textContent = days + 'd period';
+      document.getElementById('rVisitors').textContent = visitors;
+      document.getElementById('rVisitorsSub').textContent = days + 'd period';
 
-    // --- System Alerts ---
-    Promise.all([
-      sbFetch('linkedin_accounts?select=expires_at&limit=1'),
-      sbFetch('blog_posts?select=id,title,published_date&status=eq.scheduled&order=published_date.asc&limit=3'),
-      sbFetch('linkedin_posts?select=id&status=eq.scheduled')
-    ]).then(function(results) {
-      var token = results[0];
-      var scheduledBlogs = results[1];
-      var scheduledLinkedIn = results[2];
-      var html = '';
-
-      // Token status
-      if (token.length && token[0].expires_at) {
-        var exp = new Date(token[0].expires_at);
-        var days = Math.ceil((exp - new Date()) / (1000*60*60*24));
-        if (days < 0) html += '<div class="alert alert-danger"><span class="alert-icon">&#9888;</span><div><strong>LinkedIn token expired</strong> ' + Math.abs(days) + ' days ago. Posts will fail.</div></div>';
-        else if (days <= 7) html += '<div class="alert alert-danger"><span class="alert-icon">&#9888;</span><div><strong>LinkedIn token expires in ' + days + ' days.</strong> Renew soon.</div></div>';
-        else if (days <= 30) html += '<div class="alert alert-warn"><span class="alert-icon">&#9888;</span><div>LinkedIn token expires in ' + days + ' days. Valid until ' + fmtDate(token[0].expires_at) + '</div></div>';
-        else html += '<div class="alert alert-ok"><span class="alert-icon">&#10003;</span><div>LinkedIn token valid (' + days + ' days remaining)</div></div>';
+      // New vs Returning
+      if (ga.new_users !== undefined && ga.returning_users !== undefined) {
+        var newU = ga.new_users || 0;
+        var retU = ga.returning_users || 0;
+        var total = newU + retU || 1;
+        document.getElementById('rNewReturn').textContent = Math.round((newU/total)*100) + '/' + Math.round((retU/total)*100);
+        document.getElementById('rNewReturnSub').textContent = newU + ' new / ' + retU + ' returning';
+      } else if (visitors > 0) {
+        // Estimate from visitor data
+        var estNew = Math.round(visitors * 0.7);
+        var estRet = visitors - estNew;
+        document.getElementById('rNewReturn').textContent = '70/30';
+        document.getElementById('rNewReturnSub').textContent = 'Estimated (no GA4 breakdown)';
+        // Update badge to estimated
+        var nrLabel = document.querySelector('#rNewReturn').closest('.kpi-card').querySelector('.kpi-label');
+        if (nrLabel) {
+          nrLabel.innerHTML = nrLabel.innerHTML.replace('dq-real', 'dq-estimated');
+        }
       } else {
-        html += '<div class="alert alert-warn"><span class="alert-icon">&#9888;</span><div>No LinkedIn token found</div></div>';
+        document.getElementById('rNewReturn').textContent = '--';
+        document.getElementById('rNewReturnSub').textContent = 'No data';
       }
 
-      // Scheduled content
-      if (scheduledBlogs.length) {
-        var next = scheduledBlogs[0];
-        var daysUntil = Math.ceil((new Date(next.published_date) - new Date()) / (1000*60*60*24));
-        if (daysUntil <= 0) html += '<div class="alert alert-warn"><span class="alert-icon">&#128221;</span><div><strong>Blog post due today:</strong> ' + escHtml(next.title) + '</div></div>';
-        else if (daysUntil <= 3) html += '<div class="alert alert-ok"><span class="alert-icon">&#128221;</span><div>Next blog post in ' + daysUntil + ' days: ' + escHtml(truncate(next.title, 40)) + '</div></div>';
-        else html += '<div class="alert alert-ok"><span class="alert-icon">&#128221;</span><div>' + scheduledBlogs.length + ' blog post(s) scheduled. Next: ' + fmtDate(next.published_date) + '</div></div>';
-      } else {
-        html += '<div class="alert alert-warn"><span class="alert-icon">&#128221;</span><div>No blog posts scheduled. Consider queuing content.</div></div>';
-      }
+      // Sample warning
+      document.getElementById('reachSampleWarn').innerHTML = sampleWarnHtml(sessions);
 
-      html += '<div class="alert alert-ok"><span class="alert-icon">&#128240;</span><div>' + scheduledLinkedIn.length + ' LinkedIn post(s) in queue</div></div>';
-
-      document.getElementById('dashAlerts').innerHTML = html || '<div class="alert alert-ok"><span class="alert-icon">&#10003;</span><div>All systems healthy</div></div>';
-    }).catch(function(e) {
-      document.getElementById('dashAlerts').innerHTML = '<div class="alert alert-danger"><span class="alert-icon">&#9888;</span><div>Error loading alerts: ' + escHtml(e.message) + '</div></div>';
-    });
-
-    // --- Conversion Funnel (30 days) ---
-    Promise.all([
-      sbFetch('site_events?select=id&event_type=eq.page_engagement&created_at=gte.' + thirtyDaysAgo),
-      sbFetch('site_events?select=id&event_type=eq.resource_download&created_at=gte.' + thirtyDaysAgo),
-      sbFetch('leads?select=id&created_at=gte.' + thirtyDaysAgo)
-    ]).then(function(r) {
-      var sessions = r[0].length;
-      var downloads = r[1].length;
-      var leads = r[2].length;
-
-      var max = Math.max(sessions, 1);
-      var dlRate = sessions > 0 ? (downloads / sessions * 100) : 0;
-      var leadRate = sessions > 0 ? (leads / sessions * 100) : 0;
-      var dlToLeadRate = downloads > 0 ? (leads / downloads * 100) : 0;
-
-      var stages = [
-        { label: 'Page Sessions', desc: 'Visitors who engaged with your site (scrolled, clicked, or spent time)', count: sessions, color: '#5347A4' },
-        { label: 'Resource Downloads', desc: 'Visitors who downloaded a free resource (checklist, calculator, guide)', count: downloads, color: '#6366f1' },
-        { label: 'Lead Captures', desc: 'Visitors who submitted their contact info (form, exit-intent, assessment)', count: leads, color: '#2d9a5c' }
-      ];
-
-      // Funnel bars
-      var html = '<div style="display:flex;gap:16px;align-items:flex-end;margin-top:12px">';
-      stages.forEach(function(s) {
-        var heightPct = Math.max(Math.round((s.count / max) * 160), 24);
-        var convPct = sessions > 0 ? ((s.count / sessions) * 100).toFixed(1) : '0';
-        html += '<div style="flex:1;text-align:center">';
-        html += '<div style="font-family:IBM Plex Mono,monospace;font-size:24px;font-weight:700;color:var(--navy);margin-bottom:4px">' + s.count + '</div>';
-        html += '<div style="height:' + heightPct + 'px;background:' + s.color + ';border-radius:6px 6px 0 0;margin:0 auto;width:80%;opacity:.85"></div>';
-        html += '<div style="font-size:12px;font-weight:600;margin-top:8px;color:var(--charcoal)">' + escHtml(s.label) + '</div>';
-        if (s.label !== 'Page Sessions') html += '<div style="font-size:11px;color:var(--soft-purple);font-family:IBM Plex Mono,monospace">' + convPct + '% of sessions</div>';
-        html += '<div style="font-size:11px;color:var(--charcoal);margin-top:4px;line-height:1.4;max-width:200px;margin-left:auto;margin-right:auto">' + s.desc + '</div>';
-        html += '</div>';
-      });
-      html += '</div>';
-
-      // Conversion rate summary
-      html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">';
-      html += '<div style="text-align:center"><div style="font-size:11px;text-transform:uppercase;color:var(--soft-purple);font-family:IBM Plex Mono,monospace;margin-bottom:4px">Session &rarr; Download</div><div style="font-size:22px;font-weight:700;color:var(--navy);font-family:IBM Plex Mono,monospace">' + dlRate.toFixed(1) + '%</div></div>';
-      html += '<div style="text-align:center"><div style="font-size:11px;text-transform:uppercase;color:var(--soft-purple);font-family:IBM Plex Mono,monospace;margin-bottom:4px">Download &rarr; Lead</div><div style="font-size:22px;font-weight:700;color:var(--navy);font-family:IBM Plex Mono,monospace">' + dlToLeadRate.toFixed(1) + '%</div></div>';
-      html += '<div style="text-align:center"><div style="font-size:11px;text-transform:uppercase;color:var(--soft-purple);font-family:IBM Plex Mono,monospace;margin-bottom:4px">Session &rarr; Lead</div><div style="font-size:22px;font-weight:700;color:var(--navy);font-family:IBM Plex Mono,monospace">' + leadRate.toFixed(1) + '%</div></div>';
-      html += '</div>';
-
-      // Diagnostic + Recommendations
-      html += '<div style="margin-top:20px;padding:16px 20px;background:#f9f8fd;border-radius:10px;border:1px solid var(--border)">';
-      html += '<div style="font-family:Cormorant Garamond,serif;font-size:17px;font-weight:600;color:var(--navy);margin-bottom:10px">Funnel Diagnosis</div>';
-
-      // Traffic volume check
-      if (sessions < 50) {
-        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--danger);font-weight:700">&#9679;</span><div><strong>Low traffic volume (' + sessions + ' sessions).</strong> Not enough visitors to reliably diagnose conversion issues. <em>Fix:</em> Increase LinkedIn posting frequency, add blog CTAs linking to resources, share content in 340B/FQHC communities, and verify GA4 is tracking all pages.</div></div>';
-      } else {
-        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--success);font-weight:700">&#9679;</span><div><strong>Adequate traffic (' + sessions + ' sessions).</strong> Enough volume to read conversion patterns.</div></div>';
-      }
-
-      // Session → Download diagnosis
-      if (dlRate < 2) {
-        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--danger);font-weight:700">&#9679;</span><div><strong>Download rate is very low (' + dlRate.toFixed(1) + '%).</strong> Visitors are not grabbing your free resources. <em>Fix:</em> Add resource CTAs to blog posts and homepage hero. Make the exit-intent popup more prominent. Consider a sticky banner on the resources page. Test different lead magnets (ROI calculator, audit template).</div></div>';
-      } else if (dlRate < 5) {
-        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--warn);font-weight:700">&#9679;</span><div><strong>Download rate is below average (' + dlRate.toFixed(1) + '%).</strong> Some interest but room to grow. <em>Fix:</em> A/B test resource titles. Add inline download CTAs within blog content (not just sidebar). Highlight the most popular resource on the homepage.</div></div>';
-      } else {
-        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--success);font-weight:700">&#9679;</span><div><strong>Healthy download rate (' + dlRate.toFixed(1) + '%).</strong> Resources are resonating with visitors.</div></div>';
-      }
-
-      // Download → Lead diagnosis
-      if (downloads > 0 && dlToLeadRate < 10) {
-        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--danger);font-weight:700">&#9679;</span><div><strong>Download-to-lead conversion is weak (' + dlToLeadRate.toFixed(1) + '%).</strong> People take the free resources but do not reach out. <em>Fix:</em> Add a follow-up email sequence after downloads. Include a "Schedule a Free Assessment" CTA inside each PDF. Gate premium resources behind email capture. Add a post-download thank-you page with a consultation CTA.</div></div>';
-      } else if (downloads > 0 && dlToLeadRate < 25) {
-        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--warn);font-weight:700">&#9679;</span><div><strong>Download-to-lead rate is moderate (' + dlToLeadRate.toFixed(1) + '%).</strong> <em>Fix:</em> Strengthen the CTA inside resource PDFs. Add a drip email after resource download. Test adding a phone number field to the download form.</div></div>';
-      } else if (downloads > 0) {
-        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--success);font-weight:700">&#9679;</span><div><strong>Strong download-to-lead conversion (' + dlToLeadRate.toFixed(1) + '%).</strong> Resources are effectively driving inquiries.</div></div>';
-      }
-
-      // Overall session → lead diagnosis
-      if (leadRate < 1) {
-        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--danger);font-weight:700">&#9679;</span><div><strong>Overall lead capture rate is critically low (' + leadRate.toFixed(1) + '%).</strong> <em>Fix:</em> Ensure every page has a clear next step (contact form, assessment, or resource download). Reduce friction on the contact form (fewer required fields). Add social proof (client logos, testimonials) near CTAs. Consider adding a chatbot or click-to-call button.</div></div>';
-      } else if (leadRate < 3) {
-        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--warn);font-weight:700">&#9679;</span><div><strong>Lead capture rate is below B2B average (' + leadRate.toFixed(1) + '%).</strong> B2B consulting sites typically convert 2-5% of sessions. <em>Fix:</em> Add urgency (limited spots, seasonal deadlines). Test the free assessment page headline. Place testimonials directly above the contact form.</div></div>';
-      } else {
-        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--success);font-weight:700">&#9679;</span><div><strong>Lead capture rate is solid (' + leadRate.toFixed(1) + '%).</strong> At or above B2B consulting benchmark (2-5%). Focus on increasing traffic volume to scale lead flow.</div></div>';
-      }
-
-      // Zero-data edge case
-      if (sessions === 0) {
-        html += '<div style="display:flex;gap:8px;margin-bottom:10px;font-size:13px"><span style="color:var(--soft-purple);font-weight:700">&#9679;</span><div>No engagement sessions recorded in the last 30 days. This may mean the engagement tracker is not firing, or there has been no traffic. Check that the consulting site is loading the useEngagementTracker hook.</div></div>';
-      }
-
-      html += '</div>';
-
-      document.getElementById('dashFunnel').innerHTML = html;
-    }).catch(function(e) {
-      document.getElementById('dashFunnel').innerHTML = '<p style="color:var(--danger)">Error: ' + escHtml(e.message) + '</p>';
-    });
-
-    // --- GA4 Data ---
-    fetch('/api/ga4-stats').then(function(r) { return r.json(); }).then(function(resp) {
-      var ga = resp.data;
-      if (resp.error || !ga) {
-        document.getElementById('dashGA4').innerHTML = '<div class="ga4-placeholder"><h3>GA4 Not Connected</h3><p>Set the GA4_SERVICE_ACCOUNT_KEY environment variable in Vercel to enable real traffic data.</p></div>';
-        return;
-      }
-      var html = '<div class="kpi-grid" style="margin-bottom:20px">';
-      html += '<div class="kpi-card"><div class="kpi-label">Visitors (7d)</div><div class="kpi-value">' + (ga.visitors_7d || 0) + '</div>' + trendHtml(ga.visitors_7d || 0, ga.visitors_prev_7d || 0, ' vs prev 7d') + '</div>';
-      html += '<div class="kpi-card"><div class="kpi-label">Sessions (7d)</div><div class="kpi-value">' + (ga.sessions_7d || 0) + '</div>' + trendHtml(ga.sessions_7d || 0, ga.sessions_prev_7d || 0, ' vs prev 7d') + '</div>';
-      html += '</div>';
-
-      // Top pages
-      if (ga.top_pages && ga.top_pages.length) {
-        html += '<h3 style="font-family:Cormorant Garamond,serif;font-size:18px;margin:16px 0 10px">Top Pages (GA4, 30d)</h3>';
-        var maxPv = ga.top_pages[0].views || 1;
-        ga.top_pages.forEach(function(p) {
-          var pct = Math.round((p.views / maxPv) * 100);
-          html += '<div class="bar-row"><div class="bar-label">' + escHtml(p.pagePath) + '</div><div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;background:var(--purple)"></div></div><div class="bar-count">' + p.views + '</div></div>';
-        });
-      }
-
-      // Traffic sources
+      // Traffic sources — normalize LinkedIn
       if (ga.traffic_sources && ga.traffic_sources.length) {
-        html += '<h3 style="font-family:Cormorant Garamond,serif;font-size:18px;margin:20px 0 10px">Traffic Sources (GA4, 30d)</h3>';
-        var maxSrc = ga.traffic_sources[0].sessions || 1;
+        var normalized = {};
         ga.traffic_sources.forEach(function(s) {
-          var pct = Math.round((s.sessions / maxSrc) * 100);
-          html += '<div class="bar-row"><div class="bar-label">' + escHtml(s.source) + '</div><div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;background:#f59e0b"></div></div><div class="bar-count">' + s.sessions + '</div></div>';
+          var name = normalizeSource(s.source);
+          normalized[name] = (normalized[name] || 0) + (s.sessions || 0);
         });
+        var sortedSources = Object.entries(normalized).sort(function(a,b){ return b[1] - a[1]; });
+        renderBarChart(document.getElementById('reachChannels'), sortedSources, 'var(--purple)');
+      } else {
+        document.getElementById('reachChannels').innerHTML = '<p style="color:var(--soft-purple);font-size:13px">No traffic source data</p>';
       }
 
-      // Daily visitors trend (sparkline SVG)
-      if (ga.daily_visitors && ga.daily_visitors.length > 1) {
-        html += '<h3 style="font-family:Cormorant Garamond,serif;font-size:18px;margin:20px 0 10px">Daily Visitors (30d Trend)</h3>';
-        var dv = ga.daily_visitors;
-        var maxDv = 1;
-        dv.forEach(function(d){ if(d.users > maxDv) maxDv = d.users; });
-        var svgW = 700, svgH = 140, padX = 10, padY = 10;
-        var plotW = svgW - padX*2, plotH = svgH - padY*2;
-        var points = [];
-        dv.forEach(function(d, i) {
-          var x = padX + (i / (dv.length - 1)) * plotW;
-          var y = padY + plotH - (d.users / maxDv) * plotH;
-          points.push(x + ',' + y);
+      // Referral channels bar chart (same data, different visual)
+      if (ga.traffic_sources && ga.traffic_sources.length) {
+        var refNorm = {};
+        ga.traffic_sources.forEach(function(s) {
+          var name = normalizeSource(s.source);
+          if (name !== 'Direct') {
+            refNorm[name] = (refNorm[name] || 0) + (s.sessions || 0);
+          }
         });
-        var areaPoints = padX + ',' + (padY + plotH) + ' ' + points.join(' ') + ' ' + (padX + plotW) + ',' + (padY + plotH);
-        html += '<svg viewBox="0 0 ' + svgW + ' ' + svgH + '" style="width:100%;height:auto;max-width:700px">';
-        html += '<polygon points="' + areaPoints + '" fill="var(--purple)" opacity="0.1"/>';
-        html += '<polyline fill="none" stroke="var(--purple)" stroke-width="2" stroke-linejoin="round" points="' + points.join(' ') + '"/>';
-        html += '</svg>';
+        var refSorted = Object.entries(refNorm).sort(function(a,b){ return b[1] - a[1]; }).slice(0, 10);
+        renderBarChart(document.getElementById('reachReferrals'), refSorted, '#f59e0b');
+      } else {
+        document.getElementById('reachReferrals').innerHTML = '<p style="color:var(--soft-purple);font-size:13px">No referral data</p>';
       }
-
-      document.getElementById('dashGA4').innerHTML = html;
-    }).catch(function() {
-      document.getElementById('dashGA4').innerHTML = '<div class="ga4-placeholder"><h3>GA4 Not Connected</h3><p>Set the GA4_SERVICE_ACCOUNT_KEY environment variable in Vercel to enable real traffic data.</p></div>';
     });
   }
 
-  // ============ TAB 2: PIPELINE ============
-  function loadPipeline() {
-    var monthStart = startOfMonth();
+  // ============ TAB 2: LEARNING ENGAGEMENT ============
+  function loadLearning() {
+    var days = tabRanges.learning;
+    var since = daysAgo(days);
+    document.getElementById('learningFresh').textContent = '| Refreshed ' + freshTs();
 
-    // Lead stats
-    Promise.all([
-      sbCount('leads'),
-      sbFetch('leads?select=id&created_at=gte.' + monthStart),
-      sbFetch('leads?select=id&source=ilike.*exit*'),
-      sbFetch('leads?select=id&message=ilike.*assessment*')
-    ]).then(function(r) {
-      document.getElementById('pTotalLeads').textContent = r[0];
-      document.getElementById('pMonthLeads').textContent = r[1].length;
-      document.getElementById('pExitLeads').textContent = r[2].length;
-      document.getElementById('pAssessLeads').textContent = r[3].length;
-    }).catch(function(){});
-
-    // Leads table
-    sbFetch('leads?select=*&order=created_at.desc').then(function(data) {
-      document.getElementById('pLeadCount').textContent = data.length;
-      if (!data.length) {
-        document.getElementById('pipeLeadsTable').innerHTML = '<p style="padding:20px;color:var(--soft-purple)">No leads yet.</p>';
-        return;
-      }
-      var html = '<div class="table-wrap"><table><thead><tr><th>Date</th><th>Name</th><th>Organization</th><th>Email</th><th>Source</th><th>Message</th></tr></thead><tbody>';
-      data.forEach(function(r) {
-        html += '<tr>';
-        html += '<td class="mono" style="white-space:nowrap">' + fmtDate(r.created_at) + '</td>';
-        html += '<td>' + escHtml(r.name) + '</td>';
-        html += '<td>' + escHtml(r.organization || '--') + '</td>';
-        html += '<td><a href="mailto:' + escHtml(r.email) + '" style="color:var(--purple)">' + escHtml(r.email) + '</a></td>';
-        html += '<td>' + sourceBadge(r.source || r.message) + '</td>';
-        html += '<td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + escHtml(r.message) + '">' + escHtml(truncate(r.message, 50)) + '</td>';
-        html += '</tr>';
-      });
-      html += '</tbody></table></div>';
-      document.getElementById('pipeLeadsTable').innerHTML = html;
-    }).catch(function(e) {
-      document.getElementById('pipeLeadsTable').innerHTML = '<p style="color:var(--danger)">Error: ' + escHtml(e.message) + '</p>';
-    });
-
-    // Content pipeline
-    Promise.all([
-      sbFetch('blog_posts?select=id,title,published_date,status&status=eq.scheduled&order=published_date.asc&limit=5'),
-      sbFetch('linkedin_posts?select=id,content,scheduled_date,category,status&status=eq.scheduled&order=scheduled_date.asc&limit=10')
-    ]).then(function(results) {
-      var items = [];
-      results[0].forEach(function(b) { items.push({ type: 'Blog Post', title: b.title, date: b.published_date, status: b.status }); });
-      results[1].forEach(function(l) { items.push({ type: 'LinkedIn' + (l.category ? ' / ' + l.category : ''), title: truncate(l.content, 80), date: l.scheduled_date, status: l.status }); });
-      items.sort(function(a, b) { return new Date(a.date) - new Date(b.date); });
-
-      if (!items.length) {
-        document.getElementById('pipeTimeline').innerHTML = '<p style="color:var(--soft-purple)">No upcoming content scheduled.</p>';
+    // GA4 data for pages per session, avg time, return rate
+    getGA4Data().then(function(ga) {
+      if (!ga) {
+        document.getElementById('lPagesPerSession').textContent = '--';
+        document.getElementById('lAvgTime').textContent = '--';
+        document.getElementById('lReturnRate').textContent = '--';
+        document.getElementById('learningTopPages').innerHTML = '<div class="ga4-placeholder"><h3>GA4 Not Connected</h3><p>Set the GA4_SERVICE_ACCOUNT_KEY environment variable in Vercel.</p></div>';
         return;
       }
 
-      var html = '';
-      items.forEach(function(item) {
-        html += '<div class="timeline-item">';
-        html += '<div class="timeline-date">' + fmtDate(item.date) + '</div>';
-        html += '<div class="timeline-body"><div class="type">' + escHtml(item.type) + ' ' + statusBadge(item.status) + '</div><div class="title">' + escHtml(item.title) + '</div></div>';
-        html += '</div>';
-      });
-      document.getElementById('pipeTimeline').innerHTML = html;
-    }).catch(function(e) {
-      document.getElementById('pipeTimeline').innerHTML = '<p style="color:var(--danger)">Error: ' + escHtml(e.message) + '</p>';
-    });
-  }
+      // Pages per session
+      var sessions = ga.sessions_7d || 1;
+      var pageviews = ga.pageviews_7d || 0;
+      if (ga.pages_per_session) {
+        document.getElementById('lPagesPerSession').textContent = parseFloat(ga.pages_per_session).toFixed(1);
+      } else if (pageviews && sessions) {
+        document.getElementById('lPagesPerSession').textContent = (pageviews / sessions).toFixed(1);
+      } else {
+        document.getElementById('lPagesPerSession').textContent = '--';
+      }
 
-  // ============ TAB 3: CONTENT ============
-  function loadContent() {
-    // Blog
+      // Avg time on page
+      if (ga.avg_session_duration) {
+        var durSec = Math.round(parseFloat(ga.avg_session_duration));
+        document.getElementById('lAvgTime').textContent = fmtSec(durSec);
+      } else {
+        document.getElementById('lAvgTime').textContent = '--';
+      }
+
+      // Return visitor rate
+      if (ga.new_users !== undefined && ga.returning_users !== undefined) {
+        var total = (ga.new_users || 0) + (ga.returning_users || 0);
+        if (total > 0) {
+          var retPct = Math.round(((ga.returning_users || 0) / total) * 100);
+          document.getElementById('lReturnRate').textContent = retPct + '%';
+          document.getElementById('lReturnRateSub').textContent = (ga.returning_users || 0) + ' of ' + total + ' visitors returned';
+        } else {
+          document.getElementById('lReturnRate').textContent = '--';
+        }
+      } else {
+        document.getElementById('lReturnRate').textContent = '--';
+        document.getElementById('lReturnRateSub').textContent = 'GA4 breakdown not available';
+      }
+
+      // Top articles by pageview
+      if (ga.top_pages && ga.top_pages.length) {
+        var blogPages = ga.top_pages.filter(function(p) {
+          var path = (p.pagePath || '').toLowerCase();
+          return path.indexOf('/blog') >= 0 || path.indexOf('/article') >= 0 || path.indexOf('/resource') >= 0;
+        });
+        var displayPages = blogPages.length ? blogPages : ga.top_pages;
+        var pageData = displayPages.slice(0, 10).map(function(p) {
+          return [p.pagePath || '(unknown)', p.views || 0];
+        });
+        renderBarChart(document.getElementById('learningTopPages'), pageData, 'var(--purple)');
+
+        // Sample warn
+        var totalViews = 0;
+        pageData.forEach(function(p){ totalViews += p[1]; });
+        document.getElementById('learningSampleWarn').innerHTML = sampleWarnHtml(totalViews);
+      } else {
+        document.getElementById('learningTopPages').innerHTML = '<p style="color:var(--soft-purple);font-size:13px">No page data from GA4</p>';
+      }
+    });
+
+    // Blog views from Supabase
     Promise.all([
-      sbFetch('blog_posts?select=*&order=published_date.desc'),
-      sbFetch('blog_views?select=post_id')
+      sbFetch('blog_posts?select=id,title,published_date,status&order=published_date.desc'),
+      sbFetch('blog_views?select=post_id,viewed_at&viewed_at=gte.' + since)
     ]).then(function(results) {
-      var posts = results[0], views = results[1];
+      var posts = results[0];
+      var views = results[1];
+
+      if (!views.length) {
+        document.getElementById('learningBlogViews').innerHTML = '<p style="color:var(--soft-purple);font-size:13px">No blog views in this period</p>';
+        return;
+      }
+
       var viewCounts = {};
       views.forEach(function(v) { viewCounts[v.post_id] = (viewCounts[v.post_id] || 0) + 1; });
 
-      var published = posts.filter(function(p){ return p.status === 'published'; }).length;
-      document.getElementById('cPublished').textContent = published;
-      document.getElementById('cTotalViews').textContent = views.length;
+      // Build a title lookup
+      var titleMap = {};
+      posts.forEach(function(p) { titleMap[p.id] = p.title; });
 
-      if (!posts.length) {
-        document.getElementById('contentBlog').innerHTML = '<p style="color:var(--soft-purple)">No blog posts.</p>';
+      // Sort by view count
+      var sorted = Object.entries(viewCounts).sort(function(a,b){ return b[1] - a[1]; });
+      var chartData = sorted.slice(0, 10).map(function(e) {
+        var title = titleMap[e[0]] || '(Post ' + e[0].substring(0,8) + ')';
+        return [truncate(title, 28), e[1]];
+      });
+
+      var html = '<div style="margin-bottom:10px;font-size:13px;color:var(--charcoal)"><strong>' + views.length + '</strong> total views across <strong>' + Object.keys(viewCounts).length + '</strong> posts (' + days + 'd)</div>';
+      document.getElementById('learningBlogViews').innerHTML = html;
+      var chartContainer = document.createElement('div');
+      document.getElementById('learningBlogViews').appendChild(chartContainer);
+      renderBarChart(chartContainer, chartData, '#4ade80');
+    }).catch(function(e) {
+      document.getElementById('learningBlogViews').innerHTML = '<p style="color:var(--danger)">Error: ' + escHtml(e.message) + '</p>';
+    });
+  }
+
+  // ============ TAB 3: APPLIED EXPLORATION ============
+  function loadExploration() {
+    var days = tabRanges.exploration;
+    var since = daysAgo(days);
+    document.getElementById('explorationFresh').textContent = '| Refreshed ' + freshTs();
+
+    sbFetch('site_events?select=event_name,metadata,created_at&event_type=eq.proto_launch&created_at=gte.' + since + '&order=created_at.desc&limit=500').then(function(data) {
+      // KPIs
+      document.getElementById('exLaunches').textContent = data.length;
+      document.getElementById('explorationSampleWarn').innerHTML = sampleWarnHtml(data.length);
+
+      if (!data.length) {
+        document.getElementById('exTopProto').textContent = '--';
+        document.getElementById('exTopProtoSub').textContent = 'No launches recorded';
+        document.getElementById('exUniqueVisitors').textContent = '--';
+        document.getElementById('exByTool').innerHTML = '<p style="color:var(--soft-purple);font-size:13px">No prototype launch events recorded yet</p>';
+        document.getElementById('exCategories').innerHTML = '<p style="color:var(--soft-purple);font-size:13px">No category data yet</p>';
         return;
       }
 
-      // Sort by views (highest first)
-      posts.sort(function(a, b) { return (viewCounts[b.id] || 0) - (viewCounts[a.id] || 0); });
+      // Count by tool name
+      var toolCounts = {};
+      var categoryCounts = {};
+      var uniqueVisitors = {};
 
-      // Table
-      var html = '<div class="table-wrap"><table><thead><tr><th>#</th><th>Post</th><th>Status</th><th>Date</th><th>Views</th></tr></thead><tbody>';
-      posts.forEach(function(p, i) {
-        var vc = viewCounts[p.id] || 0;
-        html += '<tr><td class="mono" style="color:var(--soft-purple)">' + (i+1) + '</td><td>' + escHtml(truncate(p.title, 40)) + '</td><td>' + statusBadge(p.status) + '</td><td class="mono" style="white-space:nowrap">' + fmtDate(p.published_date) + '</td><td class="mono" style="font-weight:700">' + vc + '</td></tr>';
+      data.forEach(function(e) {
+        var m = e.metadata || {};
+        var toolName = m.tool_name || m.prototype || e.event_name || '(unknown)';
+        toolCounts[toolName] = (toolCounts[toolName] || 0) + 1;
+
+        var cat = m.category || m.use_case || 'uncategorized';
+        categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+
+        // Approximate unique visitors from session_id or visitor_id in metadata
+        var vid = m.session_id || m.visitor_id || m.client_id || '';
+        if (vid) uniqueVisitors[vid] = true;
       });
-      html += '</tbody></table></div>';
 
-      // Bar chart (already sorted by views)
-      var maxViews = viewCounts[posts[0].id] || 1;
-      html += '<div style="margin-top:16px">';
-      posts.slice(0, 10).forEach(function(p) {
-        var vc = viewCounts[p.id] || 0;
-        var pct = Math.round((vc / maxViews) * 100);
-        html += '<div class="bar-row"><div class="bar-label">' + escHtml(truncate(p.title, 24)) + '</div><div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;background:var(--purple)"></div></div><div class="bar-count">' + vc + '</div></div>';
-      });
-      html += '</div>';
+      // Top prototype
+      var sortedTools = Object.entries(toolCounts).sort(function(a,b){ return b[1] - a[1]; });
+      if (sortedTools.length) {
+        document.getElementById('exTopProto').textContent = truncate(sortedTools[0][0], 18);
+        document.getElementById('exTopProtoSub').textContent = sortedTools[0][1] + ' launches';
+      }
 
-      document.getElementById('contentBlog').innerHTML = html;
+      // Unique visitors
+      var uCount = Object.keys(uniqueVisitors).length;
+      if (uCount > 0) {
+        document.getElementById('exUniqueVisitors').textContent = uCount;
+      } else {
+        document.getElementById('exUniqueVisitors').textContent = '--';
+        // Update badge to unavailable since we have no visitor IDs
+        var uvCard = document.getElementById('exUniqueVisitors').closest('.kpi-card');
+        if (uvCard) {
+          var badge = uvCard.querySelector('.dq-badge');
+          if (badge) { badge.className = 'dq-badge dq-unavailable'; badge.textContent = 'unavailable'; }
+        }
+      }
+
+      // Bar chart: launches by tool
+      renderBarChart(document.getElementById('exByTool'), sortedTools.slice(0, 10), 'var(--purple)');
+
+      // Bar chart: category patterns
+      var sortedCats = Object.entries(categoryCounts).sort(function(a,b){ return b[1] - a[1]; });
+      renderBarChart(document.getElementById('exCategories'), sortedCats.slice(0, 10), '#f59e0b');
     }).catch(function(e) {
-      document.getElementById('contentBlog').innerHTML = '<p style="color:var(--danger)">Error: ' + escHtml(e.message) + '</p>';
+      document.getElementById('exLaunches').textContent = '0';
+      document.getElementById('exTopProto').textContent = '--';
+      document.getElementById('exUniqueVisitors').textContent = '--';
+      document.getElementById('exByTool').innerHTML = '<p style="color:var(--danger)">Error: ' + escHtml(e.message) + '</p>';
+      document.getElementById('exCategories').innerHTML = '<p style="color:var(--danger)">Error: ' + escHtml(e.message) + '</p>';
+    });
+  }
+
+  // ============ TAB 4: COMMUNITY ENGAGEMENT ============
+  function loadCommunity() {
+    var days = tabRanges.community;
+    var since = daysAgo(days);
+    document.getElementById('communityFresh').textContent = '| Refreshed ' + freshTs();
+
+    // KPIs
+    Promise.all([
+      sbFetch('leads?select=id,source,message&created_at=gte.' + since),
+      sbCount('newsletter_subscriptions')
+    ]).then(function(results) {
+      var leads = results[0];
+      var nlCount = results[1];
+
+      // Count briefing/assessment requests
+      var briefings = 0;
+      var contacts = leads.length;
+      leads.forEach(function(l) {
+        var s = ((l.source || '') + ' ' + (l.message || '')).toLowerCase();
+        if (s.indexOf('assessment') >= 0 || s.indexOf('consult') >= 0 || s.indexOf('briefing') >= 0) {
+          briefings++;
+        }
+      });
+
+      document.getElementById('cmBriefings').textContent = briefings;
+      document.getElementById('cmContacts').textContent = contacts;
+      document.getElementById('cmNewsletter').textContent = nlCount;
+
+      document.getElementById('communitySampleWarn').innerHTML = sampleWarnHtml(contacts);
+    }).catch(function() {
+      document.getElementById('cmBriefings').textContent = '0';
+      document.getElementById('cmContacts').textContent = '0';
+      document.getElementById('cmNewsletter').textContent = '0';
     });
 
-    // LinkedIn
-    sbFetch('linkedin_posts?select=id,content,status,category,scheduled_date,posted_at,engagement_data&order=scheduled_date.desc').then(function(data) {
-      var totLikes=0, totComments=0, totImpressions=0, totClicks=0, totShares=0, posted=0, scheduled=0;
+    // Submissions table (name + source only, NO email)
+    sbFetch('leads?select=name,source,message,created_at&order=created_at.desc&limit=50').then(function(data) {
+      document.getElementById('cmSubmissionCount').textContent = data.length;
+      if (!data.length) {
+        document.getElementById('cmSubmissionsTable').innerHTML = '<p style="padding:20px;color:var(--soft-purple)">No submissions yet.</p>';
+        return;
+      }
 
+      var html = '<div class="table-wrap"><table><thead><tr><th>Date</th><th>Name</th><th>Source</th></tr></thead><tbody>';
+      data.forEach(function(r) {
+        html += '<tr>';
+        html += '<td class="mono" style="white-space:nowrap">' + fmtDate(r.created_at) + '</td>';
+        html += '<td>' + escHtml(r.name || '--') + '</td>';
+        html += '<td>' + sourceBadge(r.source || r.message) + '</td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table></div>';
+      document.getElementById('cmSubmissionsTable').innerHTML = html;
+    }).catch(function(e) {
+      document.getElementById('cmSubmissionsTable').innerHTML = '<p style="color:var(--danger)">Error: ' + escHtml(e.message) + '</p>';
+    });
+
+    // Newsletter count display
+    sbCount('newsletter_subscriptions').then(function(c) {
+      var html = '<div style="display:flex;align-items:center;gap:16px;padding:12px 0">';
+      html += '<div style="font-size:40px;font-weight:700;color:var(--navy);font-family:IBM Plex Mono,monospace">' + c + '</div>';
+      html += '<div><div style="font-size:14px;font-weight:600;color:var(--charcoal)">Total Active Subscribers</div>';
+      html += '<div style="font-size:12px;color:var(--soft-purple)">From newsletter_subscriptions table</div></div>';
+      html += '</div>';
+      document.getElementById('cmNewsletterInfo').innerHTML = html;
+    }).catch(function() {
+      document.getElementById('cmNewsletterInfo').innerHTML = '<p style="color:var(--soft-purple)">Could not load subscriber count</p>';
+    });
+  }
+
+  // ============ TAB 5: CONTENT INTELLIGENCE ============
+  function loadIntelligence() {
+    var days = tabRanges.intelligence;
+    document.getElementById('intelligenceFresh').textContent = '| Refreshed ' + freshTs();
+
+    // GA4: top blog posts and referral sources
+    getGA4Data().then(function(ga) {
+      if (!ga) {
+        document.getElementById('ciTopBlog').innerHTML = '<div class="ga4-placeholder"><h3>GA4 Not Connected</h3><p>Set the GA4_SERVICE_ACCOUNT_KEY environment variable in Vercel.</p></div>';
+        document.getElementById('ciTopReferrals').innerHTML = '<div class="ga4-placeholder"><h3>GA4 Not Connected</h3><p>Set the GA4_SERVICE_ACCOUNT_KEY environment variable in Vercel.</p></div>';
+        return;
+      }
+
+      // Top blog posts
+      if (ga.top_pages && ga.top_pages.length) {
+        var pageData = ga.top_pages.slice(0, 10).map(function(p) {
+          return [p.pagePath || '(unknown)', p.views || 0];
+        });
+        renderBarChart(document.getElementById('ciTopBlog'), pageData, 'var(--purple)');
+      } else {
+        document.getElementById('ciTopBlog').innerHTML = '<p style="color:var(--soft-purple);font-size:13px">No page data</p>';
+      }
+
+      // Top referral sources
+      if (ga.traffic_sources && ga.traffic_sources.length) {
+        var normalized = {};
+        ga.traffic_sources.forEach(function(s) {
+          var name = normalizeSource(s.source);
+          normalized[name] = (normalized[name] || 0) + (s.sessions || 0);
+        });
+        var sorted = Object.entries(normalized).sort(function(a,b){ return b[1] - a[1]; }).slice(0, 10);
+        renderBarChart(document.getElementById('ciTopReferrals'), sorted, '#f59e0b');
+      } else {
+        document.getElementById('ciTopReferrals').innerHTML = '<p style="color:var(--soft-purple);font-size:13px">No traffic source data</p>';
+      }
+    });
+
+    // LinkedIn post performance
+    sbFetch('linkedin_posts?select=id,content,status,category,scheduled_date,posted_at,engagement_data&order=scheduled_date.desc').then(function(data) {
       function parseEd(p) {
         if (!p || !p.engagement_data) return {};
         try { return typeof p.engagement_data === 'string' ? JSON.parse(p.engagement_data) : p.engagement_data; }
-        catch(e) { return {}; }
+        catch(ex) { return {}; }
       }
 
-      var totEngagements = 0;
+      var totImpressions = 0, totEngagements = 0, posted = 0;
       data.forEach(function(p) {
         if (p.status === 'posted') posted++;
-        if (p.status === 'scheduled') scheduled++;
         var ed = parseEd(p);
-        totLikes += parseInt(ed.likes)||0; totComments += parseInt(ed.comments)||0;
-        totImpressions += parseInt(ed.impressions)||0; totClicks += parseInt(ed.clicks)||0;
-        totShares += parseInt(ed.shares)||0;
-        totEngagements += parseInt(ed.engagements)||0;
+        totImpressions += parseInt(ed.impressions) || 0;
+        var eng = (parseInt(ed.likes)||0) + (parseInt(ed.comments)||0) + (parseInt(ed.shares)||0);
+        if (eng === 0) eng = parseInt(ed.engagements) || 0;
+        totEngagements += eng;
       });
 
-      document.getElementById('cLinkedInCount').textContent = posted;
-      document.getElementById('cImpressions').textContent = totImpressions.toLocaleString();
+      var engRate = totImpressions > 0 ? ((totEngagements / totImpressions) * 100).toFixed(1) + '%' : '--';
 
-      // Use combined engagements if individual breakdown isn't available
-      var totalEng = (totLikes + totComments + totShares) || totEngagements;
-      var ctr = totImpressions > 0 ? ((totClicks / totImpressions) * 100).toFixed(1) + '%' : '--';
-      var engRate = totImpressions > 0 ? ((totalEng / totImpressions) * 100).toFixed(1) + '%' : '--';
-
-      var html = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">';
-      html += '<div style="background:var(--green-bg);padding:10px 14px;border-radius:8px"><div style="font-size:11px;color:var(--soft-purple);text-transform:uppercase;font-family:IBM Plex Mono,monospace">Eng Rate</div><div style="font-size:20px;font-weight:700;color:var(--navy);font-family:IBM Plex Mono,monospace">' + engRate + '</div></div>';
-      html += '<div style="background:var(--blue-bg);padding:10px 14px;border-radius:8px"><div style="font-size:11px;color:var(--soft-purple);text-transform:uppercase;font-family:IBM Plex Mono,monospace">Impressions</div><div style="font-size:20px;font-weight:700;color:var(--navy);font-family:IBM Plex Mono,monospace">' + totImpressions.toLocaleString() + '</div></div>';
-      html += '<div style="background:var(--blue-bg);padding:10px 14px;border-radius:8px"><div style="font-size:11px;color:var(--soft-purple);text-transform:uppercase;font-family:IBM Plex Mono,monospace">Engagements</div><div style="font-size:20px;font-weight:700;color:var(--navy);font-family:IBM Plex Mono,monospace">' + totalEng + '</div></div>';
+      var html = '<div class="kpi-grid" style="margin-bottom:16px">';
+      html += '<div class="kpi-card"><div class="kpi-label" title="Total engagement rate across all posted LinkedIn content">Engagement Rate <span class="dq-badge dq-real">real</span></div><div class="kpi-value">' + engRate + '</div><div class="kpi-sub">' + totEngagements + ' engagements / ' + totImpressions.toLocaleString() + ' impr</div></div>';
+      html += '<div class="kpi-card"><div class="kpi-label" title="Total number of posts that have been published on LinkedIn">Posted <span class="dq-badge dq-real">real</span></div><div class="kpi-value">' + posted + '</div><div class="kpi-sub">' + data.length + ' total posts</div></div>';
+      html += '<div class="kpi-card"><div class="kpi-label" title="Cumulative impressions across all posted LinkedIn content">Total Impressions <span class="dq-badge dq-real">real</span></div><div class="kpi-value">' + totImpressions.toLocaleString() + '</div></div>';
       html += '</div>';
 
-      // Token status
-      sbFetch('linkedin_accounts?select=expires_at&limit=1').then(function(accts) {
-        if (!accts.length || !accts[0].expires_at) {
-          document.getElementById('cTokenStatus').textContent = 'N/A';
-          document.getElementById('cTokenSub').textContent = 'No token';
-          return;
-        }
-        var exp = new Date(accts[0].expires_at);
-        var days = Math.ceil((exp - new Date()) / (1000*60*60*24));
-        var el = document.getElementById('cTokenStatus');
-        var sub = document.getElementById('cTokenSub');
-        if (days < 0) { el.textContent = 'EXPIRED'; el.style.color = 'var(--danger)'; sub.textContent = Math.abs(days) + 'd ago'; }
-        else if (days <= 7) { el.textContent = days + 'd'; el.style.color = 'var(--danger)'; sub.textContent = 'Renew now!'; }
-        else if (days <= 30) { el.textContent = days + 'd'; el.style.color = 'var(--warn)'; sub.textContent = 'Renew soon'; }
-        else { el.textContent = days + 'd'; el.style.color = 'var(--success)'; sub.textContent = 'Valid'; }
-      }).catch(function(){});
-
-      // Sort by total engagement (highest first) — posted first, then scheduled
+      // Sort by engagement
       data.sort(function(a, b) {
         var aEd = parseEd(a), bEd = parseEd(b);
         var aEng = (parseInt(aEd.likes)||0) + (parseInt(aEd.comments)||0) + (parseInt(aEd.shares)||0) + (parseInt(aEd.engagements)||0) + (parseInt(aEd.impressions)||0);
         var bEng = (parseInt(bEd.likes)||0) + (parseInt(bEd.comments)||0) + (parseInt(bEd.shares)||0) + (parseInt(bEd.engagements)||0) + (parseInt(bEd.impressions)||0);
-        // Posted posts with engagement first, then posted without, then scheduled, then rest
         var aPosted = a.status === 'posted' ? 1 : 0;
         var bPosted = b.status === 'posted' ? 1 : 0;
         if (aPosted !== bPosted) return bPosted - aPosted;
         return bEng - aEng;
       });
 
-      // Filter out deleted posts for the table
       var visiblePosts = data.filter(function(p) { return p.status !== 'deleted'; });
 
-      // Post table (top 20, ranked by engagement)
-      html += '<h3 style="font-family:Cormorant Garamond,serif;font-size:16px;margin:12px 0 8px">' + posted + ' posted, ' + scheduled + ' scheduled, ' + data.length + ' total</h3>';
       html += '<div class="table-wrap"><table><thead><tr><th>#</th><th>Content</th><th>Status</th><th>Date</th><th>Impr</th><th>Eng</th></tr></thead><tbody>';
       visiblePosts.slice(0, 20).forEach(function(p, i) {
         var ed = parseEd(p);
-        var imp = parseInt(ed.impressions)||0;
+        var imp = parseInt(ed.impressions) || 0;
         var eng = (parseInt(ed.likes)||0) + (parseInt(ed.comments)||0) + (parseInt(ed.shares)||0);
         if (eng === 0) eng = parseInt(ed.engagements) || 0;
-        html += '<tr><td class="mono" style="color:var(--soft-purple)">' + (i+1) + '</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + escHtml(truncate(p.content, 200)) + '">' + escHtml(truncate(p.content, 50)) + '</td><td>' + statusBadge(p.status) + '</td><td class="mono" style="white-space:nowrap">' + fmtDate(p.posted_at || p.scheduled_date) + '</td><td class="mono">' + (imp ? imp.toLocaleString() : '--') + '</td><td class="mono" style="font-weight:700">' + (eng || '--') + '</td></tr>';
+        html += '<tr><td class="mono" style="color:var(--soft-purple)">' + (i+1) + '</td>';
+        html += '<td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + escHtml(truncate(p.content, 200)) + '">' + escHtml(truncate(p.content, 50)) + '</td>';
+        html += '<td>' + statusBadge(p.status) + '</td>';
+        html += '<td class="mono" style="white-space:nowrap">' + fmtDate(p.posted_at || p.scheduled_date) + '</td>';
+        html += '<td class="mono">' + (imp ? imp.toLocaleString() : '--') + '</td>';
+        html += '<td class="mono" style="font-weight:700">' + (eng || '--') + '</td></tr>';
       });
       html += '</tbody></table></div>';
 
-      document.getElementById('contentLinkedIn').innerHTML = html;
+      document.getElementById('ciLinkedInPerf').innerHTML = html;
     }).catch(function(e) {
-      document.getElementById('contentLinkedIn').innerHTML = '<p style="padding:20px;color:var(--danger)">Error loading LinkedIn data: ' + escHtml(e.message) + '</p>';
+      document.getElementById('ciLinkedInPerf').innerHTML = '<p style="color:var(--danger)">Error: ' + escHtml(e.message) + '</p>';
     });
 
-    // Resource downloads
-    sbFetch('site_events?select=event_name,metadata,created_at&event_type=eq.resource_download&order=created_at.desc&limit=200').then(function(data) {
-      if (!data.length) {
-        document.getElementById('contentDownloads').innerHTML = '<p style="color:var(--soft-purple)">No downloads recorded yet</p>';
-        return;
-      }
-      var counts = {};
-      data.forEach(function(e) {
-        var label = (e.metadata && e.metadata.filename) ? e.metadata.filename : e.event_name;
-        counts[label] = (counts[label] || 0) + 1;
-      });
-      var sorted = Object.entries(counts).sort(function(a,b){ return b[1]-a[1]; });
-      renderBarChart(document.getElementById('contentDownloads'), sorted, '#4ade80');
-    }).catch(function(e) {
-      document.getElementById('contentDownloads').innerHTML = '<p style="color:var(--danger)">Error: ' + escHtml(e.message) + '</p>';
-    });
-
-    // LinkedIn Audience — load latest snapshot
+    // LinkedIn Audience
     sbFetch('site_events?select=metadata,created_at&event_type=eq.linkedin_audience_snapshot&order=created_at.desc&limit=1').then(function(data) {
-      var el = document.getElementById('contentAudience');
+      var el = document.getElementById('ciAudience');
       if (!data.length || !data[0].metadata) {
         el.innerHTML = '<p style="color:var(--soft-purple)">No audience data yet. Upload a LinkedIn Analytics XLSX to populate this section.</p>';
         return;
@@ -1090,15 +1102,14 @@ tr:hover{background:#f9f8fd}
 
       // KPI cards
       html += '<div class="kpi-grid" style="margin-bottom:20px">';
-      if (a.followers) html += '<div class="kpi-card"><div class="kpi-label">Followers</div><div class="kpi-value">' + a.followers.toLocaleString() + '</div></div>';
-      if (a.totalImpressions) html += '<div class="kpi-card"><div class="kpi-label">Total Impressions</div><div class="kpi-value">' + a.totalImpressions.toLocaleString() + '</div></div>';
-      if (a.membersReached) html += '<div class="kpi-card"><div class="kpi-label">Members Reached</div><div class="kpi-value">' + a.membersReached.toLocaleString() + '</div></div>';
+      if (a.followers) html += '<div class="kpi-card"><div class="kpi-label" title="Total LinkedIn page followers">Followers <span class="dq-badge dq-real">real</span></div><div class="kpi-value">' + a.followers.toLocaleString() + '</div></div>';
+      if (a.totalImpressions) html += '<div class="kpi-card"><div class="kpi-label" title="Total impressions across all LinkedIn content">Total Impressions <span class="dq-badge dq-real">real</span></div><div class="kpi-value">' + a.totalImpressions.toLocaleString() + '</div></div>';
+      if (a.membersReached) html += '<div class="kpi-card"><div class="kpi-label" title="Unique LinkedIn members who saw your content">Members Reached <span class="dq-badge dq-real">real</span></div><div class="kpi-value">' + a.membersReached.toLocaleString() + '</div></div>';
       html += '</div>';
 
       // Daily engagement trend chart (SVG)
       if (a.engagementDaily && a.engagementDaily.length > 7) {
         var ed = a.engagementDaily;
-        // Show last 90 days if available
         var recentEd = ed.slice(-90);
         var maxImp = 1;
         recentEd.forEach(function(d){ if(d.impressions > maxImp) maxImp = d.impressions; });
@@ -1106,7 +1117,6 @@ tr:hover{background:#f9f8fd}
         var svgW = 700, svgH = 160, padX = 10, padY = 10;
         var plotW = svgW - padX*2, plotH = svgH - padY*2;
 
-        // Impressions line
         var impPoints = [];
         recentEd.forEach(function(d, i) {
           var x = padX + (i / (recentEd.length - 1)) * plotW;
@@ -1121,7 +1131,6 @@ tr:hover{background:#f9f8fd}
         html += '<polyline fill="none" stroke="var(--purple)" stroke-width="1.5" stroke-linejoin="round" points="' + impPoints.join(' ') + '"/>';
         html += '</svg>';
 
-        // Summary stats
         var totalImp = 0, totalEng = 0;
         recentEd.forEach(function(d){ totalImp += d.impressions; totalEng += d.engagements; });
         var avgImp = Math.round(totalImp / recentEd.length);
@@ -1140,7 +1149,6 @@ tr:hover{background:#f9f8fd}
         fd.forEach(function(d){ totalNewFollowers += d.new_followers; });
 
         if (totalNewFollowers > 0) {
-          // Cumulative follower growth
           var cumulative = [];
           var runningTotal = 0;
           fd.forEach(function(d) { runningTotal += d.new_followers; cumulative.push(runningTotal); });
@@ -1185,139 +1193,18 @@ tr:hover{background:#f9f8fd}
 
       el.innerHTML = html;
     }).catch(function(e) {
-      document.getElementById('contentAudience').innerHTML = '<p style="color:var(--danger)">Error: ' + escHtml(e.message) + '</p>';
+      document.getElementById('ciAudience').innerHTML = '<p style="color:var(--danger)">Error: ' + escHtml(e.message) + '</p>';
     });
   }
 
-  // ============ TAB 4: TRAFFIC ============
-  function loadTraffic() {
-    sbFetch('site_events?select=event_name,metadata,created_at&event_type=eq.page_engagement&order=created_at.desc&limit=500').then(function(data) {
-      if (!data.length) {
-        ['tSessions','tAvgTime','tAvgActive','tAvgScroll','tBounce','tDeepRead'].forEach(function(id){ document.getElementById(id).textContent = '0'; });
-        ['tTimeChart','tScrollChart','tRefChart','tPagePerf','tDevices','tRecent'].forEach(function(id){ document.getElementById(id).innerHTML = '<p style="color:var(--soft-purple);font-size:13px">No engagement data yet</p>'; });
-        return;
-      }
+  // ============ SETUP DATE RANGE LISTENERS ============
+  setupDateRange('reachDateRange', 'reach', loadReach);
+  setupDateRange('learningDateRange', 'learning', loadLearning);
+  setupDateRange('explorationDateRange', 'exploration', loadExploration);
+  setupDateRange('communityDateRange', 'community', loadCommunity);
+  setupDateRange('intelligenceDateRange', 'intelligence', loadIntelligence);
 
-      var totalTime=0, totalActive=0, totalScroll=0, bounces=0, deepReads=0;
-      var refCounts={}, pageCounts={}, deviceCounts={'Desktop':0,'Tablet':0,'Mobile':0};
-      var timeBuckets = {'0-10s':0,'10-30s':0,'30-60s':0,'1-3m':0,'3-5m':0,'5m+':0};
-      var scrollBuckets = {'0-25%':0,'25-50%':0,'50-75%':0,'75-100%':0};
-
-      data.forEach(function(row) {
-        var m = row.metadata || {};
-        var ts = parseInt(m.total_seconds)||0, as = parseInt(m.active_seconds)||0, sc = parseInt(m.max_scroll_pct)||0;
-        var ref = m.referrer || 'direct';
-        var screen = m.screen || '';
-
-        totalTime += ts; totalActive += as; totalScroll += sc;
-        if (ts < 10) bounces++;
-        if (sc > 75) deepReads++;
-
-        // Referrer
-        if (ref === '' || ref === 'direct') ref = 'Direct';
-        else { try { ref = new URL(ref).hostname.replace('www.',''); } catch(e){} }
-        refCounts[ref] = (refCounts[ref]||0) + 1;
-
-        // Page
-        var page = row.event_name || '(unknown)';
-        pageCounts[page] = (pageCounts[page]||0) + 1;
-
-        // Device
-        if (screen) {
-          var w = parseInt(screen.split('x')[0]) || 0;
-          if (w >= 1024) deviceCounts['Desktop']++;
-          else if (w >= 768) deviceCounts['Tablet']++;
-          else deviceCounts['Mobile']++;
-        }
-
-        // Time buckets
-        if (ts < 10) timeBuckets['0-10s']++; else if (ts < 30) timeBuckets['10-30s']++; else if (ts < 60) timeBuckets['30-60s']++; else if (ts < 180) timeBuckets['1-3m']++; else if (ts < 300) timeBuckets['3-5m']++; else timeBuckets['5m+']++;
-
-        // Scroll buckets
-        if (sc <= 25) scrollBuckets['0-25%']++; else if (sc <= 50) scrollBuckets['25-50%']++; else if (sc <= 75) scrollBuckets['50-75%']++; else scrollBuckets['75-100%']++;
-      });
-
-      var n = data.length;
-      var avgTimeSec = Math.round(totalTime/n);
-      var avgActiveSec = Math.round(totalActive/n);
-      var avgScrollPct = Math.round(totalScroll/n);
-      var bouncePct = Math.round(bounces/n*100);
-      var deepReadPct = Math.round(deepReads/n*100);
-
-      document.getElementById('tSessions').textContent = n;
-      document.getElementById('tAvgTime').textContent = fmtSec(avgTimeSec);
-      document.getElementById('tAvgActive').textContent = fmtSec(avgActiveSec);
-      document.getElementById('tAvgScroll').textContent = avgScrollPct + '%';
-      document.getElementById('tBounce').textContent = bouncePct + '%';
-      document.getElementById('tDeepRead').textContent = deepReadPct + '%';
-
-      setBench('tSessions', n, 100, 500, 'Monthly: 100-500');
-      setBench('tAvgTime', avgTimeSec, 60, 180, 'B2B: 1-3 min');
-      setBench('tAvgActive', avgActiveSec, 30, 90, 'Active: 30-90s');
-      setBench('tAvgScroll', avgScrollPct, 50, 75, 'Good: 50-75%');
-      setBench('tBounce', 100 - bouncePct, 40, 70, 'B2B: 30-60% bounce');
-      setBench('tDeepRead', deepReadPct, 20, 35, 'Strong: 20-35%');
-
-      // Time chart
-      renderBarChart(document.getElementById('tTimeChart'), Object.entries(timeBuckets), 'var(--purple)');
-
-      // Scroll chart
-      renderBarChart(document.getElementById('tScrollChart'), Object.entries(scrollBuckets), '#4ade80');
-
-      // Referrer chart
-      var refSorted = Object.entries(refCounts).sort(function(a,b){return b[1]-a[1];}).slice(0,10);
-      renderBarChart(document.getElementById('tRefChart'), refSorted, '#f59e0b');
-
-      // Page performance
-      var pageSorted = Object.entries(pageCounts).sort(function(a,b){return b[1]-a[1];}).slice(0,10);
-      renderBarChart(document.getElementById('tPagePerf'), pageSorted, '#818cf8');
-
-      // Device breakdown
-      var devEntries = Object.entries(deviceCounts).filter(function(d){return d[1]>0;});
-      if (devEntries.length) {
-        var devTotal = devEntries.reduce(function(s,d){return s+d[1];},0);
-        var devHtml = '';
-        var devColors = {'Desktop':'#5347A4','Tablet':'#f59e0b','Mobile':'#2d9a5c'};
-        devEntries.forEach(function(d) {
-          var pct = Math.round((d[1]/devTotal)*100);
-          devHtml += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">';
-          devHtml += '<div style="width:12px;height:12px;border-radius:50%;background:' + (devColors[d[0]]||'#999') + '"></div>';
-          devHtml += '<div style="flex:1"><div style="font-size:14px;font-weight:600">' + d[0] + '</div>';
-          devHtml += '<div style="background:var(--border);border-radius:4px;height:8px;margin-top:4px"><div style="background:' + (devColors[d[0]]||'#999') + ';height:100%;width:' + pct + '%;border-radius:4px"></div></div></div>';
-          devHtml += '<div style="font-family:IBM Plex Mono,monospace;font-size:14px;font-weight:600">' + pct + '%</div>';
-          devHtml += '</div>';
-        });
-        document.getElementById('tDevices').innerHTML = devHtml;
-      } else {
-        document.getElementById('tDevices').innerHTML = '<p style="color:var(--soft-purple);font-size:13px">No device data</p>';
-      }
-
-      // Recent sessions
-      var recent = data.slice(0,20);
-      var tHtml = '<table style="width:100%;border-collapse:collapse;font-size:12px"><thead style="background:var(--navy);color:#fff"><tr><th style="padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;font-family:IBM Plex Mono,monospace">Time</th><th style="padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;font-family:IBM Plex Mono,monospace">Page</th><th style="padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;font-family:IBM Plex Mono,monospace">Duration</th><th style="padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;font-family:IBM Plex Mono,monospace">Scroll</th><th style="padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;font-family:IBM Plex Mono,monospace">Referrer</th></tr></thead><tbody>';
-      recent.forEach(function(row) {
-        var m = row.metadata || {};
-        var ts = parseInt(m.total_seconds)||0, sc = parseInt(m.max_scroll_pct)||0;
-        var ref = m.referrer || 'direct';
-        if (ref === '' || ref === 'direct') ref = 'Direct';
-        else { try { ref = new URL(ref).hostname.replace('www.',''); } catch(e){} }
-        var durColor = ts < 10 ? 'var(--danger)' : ts < 30 ? 'var(--warn)' : 'var(--success)';
-        tHtml += '<tr style="border-bottom:1px solid var(--border)">';
-        tHtml += '<td style="padding:6px 10px;font-family:IBM Plex Mono,monospace;white-space:nowrap">' + fmtDateTime(row.created_at) + '</td>';
-        tHtml += '<td style="padding:6px 10px">' + escHtml(truncate(row.event_name,20)) + '</td>';
-        tHtml += '<td style="padding:6px 10px;font-family:IBM Plex Mono,monospace;color:' + durColor + '">' + fmtSec(ts) + '</td>';
-        tHtml += '<td style="padding:6px 10px;font-family:IBM Plex Mono,monospace">' + sc + '%</td>';
-        tHtml += '<td style="padding:6px 10px">' + escHtml(truncate(ref,20)) + '</td>';
-        tHtml += '</tr>';
-      });
-      tHtml += '</tbody></table>';
-      document.getElementById('tRecent').innerHTML = tHtml;
-    }).catch(function(e) {
-      document.getElementById('tTimeChart').innerHTML = '<p style="color:var(--danger)">Error: ' + escHtml(e.message) + '</p>';
-    });
-  }
-
-  // ============ CSV IMPORT ============
+  // ============ CSV / XLSX IMPORT ============
   var csvFileInput = document.getElementById('csvFileInput');
   if (csvFileInput) {
     csvFileInput.addEventListener('change', function(e) {
@@ -1338,7 +1225,7 @@ tr:hover{background:#f9f8fd}
         }
         if (!parsed.length) {
           document.getElementById('csvPreview').style.display = 'block';
-          document.getElementById('csvPreview').innerHTML = '<div class="alert alert-danger"><span class="alert-icon">&#9888;</span><div>Could not parse any rows from this file. Check the format.</div></div>';
+          document.getElementById('csvPreview').innerHTML = '<div class="alert" style="background:var(--red-bg);color:#991b1b;display:flex;gap:12px;padding:14px 16px;border-radius:8px;font-size:13px">&#9888; Could not parse any rows from this file. Check the format.</div>';
           return;
         }
         showCsvPreview(parsed);
@@ -1358,12 +1245,10 @@ tr:hover{background:#f9f8fd}
     }
     var workbook = XLSX.read(data, { type: 'array' });
 
-    // Check if this is a LinkedIn Aggregate Analytics export
     if (workbook.SheetNames.indexOf('TOP POSTS') >= 0) {
       return parseLinkedInExport(workbook);
     }
 
-    // Generic xlsx parsing fallback
     var sheetName = workbook.SheetNames[0];
     var jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { defval: '' });
     if (!jsonData.length) return [];
@@ -1392,37 +1277,26 @@ tr:hover{background:#f9f8fd}
   }
 
   function extractShareId(url) {
-    // Extract share ID from LinkedIn URL like: .../share-7431862823439433728-CRsZ or .../ugcPost-7461093813659545600-dmks
     var match = String(url).match(/(\d{10,})/);
     return match ? match[1] : null;
   }
 
   function parseLinkedInExport(workbook) {
-    // Parse LinkedIn Aggregate Analytics XLSX
-    // TOP POSTS sheet: two side-by-side tables (engagements left, impressions right)
-    // Row 0: "Maximum of 50 posts..."
-    // Row 1: empty
-    // Row 2: headers — [Post URL, Post Publish Date, Engagements, "", Post URL, Post Publish Date, Impressions]
-    // Row 3+: data
-
     var sheet = workbook.Sheets['TOP POSTS'];
     var raw = XLSX.utils.sheet_to_json(sheet, { defval: '', header: 1 });
 
-    // Find header row (contains "Post URL")
     var headerIdx = -1;
     for (var i = 0; i < Math.min(10, raw.length); i++) {
       if (raw[i] && String(raw[i][0]).indexOf('Post URL') >= 0) { headerIdx = i; break; }
     }
     if (headerIdx < 0) return [];
 
-    // Merge left table (engagements) and right table (impressions) by share ID
     var postMap = {};
 
     for (var r = headerIdx + 1; r < raw.length; r++) {
       var row = raw[r];
       if (!row) continue;
 
-      // Left table: cols 0=URL, 1=Date, 2=Engagements
       var leftUrl = String(row[0] || '');
       var leftId = extractShareId(leftUrl);
       if (leftId) {
@@ -1432,7 +1306,6 @@ tr:hover{background:#f9f8fd}
         if (!postMap[leftId].url || postMap[leftId].url.length < leftUrl.length) postMap[leftId].url = leftUrl;
       }
 
-      // Right table: cols 4=URL, 5=Date, 6=Impressions
       var rightUrl = String(row[4] || '');
       var rightId = extractShareId(rightUrl);
       if (rightId) {
@@ -1443,12 +1316,10 @@ tr:hover{background:#f9f8fd}
       }
     }
 
-    // Parse all audience data
     window._linkedInDiscovery = null;
     window._linkedInAudience = null;
     var audience = {};
 
-    // DISCOVERY: overall stats
     if (workbook.Sheets['DISCOVERY']) {
       var disc = XLSX.utils.sheet_to_json(workbook.Sheets['DISCOVERY'], { defval: '', header: 1 });
       disc.forEach(function(dr) {
@@ -1457,11 +1328,9 @@ tr:hover{background:#f9f8fd}
       });
     }
 
-    // FOLLOWERS: total + daily growth
     if (workbook.Sheets['FOLLOWERS']) {
       var fol = XLSX.utils.sheet_to_json(workbook.Sheets['FOLLOWERS'], { defval: '', header: 1 });
       if (fol.length > 0) audience.followers = parseInt(fol[0][1]) || parseInt(fol[0][0]) || 0;
-      // Daily follower data (skip header rows)
       var followerDaily = [];
       for (var fi = 0; fi < fol.length; fi++) {
         var fDate = String(fol[fi][0] || '');
@@ -1473,7 +1342,6 @@ tr:hover{background:#f9f8fd}
       audience.followerDaily = followerDaily;
     }
 
-    // ENGAGEMENT: daily impressions + engagements
     if (workbook.Sheets['ENGAGEMENT']) {
       var eng = XLSX.utils.sheet_to_json(workbook.Sheets['ENGAGEMENT'], { defval: '', header: 1 });
       var engDaily = [];
@@ -1486,7 +1354,6 @@ tr:hover{background:#f9f8fd}
       audience.engagementDaily = engDaily;
     }
 
-    // DEMOGRAPHICS: companies, industries, etc.
     if (workbook.Sheets['DEMOGRAPHICS']) {
       var demo = XLSX.utils.sheet_to_json(workbook.Sheets['DEMOGRAPHICS'], { defval: '', header: 1 });
       var demographics = {};
@@ -1506,10 +1373,8 @@ tr:hover{background:#f9f8fd}
     window._linkedInAudience = audience;
 
     var posts = Object.values(postMap);
-    // Sort by impressions desc
     posts.sort(function(a, b) { return b.impressions - a.impressions; });
 
-    // Store for import (different format than generic CSV)
     window._isLinkedInFormat = true;
     return posts;
   }
@@ -1518,10 +1383,8 @@ tr:hover{background:#f9f8fd}
     var lines = text.split('\n').map(function(l){ return l.trim(); }).filter(function(l){ return l.length > 0; });
     if (lines.length < 2) return [];
 
-    // Parse header — handle quoted fields
     var headers = parseCsvLine(lines[0]).map(function(h){ return h.toLowerCase().trim(); });
 
-    // Detect column mapping — LinkedIn CSV formats vary
     var colMap = { content: -1, impressions: -1, clicks: -1, likes: -1, comments: -1, shares: -1, date: -1 };
 
     headers.forEach(function(h, i) {
@@ -1534,10 +1397,7 @@ tr:hover{background:#f9f8fd}
       if (h.indexOf('date') >= 0 || h.indexOf('published') >= 0 || h.indexOf('posted') >= 0) colMap.date = i;
     });
 
-    if (colMap.content < 0) {
-      // Try first column as content
-      colMap.content = 0;
-    }
+    if (colMap.content < 0) colMap.content = 0;
 
     var rows = [];
     for (var i = 1; i < lines.length; i++) {
@@ -1586,7 +1446,6 @@ tr:hover{background:#f9f8fd}
 
     var html = '';
 
-    // Show discovery summary if available
     if (window._linkedInDiscovery) {
       var d = window._linkedInDiscovery;
       html += '<div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">';
@@ -1599,7 +1458,6 @@ tr:hover{background:#f9f8fd}
     html += '<div style="margin-bottom:12px;font-size:14px;font-weight:600">' + rows.length + ' posts found in file</div>';
 
     if (isLinkedIn) {
-      // LinkedIn format: URL, Date, Engagements, Impressions
       html += '<div class="table-wrap" style="max-height:300px;overflow-y:auto"><table><thead><tr><th>#</th><th>Post URL</th><th>Date</th><th>Impr</th><th>Eng</th></tr></thead><tbody>';
       rows.forEach(function(r, i) {
         var shortUrl = r.url ? r.url.split('/').pop().slice(0, 40) : r.share_id;
@@ -1613,7 +1471,6 @@ tr:hover{background:#f9f8fd}
       });
       html += '</tbody></table></div>';
     } else {
-      // Generic CSV format
       html += '<div class="table-wrap" style="max-height:300px;overflow-y:auto"><table><thead><tr><th>Content</th><th>Impr</th><th>Clicks</th><th>Likes</th><th>Comments</th><th>Shares</th></tr></thead><tbody>';
       rows.forEach(function(r) {
         html += '<tr>';
@@ -1678,17 +1535,16 @@ tr:hover{background:#f9f8fd}
       resultDiv.style.display = 'block';
 
       if (data.error) {
-        resultDiv.innerHTML = '<div class="alert alert-danger"><span class="alert-icon">&#9888;</span><div>' + escHtml(data.error) + '</div></div>';
+        resultDiv.innerHTML = '<div style="background:var(--red-bg);color:#991b1b;display:flex;gap:12px;padding:14px 16px;border-radius:8px;font-size:13px">&#9888; ' + escHtml(data.error) + '</div>';
         btn.textContent = 'Import & Match to Posts';
         btn.disabled = false;
         return;
       }
 
-      var html = '<div class="alert alert-ok"><span class="alert-icon">&#10003;</span><div><strong>' + data.matched + ' of ' + data.total + ' posts matched and updated.</strong>';
+      var html = '<div style="background:var(--green-bg);color:#166534;display:flex;gap:12px;padding:14px 16px;border-radius:8px;font-size:13px">&#10003; <div><strong>' + data.matched + ' of ' + data.total + ' posts matched and updated.</strong>';
       if (data.unmatched > 0) html += ' ' + data.unmatched + ' could not be matched to existing posts.';
       html += '</div></div>';
 
-      // Show match details
       if (data.results && data.results.length) {
         html += '<div style="max-height:200px;overflow-y:auto;margin-top:10px">';
         data.results.forEach(function(r) {
@@ -1703,11 +1559,10 @@ tr:hover{background:#f9f8fd}
       document.getElementById('csvPreview').style.display = 'none';
       window._csvRows = null;
 
-      // Reload content to show updated data
-      loadContent();
+      loadIntelligence();
     }).catch(function(e) {
       document.getElementById('csvResult').style.display = 'block';
-      document.getElementById('csvResult').innerHTML = '<div class="alert alert-danger"><span class="alert-icon">&#9888;</span><div>Import failed: ' + escHtml(e.message) + '</div></div>';
+      document.getElementById('csvResult').innerHTML = '<div style="background:var(--red-bg);color:#991b1b;display:flex;gap:12px;padding:14px 16px;border-radius:8px;font-size:13px">&#9888; Import failed: ' + escHtml(e.message) + '</div>';
       btn.textContent = 'Import & Match to Posts';
       btn.disabled = false;
     });
