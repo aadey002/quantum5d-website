@@ -6,16 +6,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  publish-scheduled:
+  publish-and-rebuild:
     runs-on: ubuntu-latest
     steps:
       - name: Publish due blog posts
+        id: publish
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: |
-          # Find posts with status='scheduled' and published_date <= now
-          # Update them to status='published'
           RESULT=$(curl -s -X PATCH \
             "$SUPABASE_URL/rest/v1/blog_posts?status=eq.scheduled&published_date=lte.$(date -u +%Y-%m-%dT%H:%M:%S)" \
             -H "apikey: $SUPABASE_KEY" \
@@ -26,23 +25,62 @@ jobs:
 
           echo "Published posts: $RESULT"
 
-          # Check if any posts were actually published (non-empty array response)
           if echo "$RESULT" | grep -q '"id"'; then
-            echo "Posts were published — triggering site rebuild."
+            echo "Posts were published — rebuilding blog."
             echo "POSTS_PUBLISHED=true" >> $GITHUB_ENV
           else
             echo "No posts published today."
             echo "POSTS_PUBLISHED=false" >> $GITHUB_ENV
           fi
 
-      - name: Trigger quantum5d.ai rebuild
+      - name: Checkout repo
+        if: env.POSTS_PUBLISHED == 'true'
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        if: env.POSTS_PUBLISHED == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Regenerate static blog
         if: env.POSTS_PUBLISHED == 'true'
         env:
-          VERCEL_DEPLOY_HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: |
-          if [ -z "$VERCEL_DEPLOY_HOOK_URL" ]; then
-            echo "WARNING: VERCEL_DEPLOY_HOOK_URL not set — skipping rebuild."
-            exit 0
+          node build-blog.cjs
+          echo "Blog rebuilt with $(ls public/blog/*.html | wc -l) files"
+
+      - name: Commit and push updated blog
+        if: env.POSTS_PUBLISHED == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/blog/
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "auto: regenerate blog index — $(date -u +%Y-%m-%d)"
+            git push
           fi
-          DEPLOY_RESULT=$(curl -s -X POST "$VERCEL_DEPLOY_HOOK_URL")
-          echo "Deploy hook response: $DEPLOY_RESULT"
+
+      - name: Deploy to Vercel
+        if: env.POSTS_PUBLISHED == 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "WARNING: VERCEL_TOKEN not set — trying deploy hook."
+            HOOK_URL="${{ secrets.VERCEL_DEPLOY_HOOK_URL }}"
+            if [ -n "$HOOK_URL" ]; then
+              curl -s -X POST "$HOOK_URL"
+              echo "Deploy hook triggered."
+            else
+              echo "ERROR: No deploy mechanism available."
+              exit 1
+            fi
+          else
+            npx vercel deploy --prod --token "$VERCEL_TOKEN" --yes
+            echo "Deployed to production."
+          fi

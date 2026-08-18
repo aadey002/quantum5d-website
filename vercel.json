@@ -1,6 +1,6 @@
 {
   "framework": null,
-  "buildCommand": "",
+  "buildCommand": "node build-blog.cjs || true",
   "outputDirectory": "public",
   "cleanUrls": true,
   "redirects": [
