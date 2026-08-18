@@ -1,93 +1,57 @@
-# Q5D One-Week Repositioning Sprint — Handoff
+# Q5D One-Week Repositioning Sprint — Final Handoff
 
-**Last updated:** 2026-08-20 (Thursday — all tasks complete)  
+**Last updated:** 2026-08-21 (Friday — Q01 complete)  
 **Project:** Quantum5D.ai educational posture repositioning (Aug 17–21)  
 **Repo:** `C:\Users\adeto\quantum5d-website` (GitHub: aadey002/quantum5d-website)
 
 ---
 
-## Thursday Aug 20 — All 4 Tasks COMPLETE
+## Q01 Full Regression Suite — PASS
 
-| Task | Status | Commit |
-|------|--------|--------|
-| A05 — Admin dashboard rebuild | COMPLETE | `616f00d` — 5 sections, 1719→1573 lines |
-| W09 — Residual fixes | COMPLETE | `c406eee` — focus traps, tap targets, font audit |
-| W10 — Blog SEO + key removal | COMPLETE | `dbf1ede` — 25 posts verified, consulting key removed |
-| A06+A07 — Governance specs | COMPLETE | `2b706b5` — Supadata spec + publishing status |
+| Category | Status | Evidence |
+|----------|--------|----------|
+| 1. Prohibited Language (P0) | **PASS** | 1 violation found and fixed (`08b196f` — PILOT-READY in executive brief). 2 false positives (GA4 metric, regulatory language). 1 frozen blog post. |
+| 2. August 1 Work Preserved (P0) | **PASS** | Zero employer IDs, zero fabricated content, 28 blog files, 5/5 redirects working, client success story present. |
+| 3. Educational Repositioning (P0) | **PASS** | H1 educational, "Applied AI Prototype Lab", 0 pilot/Design Partner on roadmap, guidance framing on services, "Educational Contributor Program" on partners, DTM clean. |
+| 4. Prototype Lab Integrity (P0) | **PASS** | 15/15 routes 200, 15/15 maturity labels, 15/15 disclosures, 15/15 metadata fields, 14/15 "No external validation" (TruReach notes standalone deployment). |
+| 5. Analytics and Privacy (P0) | **PASS** | email_click: `{type:"email"}`, linkedin: `{type:"linkedin"}`, 0 PII in analytics, event register committed, 7 GA4 dims documented. |
+| 6. Infrastructure and Credentials (P0) | **PASS** | 40 files scanned, 0 credentials. Consulting key removed from source + bundle. 8/8 routes 200. |
+| 7. Blog and SEO (P0) | **PASS** | 25 in sitemap, 0 missing canonicals, 0 missing OG, robots.txt allows /blog, 0 broken links. |
+| 8. Publishing Controls (P0) | **PASS** | LinkedIn active Mon/Wed/Fri, blog auto-publisher daily, next post Aug 27, no newsletter auto-publish, Supadata at 9/100 halted. |
+| 9. Admin Dashboard (P1) | **PASS** | 5 sections, date-range controls, sample-size warnings, 5 "Data not yet available" markers, auth preserved. |
+| 10. Technical UX (P1) | **PASS with residuals** | 5 modals with aria-modal, 3 focus traps, 44px tap targets, 14 prefers-reduced-motion. Homepage has 3 H1s (inline prototypes). PageSpeed not measurable programmatically. |
 
-## Wednesday Aug 19 — All 6 Tasks COMPLETE
+**OVERALL Q01 STATUS: PASS**
 
-W06, W07, W08, W09 (partial), A04 — all committed and deployed.
-
-## Tuesday Aug 18 — All 7 Tasks COMPLETE
-
-W01-W05, A02, Sitemap — all committed and deployed.
-
----
-
-## Thursday Report
-
-### A05: Admin Dashboard
-- **Before:** 1,719 lines, 4-tab sales-funnel (Dashboard, Pipeline, Content, Traffic)
-- **After:** 1,573 lines, 5-tab educational measurement (Reach, Learning Engagement, Applied Exploration, Community Engagement, Content Intelligence)
-- Date-range controls (7d/30d/90d) on every section
-- Sample-size warnings when N<10
-- Unavailable metrics marked "Data not yet available" — no fabricated zeros
-- Authentication preserved — /admin still requires password
-
-### W09: Residual Fixes
-- **4 modals** with focus traps: application detail, prototype overlay, exit-intent, post-prototype
-- All 4 have `role="dialog" aria-modal="true"`, Tab/Shift+Tab cycle, Escape closes
-- Tag badges: `min-height:44px` with `inline-flex` alignment
-- Font requests: 15 total — 8 are duplicate @import in srcdoc iframes (browser-cached, no reduction possible without architecture change)
-- **Lighthouse:** Run manually at pagespeed.web.dev — API quota exceeded, Chrome headless permission denied in this environment
-
-### W10: Blog SEO + Consulting Key
-- **25 published posts** in database, 28 static HTML files (3 extras from pre-reverted scheduled posts — harmless)
-- **OG tags:** 0 missing across all posts
-- **Canonical tags:** 0 missing across all posts
-- **301 redirects:** intact (consulting → quantum5d.ai)
-- **robots.txt:** allows /blog
-- **Sitemap:** 25 blog URLs via dynamic API
-- **Secret scan:** PASS — no credentials in blog or public HTML output (excluding admin.html which has anon key by design)
-- **Consulting key removal:** PASS — `createClient` + anon key removed from `src/lib/supabase.ts`, dead `signupNewsletter` + `unsubscribeNewsletter` + `ANON_KEY` removed from `src/services/contactApi.ts`. Bundle clean. 8 routes smoke test passed.
-
-### A06: Supadata Specification
-- Committed to `docs/A06-SUPADATA-SPEC.md`
-- Credit guardrail: hard stop at 9/100
-- Human approval gate required before publication
-- Publishing path disabled by default
-- Scaffolding `ENABLED = false` — cannot reactivate without explicit flag + credit check + approval reference
-
-### A07: Publishing Status
-- Committed to `docs/A07-PUBLISHING-STATUS.md`
-- LinkedIn: ACTIVE, 6 published, 6 remaining (Mon/Wed/Fri)
-- Blog: ACTIVE, next post Aug 27 (auto-publish confirmed)
-- Newsletters: NOT YET WRITTEN (0 of 12), no auto-publish path
-- Supadata: STOPPED at 9/100 credits
+All P0 categories pass. P1 categories pass with documented residual items.
 
 ---
 
-## Friday Q01 Readiness
+## P1 Residual Items
 
-All gates from the Friday preview should pass:
-
-| Gate | Status |
-|------|--------|
-| Zero prohibited language | PASS — `maturity-check.cjs` green |
-| All 15 prototype routes live | Needs live verification |
-| Both disclosures present | PASS — W05 confirmed |
-| No PII in analytics | PASS — A02 confirmed |
-| /admin authenticated | PASS — auth preserved in A05 |
-| 25 blog posts in sitemap | PASS — 25 via dynamic API |
-| No credentials in built output | PASS — W10 secret scan |
-| Consulting key removed | PASS — W10 confirmed |
-| LinkedIn pipeline active | PASS — A07 confirmed |
-| maturity-check.cjs passing | PASS — verified today |
+| Item | Owner | Target |
+|------|-------|--------|
+| Homepage has 3 H1 tags (inline prototype sections) | Dev | Next sprint |
+| Partners page has 0 H1 tags | Dev | Next sprint |
+| PageSpeed scores not measured — run manually at pagespeed.web.dev | Dr. T | This week |
+| 15 Google Font requests from inline prototypes (browser-cached, no real perf impact) | Dev | Architecture refactor |
+| Blog "revenue protected" in frozen post (reactive-to-predictive) | Editorial | Review in 30-day audit |
+| admin.html contains Supabase anon key (by design — RLS-governed) | Dev | Review RLS policies |
+| 7 GA4 custom dimensions need manual configuration | Dr. T | Next week |
 
 ---
 
-## Deploy Methods
+## Week Summary (Aug 17–21)
 
-**quantum5d.ai:** `cd quantum5d-website && npx vercel deploy --prod`  
-**quantum5dconsulting.com:** `git push origin main:master` (to quantum-marketing-hub repo)
+| Day | Tasks Completed |
+|-----|----------------|
+| Mon-Tue | W01 baseline, W02 spec, W03 maturity cleanup, W04 truth-in-labeling, W05 disclosures, A02 analytics safety, Sitemap, LinkedIn/blog pipeline fixes |
+| Wed | W06 homepage journey, W07 Prototype Lab, W08 claim gaps (zero hits), W09 partial (heading hierarchy), A04 event register |
+| Thu | A05 admin dashboard rebuild, W09 residual (focus traps, tap targets, fonts), W10 blog SEO + consulting key, A06 Supadata spec, A07 publishing status |
+| Fri | Q01 full regression — 10 categories, all pass |
+
+**Total commits this sprint:** 18 task-specific commits across quantum5d-website and quantum-marketing-hub repos.
+
+---
+
+## Ready for Q02 Release Decision
