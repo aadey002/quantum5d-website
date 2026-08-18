@@ -51,7 +51,7 @@ jobs:
           echo "$POSTS" | jq -c '.[]' | while read -r POST; do
             POST_ID=$(echo "$POST" | jq -r '.id')
             CONTENT=$(echo "$POST" | jq -r '.content')
-            HASHTAGS=$(echo "$POST" | jq -r '.hashtags // [] | join(" ")')
+            HASHTAGS=$(echo "$POST" | jq -r 'if (.hashtags | type) == "array" then (.hashtags // [] | join(" ")) elif (.hashtags | type) == "string" then .hashtags else "" end')
 
             # Append hashtags to content
             FULL_CONTENT="$CONTENT"
