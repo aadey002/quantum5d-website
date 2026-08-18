@@ -27,6 +27,7 @@
     { "source": "/services", "destination": "/services" },
     { "source": "/roadmap", "destination": "/roadmap" },
     { "source": "/about", "destination": "/about" },
+    { "source": "/sitemap.xml", "destination": "/api/sitemap" },
     { "source": "/blog/:slug", "destination": "/api/blog-fallback" },
     { "source": "/", "destination": "/quantum5d-site-index" },
     { "source": "/((?!api|assets|images|resources|prototypes|briefs|blog|robots.txt|sitemap.xml|logo.png|quantum5d-site-index|admin|security-and-trust|applications|application|partners|services|roadmap|about).*)", "destination": "/quantum5d-site-index" }
