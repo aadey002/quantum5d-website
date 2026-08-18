@@ -8284,7 +8284,7 @@ document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeProto(
 <script>
 function trackQ5D(t,n,m){fetch("/api/track-event",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({event_type:t,event_name:n,site:"quantum5d.ai",metadata:m||{}})}).catch(function(){});}
 trackQ5D("page_view","homepage");
-var _origLP=window.launchProto;if(_origLP){window.launchProto=function(k){var p=(typeof PROTOS!=="undefined"&&PROTOS[k])?PROTOS[k]:{};trackQ5D("proto_launch",k,{title:p.title||k});_origLP(k);};}
+var _origLP=window.launchProto;if(_origLP){window.launchProto=function(k){var p=(typeof PROTOS!=="undefined"&&PROTOS[k])?PROTOS[k]:{};trackQ5D("proto_launch",k,{title:p.title||k});if(typeof trackEvent==='function')trackEvent('prototype_launch',{app:k,name:p.title||k});_origLP(k);};}
 
 /* --- Lead capture: exit-intent + post-prototype CTA --- */
 (function(){
