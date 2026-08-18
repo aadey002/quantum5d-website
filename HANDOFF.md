@@ -1,29 +1,45 @@
-# Q5D One-Week Repositioning Sprint — Final Handoff
+# Q5D Educational Repositioning — Complete
 
-**Last updated:** 2026-08-21 (Friday — Q01 complete)  
-**Project:** Quantum5D.ai educational posture repositioning (Aug 17–21)  
-**Repo:** `C:\Users\adeto\quantum5d-website` (GitHub: aadey002/quantum5d-website)
+**Q02 Release Decision: APPROVED** — Dr. T, August 21, 2026  
+**Sprint:** August 17–21, 2026  
+**Status:** Complete. New baseline established. 30-day measurement period starts August 21.
 
 ---
 
-## Q01 Full Regression Suite — PASS
+## What Was Done
 
-| Category | Status | Evidence |
-|----------|--------|----------|
-| 1. Prohibited Language (P0) | **PASS** | 1 violation found and fixed (`08b196f` — PILOT-READY in executive brief). 2 false positives (GA4 metric, regulatory language). 1 frozen blog post. |
-| 2. August 1 Work Preserved (P0) | **PASS** | Zero employer IDs, zero fabricated content, 28 blog files, 5/5 redirects working, client success story present. |
-| 3. Educational Repositioning (P0) | **PASS** | H1 educational, "Applied AI Prototype Lab", 0 pilot/Design Partner on roadmap, guidance framing on services, "Educational Contributor Program" on partners, DTM clean. |
-| 4. Prototype Lab Integrity (P0) | **PASS** | 15/15 routes 200, 15/15 maturity labels, 15/15 disclosures, 15/15 metadata fields, 14/15 "No external validation" (TruReach notes standalone deployment). |
-| 5. Analytics and Privacy (P0) | **PASS** | email_click: `{type:"email"}`, linkedin: `{type:"linkedin"}`, 0 PII in analytics, event register committed, 7 GA4 dims documented. |
-| 6. Infrastructure and Credentials (P0) | **PASS** | 40 files scanned, 0 credentials. Consulting key removed from source + bundle. 8/8 routes 200. |
-| 7. Blog and SEO (P0) | **PASS** | 25 in sitemap, 0 missing canonicals, 0 missing OG, robots.txt allows /blog, 0 broken links. |
-| 8. Publishing Controls (P0) | **PASS** | LinkedIn active Mon/Wed/Fri, blog auto-publisher daily, next post Aug 27, no newsletter auto-publish, Supadata at 9/100 halted. |
-| 9. Admin Dashboard (P1) | **PASS** | 5 sections, date-range controls, sample-size warnings, 5 "Data not yet available" markers, auth preserved. |
-| 10. Technical UX (P1) | **PASS with residuals** | 5 modals with aria-modal, 3 focus traps, 44px tap targets, 14 prefers-reduced-motion. Homepage has 3 H1s (inline prototypes). PageSpeed not measurable programmatically. |
+18 task-specific commits across 5 days repositioned quantum5d.ai from a commercial SaaS platform to an educational resource with an Applied AI Prototype Lab.
 
-**OVERALL Q01 STATUS: PASS**
+| Area | Changes |
+|------|---------|
+| Language | 28+ translations (Schedule a Briefing → Educational Briefing, Purpose-Built → Applied AI Prototypes, Founding Innovation Partner → Educational Contributor, etc.) |
+| Maturity | All 15 prototypes set to Interactive Prototype. Prohibited labels (pilot_ready, design_partner, technical_poc) removed from all configs. Build-time guard added. |
+| Disclosures | Ownership + synthetic-data status on all 15 prototype cards, modals, and detail pages via shared constants. |
+| Metadata | 6 new fields on all 15 prototypes: workflow, dataReq, governance, valueMeasures, limitations, evidence. |
+| Analytics | PII removed from email_click and linkedin_outbound_click. 13 safe events implemented. Event register documented. |
+| Admin | Dashboard rebuilt: 5 educational sections replacing 4 sales-funnel tabs. Date-range controls, sample-size warnings, no fabricated zeros. |
+| SEO | Dynamic sitemap (54 URLs from Supabase), consulting sitemap cleaned, GSC submitted, 5 posts indexed. |
+| Infrastructure | Blog auto-publisher pipeline (publish → build → commit → deploy). LinkedIn auto-poster hashtag fix. Consulting site Supabase key removed. |
+| Governance | Supadata spec (credit guardrail, approval gate, disabled by default). Publishing status documented. |
 
-All P0 categories pass. P1 categories pass with documented residual items.
+## Q01 Regression: All 10 Categories PASS
+
+All P0 gates passed. P1 residual items documented below.
+
+---
+
+## 30-Day Measurement Period (Aug 21 – Sep 20)
+
+| Metric | Baseline (Aug 18) | Source | Watch For |
+|--------|-------------------|--------|-----------|
+| Total sessions (30d) | 185 | GA4 | Trend direction after repositioning |
+| Organic search sessions | 10 | GA4 | Growth from sitemap + GSC indexing |
+| LinkedIn social sessions | 34 | GA4 | Sustained from auto-poster pipeline |
+| Blog post views | 33 tracked | Supabase blog_views | Growth with 6 new posts publishing |
+| Prototype launches | 34 | Supabase site_events | Engagement with prototype lab |
+| Lead capture conversions | 0 real | Supabase leads | First real conversion |
+| Resource downloads | 0 real | Supabase site_events | First real download |
+| Return visitor rate | 19% | GA4 | Retention signal |
 
 ---
 
@@ -33,25 +49,49 @@ All P0 categories pass. P1 categories pass with documented residual items.
 |------|-------|--------|
 | Homepage has 3 H1 tags (inline prototype sections) | Dev | Next sprint |
 | Partners page has 0 H1 tags | Dev | Next sprint |
-| PageSpeed scores not measured — run manually at pagespeed.web.dev | Dr. T | This week |
-| 15 Google Font requests from inline prototypes (browser-cached, no real perf impact) | Dev | Architecture refactor |
-| Blog "revenue protected" in frozen post (reactive-to-predictive) | Editorial | Review in 30-day audit |
-| admin.html contains Supabase anon key (by design — RLS-governed) | Dev | Review RLS policies |
-| 7 GA4 custom dimensions need manual configuration | Dr. T | Next week |
+| PageSpeed scores not measured | Dr. T | Run at pagespeed.web.dev |
+| 15 Google Font requests from inline prototypes | Dev | Architecture refactor |
+| Blog "revenue protected" in frozen post | Editorial | 30-day audit |
+| admin.html Supabase anon key (RLS-governed) | Dev | Review RLS policies |
+| 7 GA4 custom dimensions need configuration | Dr. T | Next session |
 
 ---
 
-## Week Summary (Aug 17–21)
+## Next Session Scope
 
-| Day | Tasks Completed |
-|-----|----------------|
-| Mon-Tue | W01 baseline, W02 spec, W03 maturity cleanup, W04 truth-in-labeling, W05 disclosures, A02 analytics safety, Sitemap, LinkedIn/blog pipeline fixes |
-| Wed | W06 homepage journey, W07 Prototype Lab, W08 claim gaps (zero hits), W09 partial (heading hierarchy), A04 event register |
-| Thu | A05 admin dashboard rebuild, W09 residual (focus traps, tap targets, fonts), W10 blog SEO + consulting key, A06 Supadata spec, A07 publishing status |
-| Fri | Q01 full regression — 10 categories, all pass |
+**GA4 custom dimension configuration** — 7 dimensions identified in the event register:
 
-**Total commits this sprint:** 18 task-specific commits across quantum5d-website and quantum-marketing-hub repos.
+1. Application ID (event-scoped)
+2. Application Name (event-scoped)
+3. Use Case (event-scoped)
+4. Role Filter (event-scoped)
+5. Form Source (event-scoped)
+6. Resource Category (event-scoped)
+7. Click Type (event-scoped)
+
+Reference: `docs/sprint-aug-21/A04-EVENT-REGISTER.md`
 
 ---
 
-## Ready for Q02 Release Decision
+## Sprint Archive
+
+All sprint documents archived to `docs/sprint-aug-21/`:
+- W01-BASELINE-REPORT.md
+- W02-POSITIONING-SPEC.md
+- A04-EVENT-REGISTER.md
+- A06-SUPADATA-SPEC.md
+- A07-PUBLISHING-STATUS.md
+
+---
+
+## Deploy Methods
+
+**quantum5d.ai:** `cd quantum5d-website && npx vercel deploy --prod`  
+**quantum5dconsulting.com:** `git push origin main:master`
+
+## Standing Constraints
+
+- /about page frozen. Blog posts frozen. LinkedIn + blog auto-publishers active.
+- Vercel Hobby: 12 functions max (at limit).
+- Run `node scripts/maturity-check.cjs` before every deploy.
+- Never print, log, or commit credential values.
