@@ -710,10 +710,10 @@ document.addEventListener("click", function(e) {
   if (!a) return;
   var href = a.href || "";
   if (href.indexOf("linkedin.com") !== -1) {
-    trackEvent("linkedin_outbound_click", {url: href});
+    trackEvent("linkedin_outbound_click", {type: "linkedin"});
   }
   if (href.indexOf("mailto:") === 0) {
-    trackEvent("email_click", {destination: href.split("?")[0]});
+    trackEvent("email_click", {type: "email"});
   }
 });
 </script>
