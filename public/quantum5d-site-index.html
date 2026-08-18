@@ -110,7 +110,7 @@ h1,h2,h3.big{font-family:'Newsreader',Georgia,serif;letter-spacing:-.005em;line-
 .tool-desc{color:var(--soft);font-size:14px;margin-top:12px}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
 .tag{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.04em;text-transform:uppercase;
-  color:var(--purple);background:#F0ECFA;border-radius:5px;padding:3px 8px}
+  color:var(--purple);background:#F0ECFA;border-radius:5px;padding:3px 8px;min-height:44px;display:inline-flex;align-items:center}
 .tool-foot{margin-top:16px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.05em;color:var(--purple-deep)}
 .badge{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
   padding:3px 8px;border-radius:5px;position:absolute;top:16px;right:16px}
@@ -1174,7 +1174,7 @@ document.addEventListener("click", function(e) {
   <div><a href="/applications" style="color:inherit;margin-right:16px">Applications</a><a href="/partners" style="color:inherit;margin-right:16px">Partners</a><a href="/services" style="color:inherit;margin-right:16px">Services</a><a href="/roadmap" style="color:inherit;margin-right:16px">Roadmap</a><a href="/security-and-trust" style="color:inherit;margin-right:16px">Security &amp; Trust</a><a href="https://quantum5d.ai" style="color:inherit">quantum5d.ai</a></div>
 </div></footer>
 
-<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()"><div class="modal" id="modal"></div></div>
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()"><div class="modal" id="modal" role="dialog" aria-modal="true"></div></div>
 
 <script>
 document.getElementById('yr').textContent=new Date().getFullYear();
@@ -1418,8 +1418,9 @@ function openModal(t){
 m.innerHTML=html;
   document.getElementById('modalBg').classList.add('open');document.body.style.overflow='hidden';
 }
-function closeModal(){document.getElementById('modalBg').classList.remove('open');document.body.style.overflow='';}
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
+var _modalTrigger=null;
+function closeModal(){document.getElementById('modalBg').classList.remove('open');document.body.style.overflow='';if(_modalTrigger){_modalTrigger.focus();_modalTrigger=null;}}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){var bg=document.getElementById('modalBg');if(bg&&bg.classList.contains('open'))closeModal();}});
 
 /* demo 2: TruReach phone validation (green/blue/red) */
 function phoneDemo(){
@@ -1707,7 +1708,7 @@ function sendInquiry(){
 function val(id){var el=document.getElementById(id);return el?el.value.trim():'';}
 </script>
 <!-- Exit-intent educational capture -->
-<div class="lc-overlay" id="lcExit">
+<div class="lc-overlay" id="lcExit" role="dialog" aria-modal="true">
   <div class="lc-box">
     <button class="lc-close" onclick="closeLc('lcExit')">&times;</button>
     <h3>Before you go&mdash;</h3>
@@ -1721,7 +1722,7 @@ function val(id){var el=document.getElementById(id);return el?el.value.trim():''
 </div>
 
 <!-- Post-prototype educational CTA -->
-<div class="lc-overlay" id="lcProto">
+<div class="lc-overlay" id="lcProto" role="dialog" aria-modal="true">
   <div class="lc-box">
     <button class="lc-close" onclick="closeLc('lcProto')">&times;</button>
     <h3>Want to learn more about <span id="lcProtoName">this</span>?</h3>
@@ -1734,7 +1735,7 @@ function val(id){var el=document.getElementById(id);return el?el.value.trim():''
   </div>
 </div>
 
-<div id="protoOverlay" class="proto-ov"><div class="proto-bar"><span id="protoTitle"></span><button onclick="closeProto()">Close ✕</button></div><div class="proto-guide" id="protoGuide"></div><iframe id="protoFrame" title="prototype"></iframe></div>
+<div id="protoOverlay" class="proto-ov" role="dialog" aria-modal="true"><div class="proto-bar"><span id="protoTitle"></span><button onclick="closeProto()">Close ✕</button></div><div class="proto-guide" id="protoGuide"></div><iframe id="protoFrame" title="prototype"></iframe></div>
 <script>
 var PROTOS={board:{title:'Board Intelligence',html:`<!DOCTYPE html>
 <!--
@@ -7098,7 +7099,7 @@ draw();
   .kpi .delta{font-family:var(--mono);font-size:11px;display:inline-flex;align-items:center;gap:4px;margin-top:7px}
   .kpi .accent{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
   .up{color:var(--good-bright)} .down{color:var(--risk-strong)} .flat{color:var(--slate)}
-  .tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.6px;text-transform:uppercase;padding:2px 7px;border-radius:20px;font-weight:500}
+  .tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.6px;text-transform:uppercase;padding:2px 7px;border-radius:20px;font-weight:500;min-height:44px;display:inline-flex;align-items:center}
   .tag.risk{background:#fdeee6;color:var(--risk-strong)} .tag.good{background:#e6f5ee;color:var(--good)} .tag.warn{background:#fdf5e3;color:#a8791a} .tag.neu{background:#eef2f6;color:var(--slate)}
 
   /* tables */
@@ -8279,7 +8280,26 @@ gb.classList.remove("on");void gb.offsetWidth;gb.classList.add("on");}
 function guideMove(d){var steps=(typeof GUIDES!=="undefined"&&GUIDES[guideKey])?GUIDES[guideKey]:[];if(guideStep+d>=steps.length){dismissGuide();return;}guideStep=Math.max(0,guideStep+d);renderGuide();}
 function dismissGuide(){document.getElementById("protoGuide").classList.remove("on");}
 function closeProto(){document.getElementById("protoOverlay").classList.remove("open");document.getElementById("protoFrame").srcdoc="";dismissGuide();document.body.style.overflow="";}
-document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeProto();}});
+document.addEventListener("keydown",function(e){
+  if(e.key==="Escape"){closeProto();}
+  // Focus trap for open dialogs
+  if(e.key==="Tab"){
+    var openDialog=document.querySelector('[role="dialog"][aria-modal="true"].open, .modal-bg.open [role="dialog"], .lc-overlay.open, .proto-ov.open');
+    if(!openDialog)return;
+    var focusable=openDialog.querySelectorAll('button,a[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+    if(!focusable.length)return;
+    var first=focusable[0],last=focusable[focusable.length-1];
+    if(e.shiftKey){if(document.activeElement===first){e.preventDefault();last.focus();}}
+    else{if(document.activeElement===last){e.preventDefault();first.focus();}}
+  }
+});
+// Close lead capture overlays on Escape
+document.addEventListener("keydown",function(e){
+  if(e.key==="Escape"){
+    var lc=document.querySelector('.lc-overlay.open');
+    if(lc){lc.classList.remove('open');document.body.style.overflow='';}
+  }
+});
 </script>
 <script>
 function trackQ5D(t,n,m){fetch("/api/track-event",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({event_type:t,event_name:n,site:"quantum5d.ai",metadata:m||{}})}).catch(function(){});}
