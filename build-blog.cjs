@@ -248,6 +248,11 @@ function buildListingPage(posts) {
     + '<h1>FQHC Operations Intelligence</h1>\n'
     + '<p>Analysis and insight on 340B programs, pharmacy operations, Medicaid coverage, and FQHC transformation.</p>\n'
     + '</header>\n'
+    + '<a href="https://quantum5dconsulting.com/blog/fqhc-pharmacy-series" class="series-banner" target="_blank" rel="noopener noreferrer">'
+    + '<div class="series-label">4-Part Series &middot; quantum5dconsulting.com</div>'
+    + '<div class="series-title">FQHC Pharmacy Leadership Series</div>'
+    + '<div class="series-desc">From gap analysis to strategic goals &mdash; a practical framework for new pharmacy leaders. Includes companion toolkit.</div>'
+    + '</a>\n'
     + '<div class="post-grid">\n' + cards + '\n</div>\n'
     + '</main>\n'
     + footerHtml() + '\n'
@@ -262,6 +267,11 @@ function listingCss() {
     '.blog-header{margin-bottom:40px}',
     '.blog-header h1{font-family:"Newsreader",Georgia,serif;font-size:36px;font-weight:600;color:var(--ink);margin-bottom:8px}',
     '.blog-header p{font-size:16px;color:var(--muted);max-width:60ch}',
+    '.series-banner{display:block;background:linear-gradient(135deg,#403592,#5347A4);color:#fff;padding:24px;border-radius:12px;margin-bottom:28px;text-decoration:none;transition:.15s}',
+    '.series-banner:hover{box-shadow:0 4px 20px rgba(83,71,164,.25)}',
+    '.series-label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#C8B8F0;margin-bottom:6px}',
+    '.series-title{font-family:"Newsreader",Georgia,serif;font-size:22px;font-weight:600;margin-bottom:6px}',
+    '.series-desc{font-size:14px;color:#E0D8F4;line-height:1.5}',
     '.post-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}',
     '@media(max-width:700px){.post-grid{grid-template-columns:1fr}}',
     '.post-card{display:block;padding:24px;border:1px solid var(--line);border-radius:12px;background:var(--card);transition:.15s}',
