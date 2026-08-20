@@ -1,0 +1,183 @@
+name: LinkedIn Comment Notifier
+# Polls for new comments on LinkedIn posts every 2 hours during business hours
+# Sends email + SMS notification for each new comment
+
+on:
+  schedule:
+    # Every 2 hours, 8am-8pm ET (12:00-00:00 UTC), every day
+    - cron: '0 12,14,16,18,20,22,0 * * *'
+  workflow_dispatch:
+
+jobs:
+  check-comments:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Poll for new LinkedIn comments
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          set -e
+
+          # Get LinkedIn access token
+          TOKEN=$(curl -s \
+            "$SUPABASE_URL/rest/v1/linkedin_accounts?select=access_token,linkedin_user_id&limit=1" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY")
+
+          ACCESS_TOKEN=$(echo "$TOKEN" | jq -r '.[0].access_token // empty')
+          LI_USER_ID=$(echo "$TOKEN" | jq -r '.[0].linkedin_user_id // empty')
+
+          if [ -z "$ACCESS_TOKEN" ]; then
+            echo "No LinkedIn access token found"
+            exit 0
+          fi
+
+          # Get all posted LinkedIn posts with post IDs
+          POSTS=$(curl -s \
+            "$SUPABASE_URL/rest/v1/linkedin_posts?status=eq.posted&linkedin_post_id=not.is.null&select=id,linkedin_post_id,content" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY")
+
+          POST_COUNT=$(echo "$POSTS" | jq '. | length')
+          echo "Checking comments on $POST_COUNT posts"
+
+          if [ "$POST_COUNT" = "0" ]; then
+            echo "No posts to check"
+            exit 0
+          fi
+
+          NOTIFIED=0
+
+          echo "$POSTS" | jq -c '.[]' | while read -r POST; do
+            DB_POST_ID=$(echo "$POST" | jq -r '.id')
+            LI_POST_ID=$(echo "$POST" | jq -r '.linkedin_post_id')
+            POST_PREVIEW=$(echo "$POST" | jq -r '.content // ""' | head -c 80)
+
+            # URL-encode the URN for the API call
+            ENCODED_URN=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$LI_POST_ID', safe=''))")
+
+            # Fetch comments for this post
+            COMMENTS_RESPONSE=$(curl -s \
+              "https://api.linkedin.com/v2/socialActions/$ENCODED_URN/comments" \
+              -H "Authorization: Bearer $ACCESS_TOKEN" \
+              -H "X-Restli-Protocol-Version: 2.0.0")
+
+            # Parse comments array
+            COMMENT_COUNT=$(echo "$COMMENTS_RESPONSE" | jq '.elements | length // 0' 2>/dev/null)
+
+            if [ "$COMMENT_COUNT" = "0" ] || [ "$COMMENT_COUNT" = "null" ]; then
+              continue
+            fi
+
+            echo "Post $DB_POST_ID has $COMMENT_COUNT comments"
+
+            echo "$COMMENTS_RESPONSE" | jq -c '.elements[]' 2>/dev/null | while read -r COMMENT; do
+              COMMENT_ID=$(echo "$COMMENT" | jq -r '.["$URN"] // .id // empty')
+              if [ -z "$COMMENT_ID" ]; then
+                COMMENT_ID=$(echo "$COMMENT" | jq -r '.actor' 2>/dev/null)_$(echo "$COMMENT" | jq -r '.created.time // 0' 2>/dev/null)
+              fi
+
+              COMMENT_TEXT=$(echo "$COMMENT" | jq -r '.message.text // "No text"')
+              ACTOR_URN=$(echo "$COMMENT" | jq -r '.actor // empty')
+              CREATED_TIME=$(echo "$COMMENT" | jq -r '.created.time // 0')
+
+              # Skip our own comments (from the auto-poster first-comment)
+              if [ "$ACTOR_URN" = "urn:li:person:$LI_USER_ID" ]; then
+                continue
+              fi
+
+              # Check if we already notified for this comment
+              EXISTING=$(curl -s \
+                "$SUPABASE_URL/rest/v1/linkedin_comment_notifications?comment_id=eq.$COMMENT_ID&select=id" \
+                -H "apikey: $SUPABASE_KEY" \
+                -H "Authorization: Bearer $SUPABASE_KEY")
+
+              if echo "$EXISTING" | jq -e '.[0]' > /dev/null 2>&1; then
+                continue
+              fi
+
+              # Resolve commenter name from profile
+              COMMENTER_NAME="LinkedIn User"
+              if [ -n "$ACTOR_URN" ]; then
+                ACTOR_ID=$(echo "$ACTOR_URN" | sed 's/urn:li:person://')
+                PROFILE=$(curl -s \
+                  "https://api.linkedin.com/v2/people/(id:$ACTOR_ID)?projection=(firstName,lastName)" \
+                  -H "Authorization: Bearer $ACCESS_TOKEN" \
+                  -H "X-Restli-Protocol-Version: 2.0.0" 2>/dev/null)
+                FIRST=$(echo "$PROFILE" | jq -r '.firstName.localized[.firstName.preferredLocale.language + "_" + .firstName.preferredLocale.country] // empty' 2>/dev/null)
+                LAST=$(echo "$PROFILE" | jq -r '.lastName.localized[.lastName.preferredLocale.language + "_" + .lastName.preferredLocale.country] // empty' 2>/dev/null)
+                if [ -n "$FIRST" ] && [ "$FIRST" != "null" ]; then
+                  COMMENTER_NAME="$FIRST $LAST"
+                fi
+              fi
+
+              # Build post URL
+              SHARE_ID=$(echo "$LI_POST_ID" | sed 's/urn:li:share://')
+              POST_URL="https://www.linkedin.com/feed/update/urn:li:share:$SHARE_ID/"
+
+              echo "NEW COMMENT from $COMMENTER_NAME: $COMMENT_TEXT"
+
+              # Send email notification via Resend
+              if [ -n "$RESEND_API_KEY" ]; then
+                EMAIL_BODY="<div style=\"font-family:Arial,sans-serif;max-width:600px;margin:0 auto\">"
+                EMAIL_BODY="$EMAIL_BODY<div style=\"background:#4b3c96;padding:20px;border-radius:8px 8px 0 0\">"
+                EMAIL_BODY="$EMAIL_BODY<div style=\"color:#fff;font-size:18px;font-weight:700\">New LinkedIn Comment</div></div>"
+                EMAIL_BODY="$EMAIL_BODY<div style=\"background:#fff;border:1px solid #e5e7eb;padding:20px;border-radius:0 0 8px 8px\">"
+                EMAIL_BODY="$EMAIL_BODY<p><strong>From:</strong> $COMMENTER_NAME</p>"
+                EMAIL_BODY="$EMAIL_BODY<p><strong>Comment:</strong></p>"
+                EMAIL_BODY="$EMAIL_BODY<blockquote style=\"border-left:3px solid #4b3c96;padding:8px 16px;margin:8px 0;background:#f9f7ff\">$(echo "$COMMENT_TEXT" | sed 's/"/\&quot;/g')</blockquote>"
+                EMAIL_BODY="$EMAIL_BODY<p><strong>On your post:</strong> $(echo "$POST_PREVIEW" | sed 's/"/\&quot;/g')...</p>"
+                EMAIL_BODY="$EMAIL_BODY<p><a href=\"$POST_URL\" style=\"color:#4b3c96;font-weight:700\">View on LinkedIn &rarr;</a></p>"
+                EMAIL_BODY="$EMAIL_BODY</div></div>"
+
+                curl -s -X POST "https://api.resend.com/emails" \
+                  -H "Authorization: Bearer $RESEND_API_KEY" \
+                  -H "Content-Type: application/json" \
+                  -d "$(jq -n \
+                    --arg from 'Quantum 5D <alerts@quantum5dconsulting.com>' \
+                    --arg to 'aadey002@gmail.com' \
+                    --arg subject "LinkedIn Comment from $COMMENTER_NAME" \
+                    --arg html "$EMAIL_BODY" \
+                    '{from: $from, to: [$to], subject: $subject, html: $html}')"
+
+                echo "Email sent"
+
+                # SMS via Verizon gateway
+                SMS_TEXT="LinkedIn comment from $COMMENTER_NAME: $(echo "$COMMENT_TEXT" | head -c 100)"
+                curl -s -X POST "https://api.resend.com/emails" \
+                  -H "Authorization: Bearer $RESEND_API_KEY" \
+                  -H "Content-Type: application/json" \
+                  -d "$(jq -n \
+                    --arg from 'Quantum 5D <alerts@quantum5dconsulting.com>' \
+                    --arg to '4107107406@vtext.com' \
+                    --arg subject '' \
+                    --arg text "$SMS_TEXT" \
+                    '{from: $from, to: [$to], subject: $subject, text: $text}')"
+
+                echo "SMS sent"
+              fi
+
+              # Record notification in Supabase to prevent duplicates
+              curl -s -X POST \
+                "$SUPABASE_URL/rest/v1/linkedin_comment_notifications" \
+                -H "apikey: $SUPABASE_KEY" \
+                -H "Authorization: Bearer $SUPABASE_KEY" \
+                -H "Content-Type: application/json" \
+                -d "$(jq -n \
+                  --arg linkedin_post_id "$LI_POST_ID" \
+                  --arg comment_id "$COMMENT_ID" \
+                  --arg commenter_name "$COMMENTER_NAME" \
+                  --arg comment_text "$COMMENT_TEXT" \
+                  '{linkedin_post_id: $linkedin_post_id, comment_id: $comment_id, commenter_name: $commenter_name, comment_text: $comment_text}')"
+
+              NOTIFIED=$((NOTIFIED + 1))
+
+              sleep 1
+            done
+
+            sleep 1
+          done
+
+          echo "Done. Sent $NOTIFIED new comment notifications."
