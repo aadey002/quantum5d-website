@@ -464,9 +464,10 @@ tr:hover{background:#f9f8fd}
 
   document.getElementById('authForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    hashPassword(document.getElementById('authPwd').value).then(function(h) {
+    var _pwd = document.getElementById('authPwd').value;
+    hashPassword(_pwd).then(function(h) {
       if (h === PWD_HASH) {
-        sessionStorage.setItem('q5d_auth','1');
+        sessionStorage.setItem('q5d_auth', _pwd);
         showDashboard();
       } else {
         document.getElementById('authError').style.display = 'block';
@@ -490,7 +491,7 @@ tr:hover{background:#f9f8fd}
     document.getElementById('authError').style.display = 'none';
   };
 
-  if (sessionStorage.getItem('q5d_auth') === '1') showDashboard();
+  if (sessionStorage.getItem('q5d_auth')) showDashboard();
 
   // ============ TABS ============
   document.getElementById('tabBar').addEventListener('click', function(e) {
@@ -531,6 +532,16 @@ tr:hover{background:#f9f8fd}
     }).then(function(r) {
       var range = r.headers.get('content-range');
       return range ? (parseInt(range.split('/')[1]) || 0) : 0;
+    });
+  }
+
+  // Leads via server-side route (service role key, never exposed client-side)
+  function adminLeadsFetch(since) {
+    return fetch('/api/admin-leads?since=' + encodeURIComponent(since), {
+      headers: { 'x-admin-token': sessionStorage.getItem('q5d_auth') || '' }
+    }).then(function(r) {
+      if (!r.ok) throw new Error('admin-leads ' + r.status);
+      return r.json();
     });
   }
 
@@ -928,67 +939,52 @@ tr:hover{background:#f9f8fd}
     var since = daysAgo(days);
     document.getElementById('communityFresh').textContent = '| Refreshed ' + freshTs();
 
-    // KPIs
-    Promise.all([
-      sbFetch('leads?select=id,source,message&created_at=gte.' + since),
-      sbCount('newsletter_subscriptions')
-    ]).then(function(results) {
-      var leads = results[0];
-      var nlCount = results[1];
+    // Single server-side call — leads via service role key, never exposed client-side
+    adminLeadsFetch(since).then(function(resp) {
+      var leads = resp.kpi || [];
+      var tableData = resp.table || [];
+      var nlCount = resp.nlCount || 0;
 
-      // Count briefing/assessment requests
+      // KPIs
       var briefings = 0;
-      var contacts = leads.length;
       leads.forEach(function(l) {
         var s = ((l.source || '') + ' ' + (l.message || '')).toLowerCase();
-        if (s.indexOf('assessment') >= 0 || s.indexOf('consult') >= 0 || s.indexOf('briefing') >= 0) {
-          briefings++;
-        }
+        if (s.indexOf('assessment') >= 0 || s.indexOf('consult') >= 0 || s.indexOf('briefing') >= 0) briefings++;
       });
-
       document.getElementById('cmBriefings').textContent = briefings;
-      document.getElementById('cmContacts').textContent = contacts;
+      document.getElementById('cmContacts').textContent = leads.length;
       document.getElementById('cmNewsletter').textContent = nlCount;
+      document.getElementById('communitySampleWarn').innerHTML = sampleWarnHtml(leads.length);
 
-      document.getElementById('communitySampleWarn').innerHTML = sampleWarnHtml(contacts);
-    }).catch(function() {
+      // Submissions table
+      document.getElementById('cmSubmissionCount').textContent = tableData.length;
+      if (!tableData.length) {
+        document.getElementById('cmSubmissionsTable').innerHTML = '<p style="padding:20px;color:var(--soft-purple)">No submissions yet.</p>';
+      } else {
+        var html = '<div class="table-wrap"><table><thead><tr><th>Date</th><th>Name / Email</th><th>Source</th></tr></thead><tbody>';
+        tableData.forEach(function(r) {
+          html += '<tr>';
+          html += '<td class="mono" style="white-space:nowrap">' + fmtDate(r.created_at) + '</td>';
+          html += '<td>' + escHtml(r.name || '--') + (r.email ? ' <span class="mono" style="font-size:11px;color:var(--soft-purple)">&lt;' + escHtml(r.email) + '&gt;</span>' : '') + '</td>';
+          html += '<td>' + sourceBadge(r.source || r.message) + '</td>';
+          html += '</tr>';
+        });
+        html += '</tbody></table></div>';
+        document.getElementById('cmSubmissionsTable').innerHTML = html;
+      }
+
+      // Newsletter display
+      var nlHtml = '<div style="display:flex;align-items:center;gap:16px;padding:12px 0">';
+      nlHtml += '<div style="font-size:40px;font-weight:700;color:var(--navy);font-family:IBM Plex Mono,monospace">' + nlCount + '</div>';
+      nlHtml += '<div><div style="font-size:14px;font-weight:600;color:var(--charcoal)">Total Active Subscribers</div>';
+      nlHtml += '<div style="font-size:12px;color:var(--soft-purple)">From newsletter_subscriptions table</div></div></div>';
+      document.getElementById('cmNewsletterInfo').innerHTML = nlHtml;
+
+    }).catch(function(e) {
       document.getElementById('cmBriefings').textContent = '0';
       document.getElementById('cmContacts').textContent = '0';
       document.getElementById('cmNewsletter').textContent = '0';
-    });
-
-    // Submissions table (name + source only, NO email)
-    sbFetch('leads?select=name,source,message,created_at&order=created_at.desc&limit=50').then(function(data) {
-      document.getElementById('cmSubmissionCount').textContent = data.length;
-      if (!data.length) {
-        document.getElementById('cmSubmissionsTable').innerHTML = '<p style="padding:20px;color:var(--soft-purple)">No submissions yet.</p>';
-        return;
-      }
-
-      var html = '<div class="table-wrap"><table><thead><tr><th>Date</th><th>Name</th><th>Source</th></tr></thead><tbody>';
-      data.forEach(function(r) {
-        html += '<tr>';
-        html += '<td class="mono" style="white-space:nowrap">' + fmtDate(r.created_at) + '</td>';
-        html += '<td>' + escHtml(r.name || '--') + '</td>';
-        html += '<td>' + sourceBadge(r.source || r.message) + '</td>';
-        html += '</tr>';
-      });
-      html += '</tbody></table></div>';
-      document.getElementById('cmSubmissionsTable').innerHTML = html;
-    }).catch(function(e) {
-      document.getElementById('cmSubmissionsTable').innerHTML = '<p style="color:var(--danger)">Error: ' + escHtml(e.message) + '</p>';
-    });
-
-    // Newsletter count display
-    sbCount('newsletter_subscriptions').then(function(c) {
-      var html = '<div style="display:flex;align-items:center;gap:16px;padding:12px 0">';
-      html += '<div style="font-size:40px;font-weight:700;color:var(--navy);font-family:IBM Plex Mono,monospace">' + c + '</div>';
-      html += '<div><div style="font-size:14px;font-weight:600;color:var(--charcoal)">Total Active Subscribers</div>';
-      html += '<div style="font-size:12px;color:var(--soft-purple)">From newsletter_subscriptions table</div></div>';
-      html += '</div>';
-      document.getElementById('cmNewsletterInfo').innerHTML = html;
-    }).catch(function() {
-      document.getElementById('cmNewsletterInfo').innerHTML = '<p style="color:var(--soft-purple)">Could not load subscriber count</p>';
+      document.getElementById('cmSubmissionsTable').innerHTML = '<p style="color:var(--danger)">Error loading leads: ' + escHtml(e.message) + '</p>';
     });
   }
 
