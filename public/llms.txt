@@ -1,0 +1,46 @@
+# Quantum 5D — Applied AI Prototype Lab
+
+> Applied AI prototypes for FQHC operations, pharmacy programs, 340B strategy, and compliance oversight. Built by Dr. Adetoro Oriaifo, PharmD, MBA, FACHE.
+
+Quantum 5D develops and evaluates applied AI prototypes for federally qualified health centers (FQHCs), pharmacy programs, 340B strategy, and healthcare compliance oversight. All prototypes use synthetic data and are labeled as interactive demonstrations — not production software. The site is an educational resource, not a commercial product catalog.
+
+## Prototypes
+
+- [Applied AI Prototype Lab](https://quantum5d.ai/applications): 15 interactive AI prototypes across FQHC operations, pharmacy, 340B, compliance, and executive decision support.
+- [Board Intelligence](https://quantum5d.ai/): AI-assisted board governance and document analysis for FQHCs.
+- [HRSA OSV Readiness](https://quantum5d.ai/applications): Site visit preparation and compliance gap analysis.
+- [340B IRA Intelligence](https://quantum5d.ai/applications): Inflation Reduction Act impact modeling for covered entities.
+- [PatientFirst Budget Engine](https://quantum5d.ai/applications): Service-line budget modeling for FQHC CFOs and boards.
+- [CoverageGuard IQ](https://quantum5d.ai/applications): Medicaid coverage lapse detection and outreach prioritization.
+- [ServiceLine IQ](https://quantum5d.ai/applications): FQHC service-line performance and gap analysis.
+- [TrueReach](https://quantum5d.ai/applications): Healthcare phone number validation and line-type classification.
+- [Sentinel](https://quantum5d.ai/applications): AI-assisted regulatory oversight and complaint triage.
+- [PharmTech CertIQ](https://quantum5d.ai/applications): Pharmacy technician certification tracking and compliance.
+- [Rx Abandonment Intelligence](https://quantum5d.ai/applications): Prescription abandonment risk scoring and intervention prioritization.
+- [Exec Compensation Benchmarking](https://quantum5d.ai/applications): FQHC executive pay comparability from public filing data.
+- [Meeting Intelligence](https://quantum5d.ai/applications): AI-assisted meeting summarization and action tracking.
+- [DTM Compliance](https://quantum5d.ai/applications): Dental treatment module regulatory compliance tracking.
+- [LoopProof](https://quantum5d.ai/applications): Referral loop integrity and closure rate assurance.
+
+## Site Pages
+
+- [About](https://quantum5d.ai/about): Mission, background, and approach to applied AI in healthcare.
+- [Partners & Collaborators](https://quantum5d.ai/partners): Educational contributor program and integration evaluation pathways.
+- [Services](https://quantum5d.ai/services): Consulting services offered through Quantum 5D Consulting.
+- [Security & Trust](https://quantum5d.ai/security-and-trust): Data handling, synthetic data disclosures, and governance practices.
+- [Roadmap](https://quantum5d.ai/roadmap): Prototype development trajectory and evaluation priorities.
+
+## Blog & Resources
+
+- [Blog](https://quantum5dconsulting.com/blog): FQHC pharmacy leadership, 340B strategy, and compliance analysis by Dr. Oriaifo.
+- [FQHC Pharmacy Leadership Series](https://quantum5dconsulting.com/blog/fqhc-pharmacy-series): Multi-part series on pharmacy governance and operational gap analysis.
+- [Resources](https://quantum5dconsulting.com/resources): 340B compliance checklists, savings calculators, and operational guides.
+
+## Contact
+
+- [Educational Briefing](https://quantum5dconsulting.com/contact): Request an educational briefing or prototype evaluation session.
+- [Quantum 5D Consulting](https://quantum5dconsulting.com): The consulting practice behind the prototype lab.
+
+## About the Author
+
+Dr. Adetoro Oriaifo, PharmD, MBA, CHCEF, FACHE — pharmacist, healthcare executive, and founder of Quantum 5D Consulting. Former multi-site FQHC pharmacy director with expertise in 340B program management, HRSA compliance, Medicaid strategy, and pharmacy operations.
