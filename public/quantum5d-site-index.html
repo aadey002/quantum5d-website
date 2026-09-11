@@ -1034,11 +1034,125 @@ document.addEventListener("click", function(e) {
       <p style="font-size:14px;color:#E2E0F0;line-height:1.6;margin:0">Patients evaluated · At-risk identified · Contact records corrected · Outreach completion · Recertification rate · Coverage retention · Revenue impact · Staff time saved</p>
     </div>
   </div>
+
+  <!-- ROI Calculator -->
+  <div id="cgRoiCalc" style="margin-top:40px">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--purple-soft);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Interactive ROI Calculator</div>
+      <h3 style="color:#fff;font-size:22px;font-weight:800;margin:0">The Cost of Doing Nothing</h3>
+      <p style="color:#CFCAE6;font-size:14px;margin-top:6px">Edit any field below. Figures update live.</p>
+    </div>
+    <div style="display:grid;gap:24px;grid-template-columns:1fr 1fr">
+
+      <!-- LEFT: Client inputs -->
+      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:24px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--purple-soft);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;font-weight:700;display:flex;align-items:center;justify-content:space-between">
+          <span>Client inputs</span><span style="font-size:9.5px;color:rgba(255,255,255,.35);text-transform:none;letter-spacing:0;font-weight:500">Edit any field</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:700;color:#E2E0F0">Total Medicaid patients</div><div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:1px">Your panel size</div></div>
+            <input id="roi-panel" type="number" value="115000" oninput="roiUpdate()" style="width:100px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:7px 10px;color:#fff;font-size:14px;font-weight:700;text-align:right;font-family:inherit;outline:none">
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:700;color:#E2E0F0">% renewal due &le;30 days</div><div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:1px">Typically 35-45% during redetermination season</div></div>
+            <input id="roi-renewal" type="number" value="40" min="0" max="100" oninput="roiUpdate()" style="width:72px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:7px 10px;color:#fff;font-size:14px;font-weight:700;text-align:right;font-family:inherit;outline:none">
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:700;color:#E2E0F0">% procedural loss (without CG)</div><div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:1px">Industry baseline: 10-15% &middot; KFF/MACPAC 2023-24</div></div>
+            <input id="roi-loss" type="number" value="12" min="0" max="100" oninput="roiUpdate()" style="width:72px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:7px 10px;color:#fff;font-size:14px;font-weight:700;text-align:right;font-family:inherit;outline:none">
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:700;color:#E2E0F0">PPS revenue per visit ($)</div><div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:1px">FQHC avg $280-$340 &middot; HRSA UDS 2023</div></div>
+            <input id="roi-pps" type="number" value="310" min="0" oninput="roiUpdate()" style="width:90px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:7px 10px;color:#fff;font-size:14px;font-weight:700;text-align:right;font-family:inherit;outline:none">
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:700;color:#E2E0F0">Average visits per patient/year</div><div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:1px">FQHC average 3-5 visits per Medicaid patient/year</div></div>
+            <input id="roi-visits" type="number" value="4" min="1" max="20" oninput="roiUpdate()" style="width:72px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:7px 10px;color:#fff;font-size:14px;font-weight:700;text-align:right;font-family:inherit;outline:none">
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:700;color:#E2E0F0">% dual eligible patients</div><div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:1px">Varies by state &middot; dual eligible auto-exempt from H.R.1 &middot; CMS 2024 avg 18%</div></div>
+            <input id="roi-dual" type="number" value="18" min="0" max="100" oninput="roiUpdate()" style="width:72px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:7px 10px;color:#fff;font-size:14px;font-weight:700;text-align:right;font-family:inherit;outline:none">
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:700;color:#E2E0F0">340B margin per patient/year ($)</div><div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:1px">Avg $800-$1,500 &middot; 340B Health/NACHC 2024</div></div>
+            <input id="roi-340b" type="number" value="1200" min="0" oninput="roiUpdate()" style="width:90px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:7px 10px;color:#fff;font-size:14px;font-weight:700;text-align:right;font-family:inherit;outline:none">
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:700;color:#E2E0F0">% H.R.1 work-req subjects</div><div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:1px">Of expansion adults &middot; CMS/OHCA est. 35%</div></div>
+            <input id="roi-hr1" type="number" value="35" min="0" max="100" oninput="roiUpdate()" style="width:72px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:7px 10px;color:#fff;font-size:14px;font-weight:700;text-align:right;font-family:inherit;outline:none">
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:700;color:#E2E0F0">Navigator avg annual salary ($)</div><div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:1px">BLS SOC 21-1091 &middot; Community Health Workers &middot; 2024 median</div></div>
+            <input id="roi-nav" type="number" value="58000" min="0" oninput="roiUpdate()" style="width:100px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:7px 10px;color:#fff;font-size:14px;font-weight:700;text-align:right;font-family:inherit;outline:none">
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:700;color:#E2E0F0">% time saved with CoverageGuard IQ</div><div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:1px">Default 80% &middot; based on automated workflow elimination</div></div>
+            <input id="roi-time" type="number" value="80" min="0" max="100" oninput="roiUpdate()" style="width:72px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:7px 10px;color:#fff;font-size:14px;font-weight:700;text-align:right;font-family:inherit;outline:none">
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Results -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <!-- Illustrative Annual Opportunity -->
+        <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:24px;flex:1">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--purple-soft);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;font-weight:700">Illustrative Annual Opportunity</div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)">
+              <span style="font-size:12.5px;color:#CFCAE6;font-weight:600">Patients at renewal risk</span>
+              <span id="roi-at-risk" style="font-size:18px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums">46,000</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)">
+              <span style="font-size:12.5px;color:#CFCAE6;font-weight:600">Revenue at risk annually</span>
+              <span id="roi-rev-risk" style="font-size:18px;font-weight:800;color:#F87171;font-variant-numeric:tabular-nums">$6.8M</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)">
+              <span style="font-size:12.5px;color:#CFCAE6;font-weight:600">Revenue protected by CoverageGuard</span>
+              <span id="roi-rev-saved" style="font-size:18px;font-weight:800;color:#34D399;font-variant-numeric:tabular-nums">$5.8M</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)">
+              <span style="font-size:12.5px;color:#CFCAE6;font-weight:600">340B margin protected</span>
+              <span id="roi-340b-saved" style="font-size:18px;font-weight:800;color:#34D399;font-variant-numeric:tabular-nums">$6.6M</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)">
+              <span style="font-size:12.5px;color:#CFCAE6;font-weight:600">H.R.1 subjects (patients)</span>
+              <span id="roi-hr1-out" style="font-size:18px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums">33,005</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)">
+              <span style="font-size:12.5px;color:#CFCAE6;font-weight:600">Navigator time savings (annual)</span>
+              <span id="roi-nav-saved" style="font-size:18px;font-weight:800;color:#34D399;font-variant-numeric:tabular-nums">$3.1M</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total Annual Impact -->
+        <div style="background:linear-gradient(135deg,rgba(83,71,164,.15),rgba(16,185,129,.1));border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:24px;text-align:center">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--purple-soft);text-transform:uppercase;letter-spacing:.1em;font-weight:700">Illustrative Annual Opportunity</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#F87171;text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Not a financial forecast</div>
+          <div id="roi-total" style="font-size:42px;font-weight:800;color:#fff;margin:12px 0 6px;line-height:1">$15.6M</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.4)">Illustrative &middot; adjust inputs to match actual panel and payer mix</div>
+          <div style="margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+            <a href="#contact" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;font-size:14px;font-weight:700;border-radius:10px">Contact us</a>
+            <button onclick="shareROI()" style="display:inline-flex;align-items:center;gap:8px;padding:12px 22px;font-size:13px;font-weight:700;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+    <!-- Source note -->
+    <div style="margin-top:12px;font-size:9.5px;color:rgba(255,255,255,.3);font-family:'IBM Plex Mono',monospace;line-height:1.5;text-align:center;max-width:680px;margin-left:auto;margin-right:auto">
+      Sources: Procedural loss rate 10-15% (KFF/MACPAC Unwinding 2023-24) &middot; PPS rate $310 (HRSA UDS 2023 FQHC avg) &middot; 340B margin $1,200/pt (340B Health/NACHC 2024) &middot; Navigator salary $58K (BLS SOC 21-1091 median 2024) &middot; Dual eligible 18% (CMS Medicare-Medicaid 2024) &middot; H.R.1 subjects 35% (CMS/OHCA projections)
+    </div>
+  </div>
+
   <div style="text-align:center;margin-top:32px">
     <span class="badge b-proto" style="font-size:12px;padding:4px 14px">Interactive Prototype</span>
     <div style="margin-top:16px">
       <a class="btn btn-ghost" href="/briefs/coverageguard-iq-executive-brief.html" target="_blank" style="border-color:rgba(255,255,255,.3);color:#fff">Download Executive Brief</a>
       <a class="btn btn-ghost" onclick="var t=TOOLS.find(function(x){return x.id==='coverage'});if(t)openModal(t);" style="cursor:pointer;border-color:rgba(255,255,255,.3);color:#fff">Launch interactive demo</a>
+      <a class="btn btn-ghost" href="#cgRoiCalc" style="border-color:rgba(16,185,129,.4);color:#34D399">Calculate your ROI</a>
     </div>
   </div>
 </div></section>
@@ -1178,6 +1292,88 @@ document.addEventListener("click", function(e) {
 <script>
 document.getElementById('yr').textContent=new Date().getFullYear();
 var CONTACT_EMAIL="hello@quantum5d.ai"; // confirm / change
+
+/* ── CoverageGuard ROI Calculator ── */
+function roiShort(n){
+  if(n>=1e6)return '$'+((n/1e6).toFixed(1))+'M';
+  if(n>=1e3)return '$'+((n/1e3).toFixed(0))+'K';
+  return '$'+Math.round(n).toLocaleString('en-US');
+}
+function roiFmt(n){return Math.round(n).toLocaleString('en-US');}
+function roiV(id){return parseFloat(document.getElementById(id).value)||0;}
+function roiUpdate(){
+  var panel=roiV('roi-panel');
+  var renewal=roiV('roi-renewal')/100;
+  var loss=roiV('roi-loss')/100;
+  var pps=roiV('roi-pps');
+  var visits=roiV('roi-visits');
+  var dual=roiV('roi-dual')/100;
+  var m340b=roiV('roi-340b');
+  var hr1pct=roiV('roi-hr1')/100;
+  var navSalary=roiV('roi-nav');
+  var timeSaved=roiV('roi-time')/100;
+  // derived
+  var atRenewal=Math.round(panel*renewal);
+  var patientsLost=Math.round(atRenewal*loss);
+  var revAtRisk=patientsLost*pps*visits;
+  var retentionRate=timeSaved; // CG retains this % of procedural losses
+  var patientsSaved=Math.round(patientsLost*retentionRate);
+  var revProtected=patientsSaved*pps*visits;
+  var m340bProtected=patientsSaved*m340b;
+  // H.R.1: expansion adults minus dual eligible
+  var nonDual=panel*(1-dual);
+  var hr1Subjects=Math.round(nonDual*hr1pct);
+  // Navigator time savings: assume 1 navigator per 2000 Medicaid patients, time saved
+  var navFTEs=panel/2000;
+  var navTimeSavings=navFTEs*navSalary*timeSaved;
+  // Total annual impact
+  var totalImpact=revProtected+m340bProtected+navTimeSavings;
+  // update outputs
+  document.getElementById('roi-at-risk').textContent=roiFmt(atRenewal);
+  document.getElementById('roi-rev-risk').textContent=roiShort(revAtRisk);
+  document.getElementById('roi-rev-saved').textContent=roiShort(revProtected);
+  document.getElementById('roi-340b-saved').textContent=roiShort(m340bProtected);
+  document.getElementById('roi-hr1-out').textContent=roiFmt(hr1Subjects);
+  document.getElementById('roi-nav-saved').textContent=roiShort(navTimeSavings);
+  document.getElementById('roi-total').textContent=roiShort(totalImpact);
+  // track interaction (debounced — fires 1.5s after last input change)
+  if(roiUpdate._timer)clearTimeout(roiUpdate._timer);
+  roiUpdate._timer=setTimeout(function(){
+    var inputs={panel:panel,renewal:renewal*100,loss:loss*100,pps:pps,visits:visits,dual:dual*100,m340b:m340b,hr1:hr1pct*100,navSalary:navSalary,timeSaved:timeSaved*100,totalImpact:Math.round(totalImpact)};
+    if(typeof trackEvent==='function')trackEvent('roi_calculator_interaction',inputs);
+    try{
+      fetch('/api/track-event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event_type:'roi_calculator',event_name:'roi_interaction',site:'quantum5d.ai',metadata:inputs})});
+    }catch(e){}
+  },1500);
+}
+// initialize on load
+if(document.getElementById('roi-panel')){
+  roiUpdate();
+  // track initial view
+  if(typeof trackEvent==='function')trackEvent('roi_calculator_view');
+  try{
+    fetch('/api/track-event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event_type:'roi_calculator',event_name:'roi_view',site:'quantum5d.ai',metadata:{}})});
+  }catch(e){}
+}
+
+/* ── ROI Share ── */
+function shareROI(){
+  var url='https://quantum5d.ai/#cgRoiCalc';
+  var title='CoverageGuard IQ ROI Calculator';
+  var text='See what Medicaid coverage loss is costing your FQHC — and what CoverageGuard IQ can protect.';
+  if(typeof trackEvent==='function')trackEvent('roi_calculator_share');
+  try{
+    fetch('/api/track-event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event_type:'roi_calculator',event_name:'roi_share',site:'quantum5d.ai',metadata:{}})});
+  }catch(e){}
+  if(navigator.share){
+    navigator.share({title:title,text:text,url:url}).catch(function(){});
+  }else if(navigator.clipboard){
+    navigator.clipboard.writeText(url).then(function(){
+      var btn=document.querySelector('[onclick="shareROI()"]');
+      if(btn){var orig=btn.innerHTML;btn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Copied!';btn.style.borderColor='#34D399';setTimeout(function(){btn.innerHTML=orig;btn.style.borderColor='rgba(255,255,255,.25)';},2000);}
+    });
+  }
+}
 
 /* ── Maturity configuration (centralized — edit here to update all cards) ── */
 var PLATFORM_CONFIG = {applicationCount: 15};
