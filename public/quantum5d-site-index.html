@@ -1135,9 +1135,12 @@ document.addEventListener("click", function(e) {
           <div style="font-size:11px;color:rgba(255,255,255,.4)">Illustrative &middot; adjust inputs to match actual panel and payer mix</div>
           <div id="roi-email-gate" style="margin-top:16px;text-align:center">
             <div style="font-size:13px;color:#CFCAE6;margin-bottom:10px">Get your personalized ROI report</div>
-            <div style="display:flex;gap:8px;justify-content:center;max-width:400px;margin:0 auto">
-              <input id="roi-email" type="email" placeholder="you@org.com" style="flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;outline:none">
-              <button onclick="submitRoiEmail()" style="background:var(--purple);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">Email my results</button>
+            <div style="display:flex;flex-direction:column;gap:8px;max-width:420px;margin:0 auto">
+              <div style="display:flex;gap:8px">
+                <input id="roi-email" type="email" placeholder="you@org.com" style="flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;outline:none">
+                <input id="roi-org" type="text" placeholder="Organization (optional)" style="flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;outline:none">
+              </div>
+              <button onclick="submitRoiEmail()" style="background:var(--purple);color:#fff;border:none;border-radius:8px;padding:12px 20px;font-size:14px;font-weight:700;cursor:pointer;width:100%">Email my results</button>
             </div>
             <div id="roi-email-note" style="font-size:11px;color:#34D399;margin-top:6px;min-height:16px"></div>
           </div>
@@ -1368,13 +1371,48 @@ if(document.getElementById('roi-panel')){
 /* ── ROI Email Gate ── */
 function submitRoiEmail(){
   var email=document.getElementById('roi-email').value.trim();
+  var org=(document.getElementById('roi-org').value||'').trim();
   var note=document.getElementById('roi-email-note');
   if(!email||email.indexOf('@')<1){note.style.color='#F87171';note.textContent='Please enter a valid email.';return;}
   note.style.color='#CFCAE6';note.textContent='Sending...';
-  var total=document.getElementById('roi-total').textContent;
-  fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'ROI Calculator',email:email,message:'ROI Calculator lead. Total opportunity: '+total+'. Panel: '+document.getElementById('roi-panel').value+', Loss rate: '+document.getElementById('roi-loss').value+'%, PPS: $'+document.getElementById('roi-pps').value,source:'roi-calculator',_hp:''})}).then(function(r){
-    if(r.ok){note.style.color='#34D399';note.textContent='Sent! Check your inbox.';if(typeof trackQ5D==='function')trackQ5D('lead_capture','roi-calculator',{email_domain:email.split('@')[1]});}
+  var inputs={
+    panel:document.getElementById('roi-panel').value,
+    renewal:document.getElementById('roi-renewal').value,
+    loss:document.getElementById('roi-loss').value,
+    pps:document.getElementById('roi-pps').value,
+    visits:document.getElementById('roi-visits').value,
+    dual:document.getElementById('roi-dual').value,
+    margin340b:document.getElementById('roi-340b').value,
+    hr1:document.getElementById('roi-hr1').value,
+    navSalary:document.getElementById('roi-nav').value,
+    timeSaved:document.getElementById('roi-time').value
+  };
+  var results={
+    atRisk:document.getElementById('roi-at-risk').textContent,
+    revRisk:document.getElementById('roi-rev-risk').textContent,
+    revSaved:document.getElementById('roi-rev-saved').textContent,
+    margin340bSaved:document.getElementById('roi-340b-saved').textContent,
+    hr1Subjects:document.getElementById('roi-hr1-out').textContent,
+    navSaved:document.getElementById('roi-nav-saved').textContent,
+    total:document.getElementById('roi-total').textContent
+  };
+  var payload={
+    email:email,
+    organization:org,
+    source:'roi-email',
+    roi_inputs:inputs,
+    roi_results:results,
+    referrer:document.referrer||'',
+    utm_source:new URLSearchParams(location.search).get('utm_source')||'',
+    utm_medium:new URLSearchParams(location.search).get('utm_medium')||'',
+    utm_campaign:new URLSearchParams(location.search).get('utm_campaign')||'',
+    _hp:''
+  };
+  fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(function(r){return r.json();}).then(function(d){
+    if(d.visitor_email_sent){note.style.color='#34D399';note.textContent='Sent! Check your inbox.';}
+    else if(d.success){note.style.color='#CFCAE6';note.textContent='We received your request and will email your report within 1 business day.';}
     else{note.style.color='#F87171';note.textContent='Error — please try again.';}
+    if(d.success&&typeof trackQ5D==='function')trackQ5D('lead_capture','roi-calculator',{email_domain:email.split('@')[1]});
   }).catch(function(){note.style.color='#F87171';note.textContent='Network error — please try again.';});
 }
 

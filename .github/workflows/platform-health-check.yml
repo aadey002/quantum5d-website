@@ -148,10 +148,10 @@ jobs:
               warn "LinkedIn token expires in $DAYS_LEFT days — refresh may be failing"
               check "LinkedIn token valid" "PASS"
             else
-              check "LinkedIn token valid" "EXPIRED — auto-poster will fail"
+              warn "LinkedIn token EXPIRED — company page deactivated (known)"
             fi
           else
-            check "LinkedIn token exists" "No token found in Supabase"
+            warn "LinkedIn token not found — company page deactivated (known)"
           fi
 
           # --- 5. Scheduled content pipeline ---
@@ -198,7 +198,7 @@ jobs:
                 -d "$(jq -n \
                   --arg to "$SMS_GATEWAY" \
                   --arg text "$ALERT_TEXT" \
-                  '{from: "Q5D Health <alerts@achestudysmart.com>", to: [$to], subject: "", text: $text}')"
+                  '{from: "Q5D Health <alerts@quantum5dconsulting.com>", to: [$to], subject: "", text: $text}')"
 
               # Email
               curl -s -X POST "https://api.resend.com/emails" \
@@ -207,7 +207,7 @@ jobs:
                 -d "$(jq -n \
                   --arg to "$ADMIN_EMAIL" \
                   --arg text "Q5D Platform Health Check Failed\n\nResult: $CHECKS_PASSED/$CHECKS_RUN passed\n$(echo -e "$FAILURES")\n$(echo -e "$WARNINGS")\n\nTimestamp: $(date -u '+%Y-%m-%d %H:%M UTC')" \
-                  '{from: "Q5D Health <alerts@achestudysmart.com>", to: [$to], subject: "Q5D ALERT: Platform health check failed", text: $text}')"
+                  '{from: "Q5D Health <alerts@quantum5dconsulting.com>", to: [$to], subject: "Q5D ALERT: Platform health check failed", text: $text}')"
 
               echo "Alert sent via SMS + email"
             fi
