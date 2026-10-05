@@ -240,7 +240,10 @@ footer{padding:42px 0;color:var(--muted);font-size:13px}
 .qopt.wrong{border-color:#D9534F;background:#FBECEB}
 .qmeta{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:8px}
 
+/* Mobile CTA — visible next to hamburger on small screens */
+.nav-mobile-cta{display:none}
 @media (max-width:760px){
+  .nav-mobile-cta{display:inline-block;background:var(--purple);color:#fff!important;font-size:12.5px;font-weight:700;padding:8px 14px;border-radius:7px;margin-right:8px;white-space:nowrap;text-decoration:none}
   .nav-toggle{display:flex;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px}
   .nav-toggle span{display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:all .2s}
   .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:var(--navy);padding:16px 24px;flex-direction:column;gap:8px;border-top:1px solid rgba(255,255,255,.1)}
@@ -729,6 +732,7 @@ document.addEventListener("click", function(e) {
     <a href="#applications">Applications</a><a href="/blog">Blog</a><a href="#services">Services</a><a href="/about">About</a><a href="/security-and-trust">Security &amp; Trust</a>
     <a class="btn btn-primary" href="#contact" style="padding:8px 18px;font-size:13px;border-radius:8px">Request a Briefing</a>
   </div>
+  <a class="nav-mobile-cta" href="#contact">Request a Briefing</a>
   <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('nav-open')" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
