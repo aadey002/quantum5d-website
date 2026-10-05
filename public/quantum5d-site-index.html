@@ -727,7 +727,7 @@ document.addEventListener("click", function(e) {
   </a>
   <div class="nav-links">
     <a href="#applications">Applications</a><a href="/blog">Blog</a><a href="#services">Services</a><a href="/about">About</a><a href="/security-and-trust">Security &amp; Trust</a>
-    <a href="#contact">Contact</a>
+    <a class="btn btn-primary" href="#contact" style="padding:8px 18px;font-size:13px;border-radius:8px">Request a Briefing</a>
   </div>
   <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('nav-open')" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -744,6 +744,7 @@ document.addEventListener("click", function(e) {
         <p class="lead ani ani-d2">Use cases, governance considerations, and working prototypes from someone who has run multi-site FQHC pharmacy operations.</p>
         <div class="hero-cta ani ani-d3">
           <a class="btn btn-primary" href="/applications" onclick="if(typeof trackEvent==='function')trackEvent('explore_applications_click')">Explore the applications →</a>
+          <a class="btn btn-ghost" href="#contact" onclick="if(typeof trackEvent==='function')trackEvent('hero_briefing_click')">Request a briefing</a>
         </div>
         <p class="v3-substantiate ani ani-d4"><b>15 applications</b> across coverage, compliance, governance, finance, and pharmacy operations</p>
       </div>
@@ -1132,7 +1133,15 @@ document.addEventListener("click", function(e) {
           <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#F87171;text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Not a financial forecast</div>
           <div id="roi-total" style="font-size:42px;font-weight:800;color:#fff;margin:12px 0 6px;line-height:1">$15.6M</div>
           <div style="font-size:11px;color:rgba(255,255,255,.4)">Illustrative &middot; adjust inputs to match actual panel and payer mix</div>
-          <div style="margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+          <div id="roi-email-gate" style="margin-top:16px;text-align:center">
+            <div style="font-size:13px;color:#CFCAE6;margin-bottom:10px">Get your personalized ROI report</div>
+            <div style="display:flex;gap:8px;justify-content:center;max-width:400px;margin:0 auto">
+              <input id="roi-email" type="email" placeholder="you@org.com" style="flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;outline:none">
+              <button onclick="submitRoiEmail()" style="background:var(--purple);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">Email my results</button>
+            </div>
+            <div id="roi-email-note" style="font-size:11px;color:#34D399;margin-top:6px;min-height:16px"></div>
+          </div>
+          <div style="margin-top:12px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
             <a href="#contact" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;font-size:14px;font-weight:700;border-radius:10px">Contact us</a>
             <button onclick="shareROI()" style="display:inline-flex;align-items:center;gap:8px;padding:12px 22px;font-size:13px;font-weight:700;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>
           </div>
@@ -1354,6 +1363,19 @@ if(document.getElementById('roi-panel')){
   try{
     fetch('/api/track-event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event_type:'roi_calculator',event_name:'roi_view',site:'quantum5d.ai',metadata:{}})});
   }catch(e){}
+}
+
+/* ── ROI Email Gate ── */
+function submitRoiEmail(){
+  var email=document.getElementById('roi-email').value.trim();
+  var note=document.getElementById('roi-email-note');
+  if(!email||email.indexOf('@')<1){note.style.color='#F87171';note.textContent='Please enter a valid email.';return;}
+  note.style.color='#CFCAE6';note.textContent='Sending...';
+  var total=document.getElementById('roi-total').textContent;
+  fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'ROI Calculator',email:email,message:'ROI Calculator lead. Total opportunity: '+total+'. Panel: '+document.getElementById('roi-panel').value+', Loss rate: '+document.getElementById('roi-loss').value+'%, PPS: $'+document.getElementById('roi-pps').value,source:'roi-calculator',_hp:''})}).then(function(r){
+    if(r.ok){note.style.color='#34D399';note.textContent='Sent! Check your inbox.';if(typeof trackQ5D==='function')trackQ5D('lead_capture','roi-calculator',{email_domain:email.split('@')[1]});}
+    else{note.style.color='#F87171';note.textContent='Error — please try again.';}
+  }).catch(function(){note.style.color='#F87171';note.textContent='Network error — please try again.';});
 }
 
 /* ── ROI Share ── */
@@ -1907,7 +1929,8 @@ function val(id){var el=document.getElementById(id);return el?el.value.trim():''
   <div class="lc-box">
     <button class="lc-close" onclick="closeLc('lcExit')">&times;</button>
     <h3>Before you go&mdash;</h3>
-    <p class="lc-sub">Get free 340B compliance tools and FQHC operational resources delivered to your inbox.</p>
+    <p class="lc-sub">Get 3 free 340B tools sent to your inbox:</p>
+    <div style="text-align:left;margin:10px 0 14px;font-size:13px;color:#CFCAE6;line-height:1.8">&#10003; <b>340B Compliance Checklist</b> &mdash; HRSA audit prep<br>&#10003; <b>340B Savings Calculator</b> &mdash; quantify your ROI<br>&#10003; <b>Compliance Training Manual</b> &mdash; 70-page guide</div>
     <input id="lc-exit-email" type="email" placeholder="you@org.com">
     <input id="lc-exit-name" type="text" placeholder="Name (optional)">
     <button class="lc-btn" onclick="submitLc('exit')">Send me the free resources</button>
@@ -1920,11 +1943,11 @@ function val(id){var el=document.getElementById(id);return el?el.value.trim():''
 <div class="lc-overlay" id="lcProto" role="dialog" aria-modal="true">
   <div class="lc-box">
     <button class="lc-close" onclick="closeLc('lcProto')">&times;</button>
-    <h3>Want to learn more about <span id="lcProtoName">this</span>?</h3>
-    <p class="lc-sub">Request an educational briefing on how AI prototypes like this could be evaluated for your FQHC or covered entity.</p>
+    <h3>See how <span id="lcProtoName">this</span> could work at your organization?</h3>
+    <p class="lc-sub">Get a 15-minute walkthrough tailored to your FQHC or covered entity.</p>
     <input id="lc-proto-email" type="email" placeholder="you@org.com">
     <input id="lc-proto-name" type="text" placeholder="Name (optional)">
-    <button class="lc-btn" onclick="submitLc('proto')">Request an educational briefing</button>
+    <button class="lc-btn" onclick="submitLc('proto')">Request a walkthrough</button>
     <div class="lc-note" id="lc-proto-note"></div>
     <button class="lc-skip" onclick="closeLc('lcProto')">Just exploring for now</button>
   </div>
