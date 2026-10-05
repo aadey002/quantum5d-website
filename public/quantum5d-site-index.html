@@ -1338,8 +1338,11 @@ function roiUpdate(){
   // Navigator time savings: assume 1 navigator per 2000 Medicaid patients, time saved
   var navFTEs=panel/2000;
   var navTimeSavings=navFTEs*navSalary*timeSaved;
-  // Total annual impact
+  // Total annual impact — sum the display-rounded line items so a CFO
+  // sees consistent arithmetic (avoids $5.5M+$5.3M+$2.7M = $13.4M)
   var totalImpact=revProtected+m340bProtected+navTimeSavings;
+  var rnd1=function(v){return Math.round(v/1e5)/10;};
+  var totalDisplay=rnd1(revProtected)+rnd1(m340bProtected)+rnd1(navTimeSavings);
   // update outputs
   document.getElementById('roi-at-risk').textContent=roiFmt(atRenewal);
   document.getElementById('roi-rev-risk').textContent=roiShort(revAtRisk);
@@ -1347,7 +1350,7 @@ function roiUpdate(){
   document.getElementById('roi-340b-saved').textContent=roiShort(m340bProtected);
   document.getElementById('roi-hr1-out').textContent=roiFmt(hr1Subjects);
   document.getElementById('roi-nav-saved').textContent=roiShort(navTimeSavings);
-  document.getElementById('roi-total').textContent=roiShort(totalImpact);
+  document.getElementById('roi-total').textContent='$'+totalDisplay.toFixed(1)+'M';
   // track interaction (debounced — fires 1.5s after last input change)
   if(roiUpdate._timer)clearTimeout(roiUpdate._timer);
   roiUpdate._timer=setTimeout(function(){
@@ -8588,7 +8591,7 @@ var _origLP=window.launchProto;if(_origLP){window.launchProto=function(k){var p=
       body: JSON.stringify({name: name || 'Lead capture', organization: '', email: email, message: msg, source: source})
     }).then(function(r) { return r.json(); }).then(function(d) {
       note.style.color = '#2E9E6B';
-      note.textContent = 'Got it — we will be in touch!';
+      note.textContent = type === 'exit' ? 'Check your inbox — your 3 tools are on the way!' : 'Got it — check your inbox!';
       trackQ5D('lead_capture', source, {email_domain: email.split('@')[1]});
       document.getElementById(prefix + '-email').value = '';
       document.getElementById(prefix + '-name').value = '';
