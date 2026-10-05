@@ -1298,6 +1298,20 @@ document.addEventListener("click", function(e) {
   </div>
 </div></section>
 
+<!-- NEWSLETTER -->
+<section style="background:var(--navy);border-top:1px solid rgba(255,255,255,.08);padding:48px 0">
+<div class="wrap" style="max-width:560px;text-align:center">
+  <p class="eyebrow" style="color:var(--purple-soft)">Newsletter</p>
+  <h2 style="color:#fff;font-size:22px;margin-bottom:6px">FQHC Operations Intelligence</h2>
+  <p style="color:#CFCAE6;font-size:14px;margin-bottom:20px">Monthly analysis on 340B, coverage, pharmacy operations, and Medicaid policy. No spam.</p>
+  <div style="display:flex;gap:8px;max-width:440px;margin:0 auto">
+    <input id="nl-email" type="email" placeholder="you@org.com" style="flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:11px 14px;color:#fff;font-size:14px;outline:none">
+    <button onclick="nlSubscribe()" style="background:var(--purple);color:#fff;border:none;border-radius:8px;padding:11px 20px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">Subscribe</button>
+  </div>
+  <div id="nl-note" style="font-size:11px;margin-top:8px;min-height:16px;color:#34D399"></div>
+</div>
+</section>
+
 </main><footer><div class="wrap foot-in">
   <div>© <span id="yr"></span> Quantum5D.ai · Minority-, Pharmacist- &amp; Woman-Owned · Nationwide</div>
   <div><a href="/applications" style="color:inherit;margin-right:16px">Applications</a><a href="/partners" style="color:inherit;margin-right:16px">Partners</a><a href="/services" style="color:inherit;margin-right:16px">Services</a><a href="/roadmap" style="color:inherit;margin-right:16px">Roadmap</a><a href="/security-and-trust" style="color:inherit;margin-right:16px">Security &amp; Trust</a><a href="https://quantum5d.ai" style="color:inherit">quantum5d.ai</a></div>
@@ -1308,6 +1322,18 @@ document.addEventListener("click", function(e) {
 <script>
 document.getElementById('yr').textContent=new Date().getFullYear();
 var CONTACT_EMAIL="hello@quantum5d.ai"; // confirm / change
+
+/* ── Newsletter Subscribe ── */
+function nlSubscribe(){
+  var email=document.getElementById('nl-email').value.trim();
+  var note=document.getElementById('nl-note');
+  if(!email||email.indexOf('@')<1){note.style.color='#F87171';note.textContent='Please enter a valid email.';return;}
+  note.style.color='#CFCAE6';note.textContent='Subscribing...';
+  fetch('/api/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email})}).then(function(r){return r.json();}).then(function(d){
+    if(d.success){note.style.color='#34D399';note.textContent='You are subscribed! Check your inbox for a welcome email.';document.getElementById('nl-email').value='';if(typeof trackQ5D==='function')trackQ5D('newsletter_subscribe','inline',{email_domain:email.split('@')[1]});}
+    else{note.style.color='#F87171';note.textContent=d.error||'Something went wrong. Please try again.';}
+  }).catch(function(){note.style.color='#F87171';note.textContent='Network error — please try again.';});
+}
 
 /* ── CoverageGuard ROI Calculator ── */
 function roiShort(n){

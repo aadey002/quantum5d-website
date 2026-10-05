@@ -61,25 +61,20 @@ export const subscribeToNewsletter = async (data: {
   interests?: string[];
 }) => {
   try {
-    const response = await fetch(`${supabaseUrl}/functions/v1/subscriber-management-public?action=subscribe`, {
+    const response = await fetch('/api/subscribe', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${supabaseAnonKey}`
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
 
-    if (!response.ok) {
-      console.warn('Failed to subscribe to newsletter, proceeding with fallback');
-      return { success: true, fallback: true, message: 'Thank you for your interest! Please contact us directly at info@quantum5dconsulting.com to subscribe.' };
-    }
-
     const result = await response.json();
+    if (!response.ok) {
+      return { success: false, message: result.error || 'Subscription failed. Please try again.' };
+    }
     return result;
   } catch (error) {
-    console.warn('Error subscribing to newsletter, proceeding with fallback:', error);
-    return { success: true, fallback: true, message: 'Thank you for your interest! Please contact us directly at info@quantum5dconsulting.com to subscribe.' };
+    console.warn('Newsletter subscribe error:', error);
+    return { success: false, message: 'Network error. Please try again.' };
   }
 };
 
