@@ -357,6 +357,7 @@ function buildPostPage(post, sequence) {
     + '</article>\n'
     + '</main>\n'
     + footerHtml() + '\n'
+    + '<script>(function(){fetch("/api/track-view",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({post_id:' + post.id + ',slug:"' + esc(post.slug) + '"})}).catch(function(){});})()</script>\n'
     + '</body>\n</html>';
 }
 
