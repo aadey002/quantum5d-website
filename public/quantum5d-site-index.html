@@ -1308,6 +1308,7 @@ document.addEventListener("click", function(e) {
     <input id="nl-email" type="email" placeholder="you@org.com" style="flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:11px 14px;color:#fff;font-size:14px;outline:none">
     <button onclick="nlSubscribe()" style="background:var(--purple);color:#fff;border:none;border-radius:8px;padding:11px 20px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">Subscribe</button>
   </div>
+  <div style="position:absolute;left:-9999px;height:0;overflow:hidden" aria-hidden="true"><input id="nl-hp" type="text" tabindex="-1" autocomplete="off"></div>
   <div id="nl-note" style="font-size:11px;margin-top:8px;min-height:16px;color:#34D399"></div>
 </div>
 </section>
@@ -1325,6 +1326,8 @@ var CONTACT_EMAIL="hello@quantum5d.ai"; // confirm / change
 
 /* ── Newsletter Subscribe ── */
 function nlSubscribe(){
+  var hp=document.getElementById('nl-hp');
+  if(hp&&hp.value){return;} // honeypot filled = bot
   var email=document.getElementById('nl-email').value.trim();
   var note=document.getElementById('nl-note');
   if(!email||email.indexOf('@')<1){note.style.color='#F87171';note.textContent='Please enter a valid email.';return;}
