@@ -12,7 +12,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 interface NewsletterIssue {
   id: string           // e.g. '2026-08'
   subject: string
-  buildHtml: () => string
+  buildHtml: (email?: string) => string
 }
 
 function header(): string {
@@ -24,29 +24,33 @@ function header(): string {
     + '</div>'
 }
 
-function footer(): string {
+function footer(email?: string): string {
+  var unsub = email
+    ? '<a href="https://quantum5d.ai/api/unsubscribe?email=' + encodeURIComponent(email) + '" style="color:#999">Unsubscribe</a>'
+    : 'Reply "unsubscribe" to stop receiving emails.'
   return '<p style="color:#999;font-size:13px;margin-top:36px;border-top:1px solid #E6E3F2;padding-top:16px">'
     + '<span style="color:#5347A4;font-family:Georgia,serif;font-weight:600">FQHC Operations Intelligence</span><br>'
     + 'Quantum 5D Consulting, LLC<br>'
     + '<a href="https://quantum5dconsulting.com" style="color:#7c3aed">quantum5dconsulting.com</a> | '
     + '<a href="https://quantum5d.ai" style="color:#7c3aed">quantum5d.ai</a><br>'
-    + 'Reply "unsubscribe" to stop receiving emails.</p>'
+    + '<a href="https://quantum5d.ai/newsletter" style="color:#7c3aed">Past issues</a> | '
+    + unsub + '</p>'
 }
 
 function cta(url: string, label: string): string {
   return '<p style="margin-top:24px"><a href="' + url + '" style="color:#5347A4;font-weight:600">' + label + ' &rarr;</a></p>'
 }
 
-function wrap(body: string): string {
+function wrap(body: string, email?: string): string {
   return '<!DOCTYPE html><html><body style="font-family:Georgia,serif;max-width:580px;margin:0 auto;color:#2D2D2D;line-height:1.7;font-size:15.5px;padding:20px">'
-    + header() + body + footer() + '</body></html>'
+    + header() + body + footer(email) + '</body></html>'
 }
 
 var ISSUES: NewsletterIssue[] = [
   {
     id: '2026-08',
     subject: 'The countdown is on for H.R.1 Medicaid redeterminations — is your FQHC ready?',
-    buildHtml: function () {
+    buildHtml: function (email) {
       return wrap(
         '<h2 style="color:#5347A4;font-size:22px;margin-bottom:8px">H.R.1 Redeterminations Are Here</h2>'
         + '<p style="color:#666;font-size:14px;margin-top:0">Issue #1 &mdash; August 2026</p>'
@@ -65,13 +69,13 @@ var ISSUES: NewsletterIssue[] = [
         + '<a href="https://quantum5dconsulting.com/resources/340B-Program-Compliance-Checklist.pdf" style="color:#7c3aed">Download our compliance checklist</a>.</p>'
         + '<p style="margin-top:24px">&mdash; Dr. Tee<br>'
         + '<span style="color:#666;font-size:14px">Founder, Quantum 5D Consulting</span></p>'
-      )
+      , email)
     }
   },
   {
     id: '2026-09',
     subject: '"HRSA is coming in 6 weeks" — the most expensive sentence in FQHC operations',
-    buildHtml: function () {
+    buildHtml: function (email) {
       return wrap(
         '<h2 style="color:#5347A4;font-size:22px;margin-bottom:8px">OSV Readiness: Stop Scrambling</h2>'
         + '<p style="color:#666;font-size:14px;margin-top:0">Issue #2 &mdash; September 2026</p>'
@@ -89,13 +93,13 @@ var ISSUES: NewsletterIssue[] = [
         + '<a href="https://quantum5d.ai/blog/ira-impact-340b-entities" style="color:#7c3aed">Read: How the IRA Impacts 340B Covered Entities &rarr;</a></p>'
         + '<p style="margin-top:24px">&mdash; Dr. Tee<br>'
         + '<span style="color:#666;font-size:14px">Founder, Quantum 5D Consulting</span></p>'
-      )
+      , email)
     }
   },
   {
     id: '2026-10',
     subject: 'How many compliance spreadsheets does your team maintain?',
-    buildHtml: function () {
+    buildHtml: function (email) {
       return wrap(
         '<h2 style="color:#5347A4;font-size:22px;margin-bottom:8px">One Command Center, Not Twelve Spreadsheets</h2>'
         + '<p style="color:#666;font-size:14px;margin-top:0">Issue #3 &mdash; October 2026</p>'
@@ -107,13 +111,13 @@ var ISSUES: NewsletterIssue[] = [
         + '<p style="margin-top:16px"><a href="https://quantum5d.ai/blog/five-340b-compliance-mistakes" style="color:#5347A4;font-weight:600">Related reading: Five 340B Compliance Mistakes That Will Cost You &rarr;</a></p>'
         + '<p style="margin-top:24px">&mdash; Dr. Tee<br>'
         + '<span style="color:#666;font-size:14px">Founder, Quantum 5D Consulting</span></p>'
-      )
+      , email)
     }
   },
   {
     id: '2026-11',
     subject: 'Your referrals are leaving the building — can you prove any of them closed?',
-    buildHtml: function () {
+    buildHtml: function (email) {
       return wrap(
         '<h2 style="color:#5347A4;font-size:22px;margin-bottom:8px">The Referral Loop Nobody Is Tracking</h2>'
         + '<p style="color:#666;font-size:14px;margin-top:0">Issue #4 &mdash; November 2026</p>'
@@ -128,13 +132,13 @@ var ISSUES: NewsletterIssue[] = [
         + '<p>If you don\'t know your loop closure rate, start measuring it this month. Pull a sample of 20 referrals from the last 90 days and check: did the report come back? Is it in the chart? Was the patient notified? The number will tell you whether your process works or just exists.</p>'
         + '<p style="margin-top:24px">&mdash; Dr. Tee<br>'
         + '<span style="color:#666;font-size:14px">Founder, Quantum 5D Consulting</span></p>'
-      )
+      , email)
     }
   },
   {
     id: '2026-12',
     subject: 'The 340B margin compression nobody is modeling yet',
-    buildHtml: function () {
+    buildHtml: function (email) {
       return wrap(
         '<h2 style="color:#5347A4;font-size:22px;margin-bottom:8px">IRA Is Compressing Your 340B Margin &mdash; Drug by Drug</h2>'
         + '<p style="color:#666;font-size:14px;margin-top:0">Issue #5 &mdash; December 2026</p>'
@@ -150,13 +154,13 @@ var ISSUES: NewsletterIssue[] = [
         + '<p style="margin-top:16px"><a href="https://quantum5d.ai/blog/ira-impact-340b-entities" style="color:#5347A4;font-weight:600">Related reading: How the IRA Impacts 340B Covered Entities &rarr;</a></p>'
         + '<p style="margin-top:24px">&mdash; Dr. Tee<br>'
         + '<span style="color:#666;font-size:14px">Founder, Quantum 5D Consulting</span></p>'
-      )
+      , email)
     }
   },
   {
     id: '2027-01',
     subject: 'Your pharmacy is chasing the wrong prescriptions',
-    buildHtml: function () {
+    buildHtml: function (email) {
       return wrap(
         '<h2 style="color:#5347A4;font-size:22px;margin-bottom:8px">Stop Chasing Prescriptions Nobody Wants</h2>'
         + '<p style="color:#666;font-size:14px;margin-top:0">Issue #6 &mdash; January 2027</p>'
@@ -167,13 +171,13 @@ var ISSUES: NewsletterIssue[] = [
         + '<p>The question isn\'t whether to chase abandoned prescriptions. It\'s which ones to chase first. Rank by clinical criticality: the patient whose A1C is climbing matters more than the auto-refill sitting on will-call. And the scripts that shouldn\'t be chased at all &mdash; OTC switches, duplicates, patient opt-outs &mdash; stop wasting time on those.</p>'
         + '<p style="margin-top:24px">&mdash; Dr. Tee<br>'
         + '<span style="color:#666;font-size:14px">Founder, Quantum 5D Consulting</span></p>'
-      )
+      , email)
     }
   },
   {
     id: '2027-02',
     subject: 'Board meeting is Thursday — how much executive time did the prep just eat?',
-    buildHtml: function () {
+    buildHtml: function (email) {
       return wrap(
         '<h2 style="color:#5347A4;font-size:22px;margin-bottom:8px">Board Prep Should Not Be a Full-Time Job</h2>'
         + '<p style="color:#666;font-size:14px;margin-top:0">Issue #7 &mdash; February 2027</p>'
@@ -188,13 +192,13 @@ var ISSUES: NewsletterIssue[] = [
         + '<p style="margin-top:16px"><a href="https://quantum5d.ai/blog/board-does-not-understand-pharmacy-program" style="color:#5347A4;font-weight:600">Related reading: Why Your Board Does Not Understand Your Pharmacy Program &rarr;</a></p>'
         + '<p style="margin-top:24px">&mdash; Dr. Tee<br>'
         + '<span style="color:#666;font-size:14px">Founder, Quantum 5D Consulting</span></p>'
-      )
+      , email)
     }
   },
   {
     id: '2027-03',
     subject: 'Your board just approved a CEO salary — where did the number come from?',
-    buildHtml: function () {
+    buildHtml: function (email) {
       return wrap(
         '<h2 style="color:#5347A4;font-size:22px;margin-bottom:8px">Executive Compensation: The Governance Gap</h2>'
         + '<p style="color:#666;font-size:14px;margin-top:0">Issue #8 &mdash; March 2027</p>'
@@ -205,13 +209,13 @@ var ISSUES: NewsletterIssue[] = [
         + '<p>Start with HRSA\'s <a href="https://data.hrsa.gov/tools/data-reporting" style="color:#7c3aed">UDS data</a> and public 990 filings for peer organizations. The data is free. The discipline of using it is what most boards lack.</p>'
         + '<p style="margin-top:24px">&mdash; Dr. Tee<br>'
         + '<span style="color:#666;font-size:14px">Founder, Quantum 5D Consulting</span></p>'
-      )
+      , email)
     }
   },
   {
     id: '2027-04',
     subject: '"Should we add behavioral health?" — here\'s how to stop guessing',
-    buildHtml: function () {
+    buildHtml: function (email) {
       return wrap(
         '<h2 style="color:#5347A4;font-size:22px;margin-bottom:8px">Service Line Decisions Deserve Data, Not Gut Feel</h2>'
         + '<p style="color:#666;font-size:14px;margin-top:0">Issue #9 &mdash; April 2027</p>'
@@ -221,13 +225,13 @@ var ISSUES: NewsletterIssue[] = [
         + '<p>Plot every service line on two axes: productivity (visits per provider FTE) and cost per visit. The ones in the bottom-right quadrant &mdash; low productivity, high cost &mdash; are the ones that need a decision. Use HRSA UDS peer data for benchmarks. The verdict is usually obvious once the data is visible.</p>'
         + '<p style="margin-top:24px">&mdash; Dr. Tee<br>'
         + '<span style="color:#666;font-size:14px">Founder, Quantum 5D Consulting</span></p>'
-      )
+      , email)
     }
   },
   {
     id: '2027-05',
     subject: 'Your no-show rate isn\'t a patient problem — it\'s a phone number problem',
-    buildHtml: function () {
+    buildHtml: function (email) {
       return wrap(
         '<h2 style="color:#5347A4;font-size:22px;margin-bottom:8px">Bad Phone Numbers Are Costing You Patients</h2>'
         + '<p style="color:#666;font-size:14px;margin-top:0">Issue #10 &mdash; May 2027</p>'
@@ -241,13 +245,13 @@ var ISSUES: NewsletterIssue[] = [
         + '<p>Before your next outreach campaign, run a validation pass on your patient phone file. Most PMS systems can export the list. A disconnected number is worse than no number &mdash; it consumes staff time and produces nothing. Clean the file first, then measure your contact rate.</p>'
         + '<p style="margin-top:24px">&mdash; Dr. Tee<br>'
         + '<span style="color:#666;font-size:14px">Founder, Quantum 5D Consulting</span></p>'
-      )
+      , email)
     }
   },
   {
     id: '2027-06',
     subject: '400 complaints a year, triaged by hand — which ones are hiding real danger?',
-    buildHtml: function () {
+    buildHtml: function (email) {
       return wrap(
         '<h2 style="color:#5347A4;font-size:22px;margin-bottom:8px">AI-Assisted Complaint Triage for Regulatory Boards</h2>'
         + '<p style="color:#666;font-size:14px;margin-top:0">Issue #11 &mdash; June 2027</p>'
@@ -256,13 +260,13 @@ var ISSUES: NewsletterIssue[] = [
         + '<p>The structural problem is triage speed, not triage effort. Every day a high-risk complaint sits unread is a day the board is carrying liability it doesn\'t know about.</p>'
         + '<p style="margin-top:24px">&mdash; Dr. Tee<br>'
         + '<span style="color:#666;font-size:14px">Founder, Quantum 5D Consulting</span></p>'
-      )
+      , email)
     }
   },
   {
     id: '2027-07',
     subject: '"Take last year\'s budget and add 3%" isn\'t a strategy',
-    buildHtml: function () {
+    buildHtml: function (email) {
       return wrap(
         '<h2 style="color:#5347A4;font-size:22px;margin-bottom:8px">Budget Forward From Mission, Not Backward From Last Year</h2>'
         + '<p style="color:#666;font-size:14px;margin-top:0">Issue #12 &mdash; July 2027</p>'
@@ -282,7 +286,7 @@ var ISSUES: NewsletterIssue[] = [
         + '<p><strong>That\'s a wrap on Year 1.</strong> Thank you for reading FQHC Operations Intelligence. We\'ll be back in August with a new season. If there\'s a topic you want us to cover, just reply to this email.</p>'
         + '<p style="margin-top:24px">&mdash; Dr. Tee<br>'
         + '<span style="color:#666;font-size:14px">Founder, Quantum 5D Consulting</span></p>'
-      )
+      , email)
     }
   },
 ]
@@ -320,6 +324,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     })
   }
 
+  // Check if this issue was already sent (prevent duplicates)
+  if (supabaseKey && !req.query.force) {
+    try {
+      var sentCheck = await fetch(
+        supabaseUrl + '/rest/v1/leads?source=eq.newsletter-send&message=eq.' + encodeURIComponent('sent:' + issueId) + '&select=id&limit=1',
+        { headers: { apikey: supabaseKey, Authorization: 'Bearer ' + supabaseKey } }
+      )
+      var sentRows = await sentCheck.json()
+      if (Array.isArray(sentRows) && sentRows.length > 0) {
+        return res.status(200).json({ message: 'Issue ' + issueId + ' was already sent', issueId: issueId })
+      }
+    } catch (e) {
+      console.error('Send tracking check error:', e)
+    }
+  }
+
   // Get all newsletter subscribers
   var subscribers: Array<{ email: string; name: string }> = []
   if (supabaseKey) {
@@ -355,13 +375,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // Send to each subscriber
-  var html = issue.buildHtml()
   var sent = 0
   var failed = 0
   var errors: string[] = []
 
   for (var i = 0; i < subscribers.length; i++) {
     var sub = subscribers[i]
+    var html = issue.buildHtml(sub.email)
     try {
       var sendRes = await fetch('https://api.resend.com/emails', {
         method: 'POST',
@@ -418,6 +438,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       })
     } catch (e) {
       console.error('Admin notification error:', e)
+    }
+  }
+
+  // Record that this issue was sent
+  if (supabaseKey && sent > 0) {
+    try {
+      await fetch(supabaseUrl + '/rest/v1/leads', {
+        method: 'POST',
+        headers: {
+          apikey: supabaseKey, Authorization: 'Bearer ' + supabaseKey,
+          'Content-Type': 'application/json', Prefer: 'return=minimal',
+        },
+        body: JSON.stringify({
+          name: 'Newsletter Send Log',
+          email: 'system@quantum5d.ai',
+          message: 'sent:' + issueId,
+          source: 'newsletter-send',
+          status: 'sent',
+        }),
+      })
+    } catch (e) {
+      console.error('Send tracking insert error:', e)
     }
   }
 
