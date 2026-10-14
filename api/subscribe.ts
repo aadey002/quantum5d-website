@@ -32,18 +32,22 @@ function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
 
-// Bot detection: dotted-gmail gibberish, double dots, disposable patterns
+// Bot detection: dotted-gmail gibberish, double dots, single-char segment patterns
 function isSuspiciousEmail(email: string): boolean {
   const local = email.split('@')[0]
   const domain = email.split('@')[1] || ''
   // Gmail ignores dots — bots exploit this with excessive dots
   if (domain === 'gmail.com') {
     const dotCount = (local.match(/\./g) || []).length
-    if (dotCount >= 4) return true // legit gmail rarely has 4+ dots
-    if (/\.\./.test(local)) return true // double dots are invalid per RFC but pass basic regex
+    if (dotCount >= 3) return true
+    if (/\.\./.test(local)) return true
   }
   // Double dots in any address
   if (/\.\./.test(local)) return true
+  // Single-char segments between dots: a.b.c.d pattern (bot fingerprint)
+  const parts = local.split('.')
+  const singleCharParts = parts.filter(p => p.length === 1).length
+  if (singleCharParts >= 3) return true
   return false
 }
 
