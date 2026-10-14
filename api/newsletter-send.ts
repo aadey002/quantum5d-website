@@ -130,6 +130,8 @@ var ISSUES: NewsletterIssue[] = [
         + '<li><strong>Referral Documentation Readiness</strong> &mdash; would your referral files hold up to a site visit or a tort claim?</li>'
         + '</ol>'
         + '<p>If you don\'t know your loop closure rate, start measuring it this month. Pull a sample of 20 referrals from the last 90 days and check: did the report come back? Is it in the chart? Was the patient notified? The number will tell you whether your process works or just exists.</p>'
+        + '<hr style="border:none;border-top:1px solid #E6E3F2;margin:24px 0">'
+        + '<p><strong>Try it:</strong> What is Medicaid coverage loss costing your FQHC? <a href="https://quantum5d.ai/roi" style="color:#5347A4;font-weight:600">Calculate your number in 60 seconds &rarr;</a></p>'
         + '<p style="margin-top:24px">&mdash; Dr. Tee<br>'
         + '<span style="color:#666;font-size:14px">Founder, Quantum 5D Consulting</span></p>'
       , email)

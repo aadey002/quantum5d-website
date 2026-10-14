@@ -683,6 +683,9 @@ div[style*="Built by an FQHC executive"]{background:var(--paper)!important;borde
   .hero{padding:60px 0 70px!important}
 }
 
+.roi-blurred { filter: blur(8px); pointer-events: none; user-select: none; transition: filter 0.3s; }
+.roi-revealed { filter: none; pointer-events: auto; user-select: auto; }
+
 </style>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Quantum5D.ai","alternateName":"Quantum 5D","url":"https://quantum5d.ai","logo":"https://quantum5d.ai/logo.png","founder":{"@type":"Person","name":"Adetoro Oriaifo","honorificPrefix":"Dr.","jobTitle":"Founder and CEO"},"description":"Quantum5D.ai explores AI use cases for Federally Qualified Health Centers — coverage, compliance, governance, finance, and pharmacy operations.","sameAs":["https://www.linkedin.com/company/quantum-5d-consulting"]}
@@ -1099,7 +1102,15 @@ document.addEventListener("click", function(e) {
       </div>
 
       <!-- RIGHT: Results -->
-      <div style="display:flex;flex-direction:column;gap:16px">
+      <div id="roi-results" class="roi-blurred" style="display:flex;flex-direction:column;gap:16px;position:relative">
+        <div id="roi-unlock" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;text-align:center;background:rgba(20,17,46,.92);padding:28px 32px;border-radius:14px;border:1px solid rgba(255,255,255,.15);width:90%;max-width:360px">
+          <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">See your results</div>
+          <div style="font-size:12px;color:#CFCAE6;margin-bottom:14px">Enter your email to unlock your personalized ROI report</div>
+          <input id="roi-email" type="email" placeholder="you@org.com" style="width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:8px">
+          <input id="roi-org" type="text" placeholder="Organization (optional)" style="width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:10px">
+          <button onclick="submitRoiEmail()" style="width:100%;background:var(--purple);color:#fff;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer">Unlock my ROI report</button>
+          <div id="roi-email-note" style="font-size:11px;color:#34D399;margin-top:6px;min-height:16px"></div>
+        </div>
         <!-- Illustrative Annual Opportunity -->
         <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:24px;flex:1">
           <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--purple-soft);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;font-weight:700">Illustrative Annual Opportunity</div>
@@ -1137,17 +1148,6 @@ document.addEventListener("click", function(e) {
           <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#F87171;text-transform:uppercase;letter-spacing:.08em;margin-top:4px;font-weight:600">Not a financial forecast</div>
           <div id="roi-total" style="font-size:42px;font-weight:800;color:#fff;margin:12px 0 6px;line-height:1">$15.6M</div>
           <div style="font-size:11px;color:rgba(255,255,255,.4)">Illustrative &middot; adjust inputs to match actual panel and payer mix</div>
-          <div id="roi-email-gate" style="margin-top:16px;text-align:center">
-            <div style="font-size:13px;color:#CFCAE6;margin-bottom:10px">Get your personalized ROI report</div>
-            <div style="display:flex;flex-direction:column;gap:8px;max-width:420px;margin:0 auto">
-              <div style="display:flex;gap:8px">
-                <input id="roi-email" type="email" placeholder="you@org.com" style="flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;outline:none">
-                <input id="roi-org" type="text" placeholder="Organization (optional)" style="flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;outline:none">
-              </div>
-              <button onclick="submitRoiEmail()" style="background:var(--purple);color:#fff;border:none;border-radius:8px;padding:12px 20px;font-size:14px;font-weight:700;cursor:pointer;width:100%">Email my results</button>
-            </div>
-            <div id="roi-email-note" style="font-size:11px;color:#34D399;margin-top:6px;min-height:16px"></div>
-          </div>
           <div style="margin-top:12px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
             <a href="#contact" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;font-size:14px;font-weight:700;border-radius:10px">Contact us</a>
             <button onclick="shareROI()" style="display:inline-flex;align-items:center;gap:8px;padding:12px 22px;font-size:13px;font-weight:700;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>
@@ -1445,10 +1445,14 @@ function submitRoiEmail(){
     _hp:''
   };
   fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(function(r){return r.json();}).then(function(d){
-    if(d.visitor_email_sent){note.style.color='#34D399';note.textContent='Sent! Check your inbox.';}
-    else if(d.success){note.style.color='#CFCAE6';note.textContent='We received your request and will email your report within 1 business day.';}
-    else{note.style.color='#F87171';note.textContent='Error — please try again.';}
-    if(d.success&&typeof trackQ5D==='function')trackQ5D('lead_capture','roi-calculator',{email_domain:email.split('@')[1]});
+    if(d.success){
+      document.getElementById('roi-results').classList.remove('roi-blurred');
+      document.getElementById('roi-results').classList.add('roi-revealed');
+      var unlock=document.getElementById('roi-unlock');if(unlock)unlock.style.display='none';
+      if(d.visitor_email_sent){note.style.color='#34D399';note.textContent='Results unlocked! Report sent to your inbox.';}
+      else{note.style.color='#34D399';note.textContent='Results unlocked! We will email your report within 1 business day.';}
+      if(typeof trackQ5D==='function')trackQ5D('lead_capture','roi-calculator',{email_domain:email.split('@')[1]});
+    }else{note.style.color='#F87171';note.textContent=d.error||'Error — please try again.';}
   }).catch(function(){note.style.color='#F87171';note.textContent='Network error — please try again.';});
 }
 
@@ -8639,7 +8643,7 @@ var _origLP=window.launchProto;if(_origLP){window.launchProto=function(k){var p=
   function onMouseLeave(e) {
     if (e.clientY > 5) return;
     if (lcShown.lcExit) return;
-    if (Date.now() - pageStart < 30000) return;
+    if (Date.now() - pageStart < 10000) return;
     if (document.getElementById('protoOverlay').classList.contains('open')) return;
     document.getElementById('lcExit').classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -8650,11 +8654,11 @@ var _origLP=window.launchProto;if(_origLP){window.launchProto=function(k){var p=
   }
   document.addEventListener('mouseleave', onMouseLeave);
 
-  // Scroll-depth trigger: fires at 75% scroll after 45s on page
+  // Scroll-depth trigger: fires at 75% scroll after 15s on page
   var scrollFired = false;
   function onScrollDepth() {
     if (scrollFired || lcShown.lcExit) return;
-    if (Date.now() - pageStart < 45000) return;
+    if (Date.now() - pageStart < 15000) return;
     var scrollPct = (window.scrollY + window.innerHeight) / document.documentElement.scrollHeight;
     if (scrollPct >= 0.75) {
       scrollFired = true;
@@ -8674,7 +8678,7 @@ var _origLP=window.launchProto;if(_origLP){window.launchProto=function(k){var p=
   var touchVelocity = 0;
   function onTouchMove(e) {
     if (lcShown.lcExit) { document.removeEventListener('touchmove', onTouchMove); return; }
-    if (Date.now() - pageStart < 30000) return;
+    if (Date.now() - pageStart < 8000) return;
     var curY = e.touches[0].clientY;
     var delta = curY - lastTouchY;
     lastTouchY = curY;
