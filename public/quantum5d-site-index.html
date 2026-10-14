@@ -1050,7 +1050,7 @@ document.addEventListener("click", function(e) {
       <h3 style="color:#fff;font-size:22px;font-weight:800;margin:0">The Cost of Doing Nothing</h3>
       <p style="color:#CFCAE6;font-size:14px;margin-top:6px">Edit any field below. Figures update live.</p>
     </div>
-    <div style="display:grid;gap:24px;grid-template-columns:1fr 1fr">
+    <div style="display:grid;gap:24px;grid-template-columns:1fr 1fr;position:relative">
 
       <!-- LEFT: Client inputs -->
       <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:24px">
@@ -1101,16 +1101,18 @@ document.addEventListener("click", function(e) {
         </div>
       </div>
 
+      <!-- ROI unlock overlay — sibling of the grid columns, not inside the blur -->
+      <div id="roi-unlock" style="position:absolute;top:50%;right:0;transform:translateY(-50%);z-index:10;text-align:center;background:rgba(20,17,46,.92);padding:28px 32px;border-radius:14px;border:1px solid rgba(255,255,255,.15);width:calc(50% - 12px);max-width:420px;box-sizing:border-box">
+        <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">See your results</div>
+        <div style="font-size:12px;color:#CFCAE6;margin-bottom:14px">Enter your email to unlock your personalized ROI report</div>
+        <input id="roi-email" type="email" placeholder="you@org.com" style="width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:8px">
+        <input id="roi-org" type="text" placeholder="Organization (optional)" style="width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:10px">
+        <button onclick="submitRoiEmail()" style="width:100%;background:var(--purple);color:#fff;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer">Unlock my ROI report</button>
+        <div id="roi-email-note" style="font-size:11px;color:#34D399;margin-top:6px;min-height:16px"></div>
+      </div>
+
       <!-- RIGHT: Results -->
-      <div id="roi-results" class="roi-blurred" style="display:flex;flex-direction:column;gap:16px;position:relative">
-        <div id="roi-unlock" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;text-align:center;background:rgba(20,17,46,.92);padding:28px 32px;border-radius:14px;border:1px solid rgba(255,255,255,.15);width:90%;max-width:360px">
-          <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">See your results</div>
-          <div style="font-size:12px;color:#CFCAE6;margin-bottom:14px">Enter your email to unlock your personalized ROI report</div>
-          <input id="roi-email" type="email" placeholder="you@org.com" style="width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:8px">
-          <input id="roi-org" type="text" placeholder="Organization (optional)" style="width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;outline:none;box-sizing:border-box;margin-bottom:10px">
-          <button onclick="submitRoiEmail()" style="width:100%;background:var(--purple);color:#fff;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer">Unlock my ROI report</button>
-          <div id="roi-email-note" style="font-size:11px;color:#34D399;margin-top:6px;min-height:16px"></div>
-        </div>
+      <div id="roi-results" class="roi-blurred" style="display:flex;flex-direction:column;gap:16px">
         <!-- Illustrative Annual Opportunity -->
         <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:24px;flex:1">
           <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--purple-soft);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;font-weight:700">Illustrative Annual Opportunity</div>
@@ -1333,7 +1335,7 @@ function nlSubscribe(){
   if(!email||email.indexOf('@')<1){note.style.color='#F87171';note.textContent='Please enter a valid email.';return;}
   note.style.color='#CFCAE6';note.textContent='Subscribing...';
   fetch('/api/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email})}).then(function(r){return r.json();}).then(function(d){
-    if(d.success){note.style.color='#34D399';note.textContent='You are subscribed! Check your inbox for a welcome email.';document.getElementById('nl-email').value='';if(typeof trackQ5D==='function')trackQ5D('newsletter_subscribe','inline',{email_domain:email.split('@')[1]});}
+    if(d.success){note.style.color='#34D399';note.textContent=d.message||'Check your email to confirm your subscription.';document.getElementById('nl-email').value='';if(typeof trackQ5D==='function')trackQ5D('newsletter_subscribe','inline',{email_domain:email.split('@')[1]});}
     else{note.style.color='#F87171';note.textContent=d.error||'Something went wrong. Please try again.';}
   }).catch(function(){note.style.color='#F87171';note.textContent='Network error — please try again.';});
 }

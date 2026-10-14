@@ -3,6 +3,15 @@
 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
+function generateToken(): string {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
+  let token = ''
+  for (let i = 0; i < 32; i++) {
+    token += chars.charAt(Math.floor(Math.random() * chars.length))
+  }
+  return token
+}
+
 // Simple in-memory rate limiter: max 5 requests per IP per minute
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
 
@@ -150,7 +159,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (supabaseKey) {
     try {
       const checkRes = await fetch(
-        supabaseUrl + '/rest/v1/leads?email=eq.' + encodeURIComponent(cleanEmail) + '&source=eq.newsletter&select=id&limit=1',
+        supabaseUrl + '/rest/v1/leads?email=eq.' + encodeURIComponent(cleanEmail) + '&source=eq.newsletter&status=in.(confirmed,pending)&select=id,status&limit=1',
         {
           headers: {
             apikey: supabaseKey,
@@ -160,6 +169,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       )
       const existing = await checkRes.json()
       if (Array.isArray(existing) && existing.length > 0) {
+        if (existing[0].status === 'pending') {
+          return res.status(200).json({
+            success: true,
+            message: 'We sent you a confirmation email — check your inbox (and spam folder) to complete your subscription.',
+          })
+        }
         return res.status(200).json({
           success: true,
           message: 'You are already subscribed to our newsletter. Thank you!',
@@ -171,6 +186,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // 2. Save to leads table
+  const token = generateToken()
   if (supabaseKey) {
     try {
       await fetch(supabaseUrl + '/rest/v1/leads', {
@@ -185,9 +201,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           name: cleanName,
           organization: cleanOrg,
           email: cleanEmail,
-          message: magnetId ? 'Lead magnet: ' + magnetId : 'Newsletter signup',
+          message: 'confirm:' + token,
           source: 'newsletter',
-          status: 'subscribed',
+          status: 'pending',
         }),
       })
     } catch (e) {
@@ -195,59 +211,41 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   }
 
-  // 3. Send welcome email via Resend
+  // 3. Send confirmation email via Resend
   if (resendKey) {
     try {
-      const welcomeRes = await fetch('https://api.resend.com/emails', {
+      const confirmUrl = 'https://quantum5d.ai/api/newsletter-confirm?token=' + token + '&email=' + encodeURIComponent(cleanEmail)
+      const confirmHtml = '<!DOCTYPE html><html><body style="font-family:Georgia,serif;max-width:580px;margin:0 auto;color:#2D2D2D;line-height:1.7;font-size:15.5px;padding:20px">'
+        + '<div style="margin-bottom:28px"><table cellpadding="0" cellspacing="0" border="0"><tr>'
+        + '<td style="padding-right:12px"><img src="https://quantum5d.ai/logo.png" alt="" width="32" height="32" style="width:32px;height:32px;border-radius:6px" /></td>'
+        + '<td><span style="font-family:Georgia,serif;font-size:18px;font-weight:600;color:#5347A4;letter-spacing:0.01em">FQHC Operations Intelligence</span></td>'
+        + '</tr></table></div>'
+        + '<p>Please confirm your subscription to the FQHC Operations Intelligence newsletter:</p>'
+        + '<div style="text-align:center;margin:28px 0"><a href="' + confirmUrl + '" style="display:inline-block;background:#5347A4;color:#fff;padding:14px 36px;border-radius:8px;font-size:16px;font-weight:700;text-decoration:none">Confirm my subscription</a></div>'
+        + '<p style="color:#666;font-size:13px">If you did not request this, you can ignore this email.</p>'
+        + '<p style="color:#999;font-size:13px;margin-top:36px;border-top:1px solid #E6E3F2;padding-top:16px">'
+        + '<span style="color:#5347A4;font-family:Georgia,serif;font-weight:600">FQHC Operations Intelligence</span><br>'
+        + 'Quantum 5D Consulting, LLC</p>'
+        + '</body></html>'
+
+      await fetch('https://api.resend.com/emails', {
         method: 'POST',
-        headers: {
-          Authorization: 'Bearer ' + resendKey,
-          'Content-Type': 'application/json',
-        },
+        headers: { Authorization: 'Bearer ' + resendKey, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           from: 'Dr. Tee | Quantum 5D <alerts@quantum5dconsulting.com>',
           to: [cleanEmail],
-          subject: 'Welcome to FQHC Operations Intelligence',
-          html: buildWelcomeHtml(cleanName),
+          subject: 'Confirm your subscription to FQHC Operations Intelligence',
+          html: confirmHtml,
           reply_to: 'info@quantum5dconsulting.com',
         }),
       })
-      if (!welcomeRes.ok) {
-        const errText = await welcomeRes.text()
-        console.error('Resend welcome email error:', welcomeRes.status, errText)
-      }
     } catch (e) {
-      console.error('Welcome email error:', e)
-    }
-
-    // 4. Notify admin
-    var adminEmail = process.env.ADMIN_EMAIL
-    if (adminEmail) {
-      try {
-        await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: {
-            Authorization: 'Bearer ' + resendKey,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            from: 'Quantum 5D <alerts@quantum5dconsulting.com>',
-            to: [adminEmail],
-            subject: 'New newsletter subscriber: ' + cleanEmail,
-            text: 'New subscriber!\n\nEmail: ' + cleanEmail + '\nName: ' + cleanName
-              + '\nOrganization: ' + (cleanOrg || 'N/A')
-              + '\nSource: ' + cleanSource
-              + '\nTime: ' + new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }),
-          }),
-        })
-      } catch (e) {
-        console.error('Admin notification error:', e)
-      }
+      console.error('Confirmation email error:', e)
     }
   }
 
   return res.status(200).json({
     success: true,
-    message: 'Welcome! Check your email for a welcome message from Quantum 5D Consulting.',
+    message: 'Check your email — click the confirmation link to complete your subscription.',
   })
 }

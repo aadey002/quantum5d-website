@@ -347,7 +347,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (supabaseKey) {
     try {
       var subRes = await fetch(
-        supabaseUrl + '/rest/v1/leads?source=eq.newsletter&status=eq.subscribed&select=email,name',
+        supabaseUrl + '/rest/v1/leads?source=eq.newsletter&status=in.(subscribed,confirmed)&select=email,name',
         {
           headers: {
             apikey: supabaseKey,
