@@ -134,7 +134,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(429).json({ success: false, error: 'Too many requests. Please try again in a minute.' })
   }
 
-  const { email, name, organization, source, magnetId } = req.body || {}
+  const { email, name, organization, source, magnetId, _hp, _ts } = req.body || {}
+
+  // Honeypot — if filled, silently accept (bot trap)
+  if (_hp) return res.status(200).json({ success: true, message: 'Thank you for subscribing!' })
+
+  // Timestamp check — form must exist for >3 seconds (bots submit instantly)
+  if (_ts && typeof _ts === 'number' && Date.now() - _ts < 3000) {
+    return res.status(200).json({ success: true, message: 'Thank you for subscribing!' })
+  }
 
   // Validate email
   if (!email || typeof email !== 'string' || !isValidEmail(email)) {
