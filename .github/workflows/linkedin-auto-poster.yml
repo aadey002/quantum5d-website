@@ -1,9 +1,11 @@
 name: LinkedIn Auto-Poster
-# Posts scheduled LinkedIn content on weekdays at 9am ET
+# Posts scheduled LinkedIn content on weekdays
 
 on:
   schedule:
-    - cron: '0 13 * * 1,3,5'  # 9am ET (13:00 UTC) Mon/Wed/Fri — Phase 4 re-enabled 2026-08-08
+    - cron: '0 13 * * 1,3,5'   # Mon/Wed/Fri 9am ET (13:00 UTC)
+    - cron: '30 12 * * 2,4'    # Tue/Thu 8:30am EDT (12:30 UTC)
+    - cron: '30 13 * * 2,4'    # Tue/Thu 8:30am EST (13:30 UTC) — covers after DST ends
   workflow_dispatch:
 
 jobs:
