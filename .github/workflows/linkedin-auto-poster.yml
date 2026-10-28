@@ -22,9 +22,9 @@ jobs:
           NOW=$(date -u +%Y-%m-%dT%H:%M:%S)
           echo "Checking for posts due before $NOW"
 
-          # Get LinkedIn access token
+          # Get LinkedIn access token (filter out rows with null linkedin_user_id)
           TOKEN_RESPONSE=$(curl -s \
-            "$SUPABASE_URL/rest/v1/linkedin_accounts?select=access_token,linkedin_user_id&limit=1" \
+            "$SUPABASE_URL/rest/v1/linkedin_accounts?select=access_token,linkedin_user_id&linkedin_user_id=not.is.null&order=updated_at.desc&limit=1" \
             -H "apikey: $SUPABASE_KEY" \
             -H "Authorization: Bearer $SUPABASE_KEY")
 
