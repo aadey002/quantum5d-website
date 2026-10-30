@@ -17,9 +17,9 @@ jobs:
         run: |
           set -e
 
-          # Get LinkedIn access token
+          # Get LinkedIn access token (filter out rows with null linkedin_user_id)
           TOKEN=$(curl -s \
-            "$SUPABASE_URL/rest/v1/linkedin_accounts?select=access_token,linkedin_user_id&limit=1" \
+            "$SUPABASE_URL/rest/v1/linkedin_accounts?select=access_token,linkedin_user_id&linkedin_user_id=not.is.null&order=updated_at.desc&limit=1" \
             -H "apikey: $SUPABASE_KEY" \
             -H "Authorization: Bearer $SUPABASE_KEY")
 
@@ -51,41 +51,34 @@ jobs:
             POST_ID=$(echo "$POST" | jq -r '.id')
             LI_POST_ID=$(echo "$POST" | jq -r '.linkedin_post_id')
 
-            # 1. Social actions: likes + comments
-            STATS=$(curl -s \
-              "https://api.linkedin.com/v2/socialActions/$LI_POST_ID?projection=(likesSummary,commentsSummary)" \
-              -H "Authorization: Bearer $ACCESS_TOKEN" \
-              -H "X-Restli-Protocol-Version: 2.0.0")
-
-            LIKES=$(echo "$STATS" | jq -r '.likesSummary.totalLikes // 0')
-            COMMENTS=$(echo "$STATS" | jq -r '.commentsSummary.totalFirstLevelComments // 0')
-
-            # 2. Share statistics: impressions, clicks, shares/reposts
-            # Encode the URN for the query parameter
+            # Social actions: likes + comments (works for personal posts)
             ENCODED_URN=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$LI_POST_ID', safe=''))")
-            SHARE_STATS=$(curl -s \
-              "https://api.linkedin.com/v2/shareStatistics?shares=$ENCODED_URN&q=shares" \
+
+            STATS=$(curl -s -w "\n%{http_code}" \
+              "https://api.linkedin.com/v2/socialActions/$ENCODED_URN" \
               -H "Authorization: Bearer $ACCESS_TOKEN" \
               -H "X-Restli-Protocol-Version: 2.0.0")
 
-            IMPRESSIONS=$(echo "$SHARE_STATS" | jq -r '.elements[0].totalShareStatistics.impressionCount // 0')
-            UNIQUE_IMPRESSIONS=$(echo "$SHARE_STATS" | jq -r '.elements[0].totalShareStatistics.uniqueImpressionsCount // 0')
-            CLICKS=$(echo "$SHARE_STATS" | jq -r '.elements[0].totalShareStatistics.clickCount // 0')
-            SHARES=$(echo "$SHARE_STATS" | jq -r '.elements[0].totalShareStatistics.shareCount // 0')
+            STATS_HTTP=$(echo "$STATS" | tail -1)
+            STATS_BODY=$(echo "$STATS" | sed '$d')
 
-            # Fallback: if shareStatistics returns nothing, try networkSizes approach
-            if [ "$IMPRESSIONS" = "0" ] && [ "$CLICKS" = "0" ]; then
-              # Try the socialMetadata endpoint as fallback
-              META=$(curl -s \
-                "https://api.linkedin.com/v2/socialMetadata/$LI_POST_ID" \
-                -H "Authorization: Bearer $ACCESS_TOKEN" \
-                -H "X-Restli-Protocol-Version: 2.0.0")
-
-              META_SHARES=$(echo "$META" | jq -r '.shareCount // 0')
-              if [ "$META_SHARES" != "0" ] && [ "$META_SHARES" != "null" ]; then
-                SHARES=$META_SHARES
-              fi
+            if [ "$STATS_HTTP" = "200" ]; then
+              LIKES=$(echo "$STATS_BODY" | jq -r '.likesSummary.totalLikes // 0')
+              COMMENTS=$(echo "$STATS_BODY" | jq -r '.commentsSummary.totalFirstLevelComments // 0')
+            else
+              echo "  socialActions HTTP $STATS_HTTP for $LI_POST_ID"
+              echo "  $STATS_BODY"
+              LIKES=0
+              COMMENTS=0
             fi
+
+            # Note: impressions/clicks/shares require Organization Statistics permission
+            # (r_organization_social) which is not available for personal profiles.
+            # These remain 0 until a Company Page is configured.
+            IMPRESSIONS=0
+            UNIQUE_IMPRESSIONS=0
+            CLICKS=0
+            SHARES=0
 
             # Build engagement JSON
             ENGAGEMENT=$(cat <<EJSON
