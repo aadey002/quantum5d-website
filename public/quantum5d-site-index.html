@@ -2035,6 +2035,31 @@ function val(id){var el=document.getElementById(id);return el?el.value.trim():''
 
 <div id="protoOverlay" class="proto-ov" role="dialog" aria-modal="true"><div class="proto-bar"><span id="protoTitle"></span><button onclick="closeProto()">Close ✕</button></div><div class="proto-guide" id="protoGuide"></div><iframe id="protoFrame" title="prototype"></iframe></div>
 <script>
+// Early stubs. The real launchProto/closeProto live at the end of the large
+// prototype script below (~300 KB). Until that script has downloaded, a click on
+// "Launch full prototype" used to throw "launchProto is not defined" and do
+// nothing. Now the click shows a loading state and the prototype opens as soon
+// as the page finishes loading. The real functions replace these stubs.
+window.launchProto=function(k){
+  window.__pendingProto=k;
+  var ov=document.getElementById("protoOverlay"),f=document.getElementById("protoFrame"),t=document.getElementById("protoTitle");
+  if(t)t.textContent="Loading prototype…";
+  if(f)f.srcdoc='<p style="padding:40px;font-family:sans-serif;color:#555">Loading prototype…</p>';
+  if(ov){ov.classList.add("open");document.body.style.overflow="hidden";}
+  if(typeof closeModal==="function")closeModal();
+};
+window.closeProto=function(){
+  window.__pendingProto=null;
+  document.getElementById("protoOverlay").classList.remove("open");
+  document.getElementById("protoFrame").srcdoc="";
+  document.body.style.overflow="";
+};
+document.addEventListener("DOMContentLoaded",function(){
+  var k=window.__pendingProto;window.__pendingProto=null;
+  if(k&&document.getElementById("protoOverlay").classList.contains("open"))window.launchProto(k);
+});
+</script>
+<script>
 var PROTOS={board:{title:'Board Intelligence',html:`<!DOCTYPE html>
 <!--
   BOARD INTELLIGENCE — Quantum 5D prototype (clean-room)
