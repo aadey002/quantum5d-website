@@ -109,6 +109,7 @@ function navHtml() {
     + '<a href="/blog" class="nav-active">Blog</a>'
     + '<a href="/#services">Services</a>'
     + '<a href="/#about">About</a>'
+    + '<a href="/hub">Hub</a>'
     + '<a href="/security-and-trust">Security &amp; Trust</a>'
     + '<a href="/#contact">Contact</a>'
     + '</div>'

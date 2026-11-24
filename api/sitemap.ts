@@ -19,6 +19,7 @@ const STATIC_PAGES = [
   { loc: '/partners', priority: '0.7', changefreq: 'monthly' },
   { loc: '/roadmap', priority: '0.6', changefreq: 'monthly' },
   { loc: '/security-and-trust', priority: '0.6', changefreq: 'monthly' },
+  { loc: '/hub', priority: '0.7', changefreq: 'monthly' },
   // Application subpages
   { loc: '/applications/coverage', priority: '0.7', changefreq: 'monthly' },
   { loc: '/applications/osv', priority: '0.7', changefreq: 'monthly' },
